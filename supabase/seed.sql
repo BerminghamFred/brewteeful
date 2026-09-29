@@ -20,7 +20,7 @@ cross join (values
    '/designs/osama-tin-laden/back.jpg'),
   ('wayne-schooney', 'Wayne Schooney', 'Overhead kick, pint in hand. A certain Manchester No. 10, still hasn''t spilled a drop.', '#c8102e', 2,
    'Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and ''Wayne Schooney'' scrawled across the stand. Oversized organic tee with a high neck.',
-   null),
+   '/designs/wayne-schooney/back.jpg'),
   ('pamela-canderson', 'Pamela Canderson', 'The beach''s finest lifeguard, running in slow motion with a tray of ice-cold ones.', '#e0301e', 3,
    'Hand-painted 90s lifeguard icon in the red swimsuit, wading out of the surf with a full tray of cold ones. Small chest print up front; the full beach scene on the back with ''Pamela Canderson'' in red across the sky. Oversized organic tee with a high neck.',
    '/designs/pamela-canderson/back.jpg'),
@@ -44,7 +44,7 @@ cross join (values
   ('side-left.jpg', 'left side', 3),
   ('side-right.jpg', 'right side', 4)
 ) as i(file, label, sort_order)
-where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson', 'marilyn-monrose');
+where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson', 'marilyn-monrose', 'wayne-schooney');
 
 
 insert into public.product_variants (product_id, size, sku)

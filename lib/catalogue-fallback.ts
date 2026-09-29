@@ -65,6 +65,13 @@ const DESIGNS: DesignSeed[] = [
     color: "#c8102e",
     description:
       "Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and 'Wayne Schooney' scrawled across the stand. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/wayne-schooney/back.jpg", alt: "Wayne Schooney T-shirt — back print" },
+      { url: "/designs/wayne-schooney/front.jpg", alt: "Wayne Schooney T-shirt — front chest print" },
+      { url: "/designs/wayne-schooney/folded.jpg", alt: "Wayne Schooney T-shirt — folded" },
+      { url: "/designs/wayne-schooney/side-left.jpg", alt: "Wayne Schooney T-shirt — left side" },
+      { url: "/designs/wayne-schooney/side-right.jpg", alt: "Wayne Schooney T-shirt — right side" },
+    ],
   },
   {
     slug: "pamela-canderson",

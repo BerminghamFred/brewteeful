@@ -27,6 +27,16 @@ import type {
 import { COOKIES } from "@/lib/cookies";
 
 export const STOREFRONT_TAG = "storefront";
+
+/**
+ * Cache DB reads (admin edits invalidate them via STOREFRONT_TAG). The built-in fallback
+ * data is never cached — the data cache survives rebuilds/deploys, so caching it would
+ * serve stale catalogue code.
+ */
+function dbCache<T>(fn: () => Promise<T>, key: string[], opts: { tags: string[]; revalidate: number }) {
+  const cached = unstable_cache(fn, key, opts);
+  return (): Promise<T> => (publicClient() ? cached() : fn());
+}
 const REVALIDATE = 300;
 
 // Anon can't read cost columns (see migration); costs come from the service role at checkout.
@@ -43,7 +53,7 @@ function sortRelations(p: ProductWithRelations): ProductWithRelations {
   };
 }
 
-export const getCatalogue = unstable_cache(
+export const getCatalogue = dbCache(
   async (): Promise<{ collections: Collection[]; products: ProductWithRelations[] }> => {
     const sb = publicClient();
     if (!sb) return { collections: [FALLBACK_COLLECTION], products: FALLBACK_PRODUCTS };
@@ -74,7 +84,7 @@ export async function getProductBySlug(slug: string) {
 }
 
 /** Public settings (everything except economics, which RLS hides from anon). */
-export const getSettings = unstable_cache(
+export const getSettings = dbCache(
   async (): Promise<SiteSettings> => {
     const sb = publicClient();
     if (!sb) return DEFAULT_SETTINGS;
@@ -93,7 +103,7 @@ export async function getSettingsWithEconomics(): Promise<SiteSettings> {
   return mergeSettings(data);
 }
 
-export const getOffers = unstable_cache(
+export const getOffers = dbCache(
   async (): Promise<Offer[]> => {
     const sb = publicClient();
     if (!sb) return [];
@@ -104,7 +114,7 @@ export const getOffers = unstable_cache(
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
 
-export const getFaqs = unstable_cache(
+export const getFaqs = dbCache(
   async (): Promise<Faq[]> => {
     const sb = publicClient();
     if (!sb) return FALLBACK_FAQS;
@@ -115,7 +125,7 @@ export const getFaqs = unstable_cache(
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
 
-export const getApprovedReviews = unstable_cache(
+export const getApprovedReviews = dbCache(
   async (): Promise<Review[]> => {
     const sb = publicClient();
     if (!sb) return [];
@@ -131,7 +141,7 @@ export const getApprovedReviews = unstable_cache(
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
 
-export const getRunningExperiments = unstable_cache(
+export const getRunningExperiments = dbCache(
   async (): Promise<Experiment[]> => {
     const sb = publicClient();
     if (!sb) return [];
