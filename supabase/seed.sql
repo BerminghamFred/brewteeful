@@ -1,5 +1,5 @@
 -- Seed data for the stag-set MVP (run after migrations).
--- Designs mirror lib/catalogue-fallback.ts. Bierry Henry is real; the rest are placeholders —
+-- Designs mirror lib/catalogue-fallback.ts. Bierry Henry and Osama Tin Laden are real; the rest are placeholders —
 -- replace them with the real designs in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
@@ -15,28 +15,31 @@ cross join (values
   ('bierry-henry', 'Bierry Henry', 'Va-va-voom. Va-va-vino. A certain French No. 12, one bottle in.', '#1f3c9c', 0,
    'Hand-illustrated tribute to a certain French No. 12 — hand on hip, drink in hand, completely unbothered. Small chest print up front; the full piece on the back, with splashes of stadium colour and ''Bierry Henry'' scrawled across the pitch. Oversized organic tee with a high neck.',
    '/designs/bierry-henry/back.jpg'),
-  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 1, null, null),
-  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 2, null, null),
-  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 3, null, null),
-  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 4, null, null),
-  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 5, null, null),
-  ('half-time-oranges', 'Half-Time Oranges', 'Peaked at under-11s.', '#ef7d1a', 6, null, null),
-  ('last-orders', 'Last Orders', 'Never, ever the first to leave.', '#7a1f3d', 7, null, null)
+  ('osama-tin-laden', 'Osama Tin Laden', 'Strapped to the tits with tinnies. Nobody''s finding him at last orders.', '#f2a900', 1,
+   'Satirical illustrated portrait with the vest swapped for five cans of the good stuff. Small chest print up front; the full portrait on the back against a bold mustard block, with ''Osama Tin Laden'' scrawled alongside. Oversized organic tee with a high neck.',
+   '/designs/osama-tin-laden/back.jpg'),
+  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 2, null, null),
+  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 3, null, null),
+  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 4, null, null),
+  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 5, null, null),
+  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 6, null, null),
+  ('half-time-oranges', 'Half-Time Oranges', 'Peaked at under-11s.', '#ef7d1a', 7, null, null)
 ) as d(slug, name, tagline, color, sort_order, description, hero)
 where c.slug = 'football'
 on conflict (slug) do nothing;
 
 insert into public.product_images (product_id, url, alt, sort_order)
-select p.id, i.url, i.alt, i.sort_order
+select p.id, '/designs/' || p.slug || '/' || i.file, p.name || ' T-shirt — ' || i.label, i.sort_order
 from public.products p
 cross join (values
-  ('/designs/bierry-henry/back.jpg', 'Bierry Henry T-shirt — back print', 0),
-  ('/designs/bierry-henry/front.jpg', 'Bierry Henry T-shirt — front chest print', 1),
-  ('/designs/bierry-henry/folded.jpg', 'Bierry Henry T-shirt — folded', 2),
-  ('/designs/bierry-henry/side-left.jpg', 'Bierry Henry T-shirt — left side', 3),
-  ('/designs/bierry-henry/side-right.jpg', 'Bierry Henry T-shirt — right side', 4)
-) as i(url, alt, sort_order)
-where p.slug = 'bierry-henry';
+  ('back.jpg', 'back print', 0),
+  ('front.jpg', 'front chest print', 1),
+  ('folded.jpg', 'folded', 2),
+  ('side-left.jpg', 'left side', 3),
+  ('side-right.jpg', 'right side', 4)
+) as i(file, label, sort_order)
+where p.slug in ('bierry-henry', 'osama-tin-laden');
+
 
 insert into public.product_variants (product_id, size, sku)
 select p.id, s.size, upper(left(p.slug, 12)) || '-' || s.size

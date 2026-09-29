@@ -43,13 +43,27 @@ const DESIGNS: DesignSeed[] = [
       { url: `${BIERRY}/side-right.jpg`, alt: "Bierry Henry T-shirt — right side" },
     ],
   },
+  {
+    slug: "osama-tin-laden",
+    name: "Osama Tin Laden",
+    tagline: "Strapped to the tits with tinnies. Nobody's finding him at last orders.",
+    color: "#f2a900",
+    description:
+      "Satirical illustrated portrait with the vest swapped for five cans of the good stuff. Small chest print up front; the full portrait on the back against a bold mustard block, with 'Osama Tin Laden' scrawled alongside. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/osama-tin-laden/back.jpg", alt: "Osama Tin Laden T-shirt — back print" },
+      { url: "/designs/osama-tin-laden/front.jpg", alt: "Osama Tin Laden T-shirt — front chest print" },
+      { url: "/designs/osama-tin-laden/folded.jpg", alt: "Osama Tin Laden T-shirt — folded" },
+      { url: "/designs/osama-tin-laden/side-left.jpg", alt: "Osama Tin Laden T-shirt — left side" },
+      { url: "/designs/osama-tin-laden/side-right.jpg", alt: "Osama Tin Laden T-shirt — right side" },
+    ],
+  },
   { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
   { slug: "sunday-league-legend", name: "Sunday League Legend", tagline: "Hungover, unfit, undroppable.", color: "#1f6f43" },
   { slug: "away-day", name: "Away Day", tagline: "Train beers from 9am. Standard.", color: "#d4481c" },
   { slug: "golden-boot", name: "Golden Boot", tagline: "Scores more at the bar than on the pitch.", color: "#d9a400" },
   { slug: "the-gaffer", name: "The Gaffer", tagline: "Picks the team. Picks the bar. Picks the fights.", color: "#1d3b8b" },
   { slug: "half-time-oranges", name: "Half-Time Oranges", tagline: "Peaked at under-11s.", color: "#ef7d1a" },
-  { slug: "last-orders", name: "Last Orders", tagline: "Never, ever the first to leave.", color: "#7a1f3d" },
 ];
 
 const now = "2026-09-29T00:00:00.000Z";
