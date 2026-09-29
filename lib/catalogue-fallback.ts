@@ -1,7 +1,7 @@
 /**
  * Catalogue used when Supabase isn't configured (local dev, previews), mirrored in
- * supabase/seed.sql. Designs with `images` are real; the rest are placeholders to be
- * replaced with real designs + photography in /admin/products before launch.
+ * supabase/seed.sql. Designs with `images` are real; The Stag is a placeholder to be
+ * replaced with a real design + photography in /admin/products before launch.
  */
 import type { Collection, Faq, ProductWithRelations } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
@@ -103,9 +103,31 @@ const DESIGNS: DesignSeed[] = [
       { url: "/designs/marilyn-monrose/side-right.jpg", alt: "Marilyn Monrosé T-shirt — right side" },
     ],
   },
+  {
+    slug: "nelson-manstella",
+    name: "Nelson Manstella",
+    tagline: "Long walk to the bar. Freedom tastes like a cold one.",
+    color: "#4b5563",
+    description:
+      "Hand-painted statesman at the podium, one fist in the air and a cold can held high. Small chest print up front; the full piece on the back against an abstract crowd, with 'Nelson Manstella' scrawled across the podium. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/nelson-manstella/back.jpg", alt: "Nelson Manstella T-shirt — back print" },
+      { url: "/designs/nelson-manstella/front.jpg", alt: "Nelson Manstella T-shirt — front chest print" },
+    ],
+  },
+  {
+    slug: "mother-beeresa",
+    name: "Mother Beeresa",
+    tagline: "Patron saint of the pint. Blesses every round.",
+    color: "#6b4128",
+    description:
+      "Hand-painted saintly icon in the blue-striped habit, pint in hand and a knowing grin. Small chest print up front; the full portrait on the back against a bold brown block with 'Mother Beeresa' across the top. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/mother-beeresa/back.jpg", alt: "Mother Beeresa T-shirt — back print" },
+      { url: "/designs/mother-beeresa/front.jpg", alt: "Mother Beeresa T-shirt — front chest print" },
+    ],
+  },
   { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
-  { slug: "sunday-league-legend", name: "Sunday League Legend", tagline: "Hungover, unfit, undroppable.", color: "#1f6f43" },
-  { slug: "away-day", name: "Away Day", tagline: "Train beers from 9am. Standard.", color: "#d4481c" },
 ];
 
 const now = "2026-09-29T00:00:00.000Z";

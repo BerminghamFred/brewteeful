@@ -1,6 +1,6 @@
 -- Seed data for the stag-set MVP (run after migrations).
--- Designs mirror lib/catalogue-fallback.ts. Bierry Henry, Osama Tin Laden, Wayne Schooney, Pamela Canderson and Marilyn Monrosé are real; the rest are placeholders —
--- replace them with the real designs in /admin/products. No reviews are seeded — reviews must be real.
+-- Designs mirror lib/catalogue-fallback.ts. Bierry Henry, Osama Tin Laden, Wayne Schooney, Pamela Canderson, Marilyn Monrosé, Nelson Manstella and Mother Beeresa are real; The Stag is a placeholder —
+-- replace it with a real design in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
 values ('legends', 'The Legends Collection', 'Hand-illustrated icons, each with a drink in hand. Made to look unreal as a lineup.', 0)
@@ -27,9 +27,13 @@ cross join (values
   ('marilyn-monrose', 'Marilyn Monrosé', 'Some like it pink. Skirt up, glass up, never spilled a drop.', '#e8303f', 4,
    'Hand-painted Hollywood icon in that white halter dress, mid-breeze, with a glass of rosé raised. Small chest print up front; the full piece on the back against a bold red block with ''Marilyn Monrosé'' across the top. Oversized organic tee with a high neck.',
    '/designs/marilyn-monrose/back.jpg'),
-  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 5, null, null),
-  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 6, null, null),
-  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 7, null, null)
+  ('nelson-manstella', 'Nelson Manstella', 'Long walk to the bar. Freedom tastes like a cold one.', '#4b5563', 5,
+   'Hand-painted statesman at the podium, one fist in the air and a cold can held high. Small chest print up front; the full piece on the back against an abstract crowd, with ''Nelson Manstella'' scrawled across the podium. Oversized organic tee with a high neck.',
+   '/designs/nelson-manstella/back.jpg'),
+  ('mother-beeresa', 'Mother Beeresa', 'Patron saint of the pint. Blesses every round.', '#6b4128', 6,
+   'Hand-painted saintly icon in the blue-striped habit, pint in hand and a knowing grin. Small chest print up front; the full portrait on the back against a bold brown block with ''Mother Beeresa'' across the top. Oversized organic tee with a high neck.',
+   '/designs/mother-beeresa/back.jpg'),
+  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 7, null, null)
 ) as d(slug, name, tagline, color, sort_order, description, hero)
 where c.slug = 'legends'
 on conflict (slug) do nothing;
@@ -44,7 +48,8 @@ cross join (values
   ('side-left.jpg', 'left side', 3),
   ('side-right.jpg', 'right side', 4)
 ) as i(file, label, sort_order)
-where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson', 'marilyn-monrose', 'wayne-schooney');
+where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson', 'marilyn-monrose', 'wayne-schooney')
+   or (p.slug in ('nelson-manstella', 'mother-beeresa') and i.file in ('back.jpg', 'front.jpg'));
 
 
 insert into public.product_variants (product_id, size, sku)
