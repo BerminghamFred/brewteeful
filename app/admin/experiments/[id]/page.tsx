@@ -64,7 +64,7 @@ export default async function ExperimentPage({ params, searchParams }: { params:
                         <td className="text-right tabular-nums">{pct(r.conversionRate, 2)}</td>
                         <td className="text-right tabular-nums">{gbp(r.aovPence, { whole: false })}</td>
                         <td className="text-right tabular-nums">{gbp(r.revenuePerVisitorPence, { whole: false })}</td>
-                        <td className="text-right font-extrabold tabular-nums">
+                        <td className="text-right font-semibold tabular-nums">
                           {gbp(r.contributionPerVisitorPence, { whole: false })}
                           {lift != null ? <span className={`ml-1 text-xs ${lift >= 0 ? "text-pitch" : "text-flare"}`}>{lift >= 0 ? "+" : ""}{pct(lift, 0)}</span> : null}
                         </td>

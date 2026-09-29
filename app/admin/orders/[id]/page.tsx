@@ -55,7 +55,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                     <td className="py-2">{i.position}</td>
                     <td>{i.is_stag ? "★ Stag" : "Lad"}{i.nickname ? ` — ${i.nickname}` : ""}</td>
                     <td className="font-bold">{i.product_name}</td>
-                    <td className="font-extrabold">{i.size}</td>
+                    <td className="font-semibold">{i.size}</td>
                     <td className="text-xs text-mute">{i.sku}</td>
                     <td className="text-right tabular-nums">{gbp(i.unit_price_pence)}</td>
                   </tr>

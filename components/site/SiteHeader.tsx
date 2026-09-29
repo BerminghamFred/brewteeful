@@ -9,24 +9,30 @@ export function SiteHeader({ offers }: { offers: Offer[] }) {
   return (
     <>
       {cfg?.text ? (
-        <div className="border-b-2 border-ink bg-sun px-4 py-2 text-center text-xs font-extrabold uppercase tracking-wide md:text-sm">
-          {cfg.link ? <Link href={cfg.link}>{cfg.text}</Link> : cfg.text}
+        <div className="bg-ink px-4 py-2 text-center text-[13px] font-medium text-chalk">
+          {cfg.link ? (
+            <Link href={cfg.link} className="hover:underline">
+              {cfg.text} <span aria-hidden>→</span>
+            </Link>
+          ) : (
+            cfg.text
+          )}
         </div>
       ) : null}
-      <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 md:h-16">
-          <Link href="/" className="font-display text-2xl uppercase tracking-tight md:text-3xl">
+      <header className="glass sticky top-0 z-40 border-b">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 md:h-16 md:px-6">
+          <Link href="/" className="font-display text-[19px] font-extrabold tracking-[-0.04em] md:text-xl">
             {BRAND.name}
           </Link>
-          <nav className="hidden items-center gap-6 text-sm font-bold uppercase md:flex">
-            <Link href="/designs" className="hover:text-flare">Designs</Link>
-            <Link href="/#how-it-works" className="hover:text-flare">How it works</Link>
-            <Link href="/delivery-returns" className="hover:text-flare">Delivery</Link>
-            <Link href="/faq" className="hover:text-flare">FAQ</Link>
+          <nav className="hidden items-center gap-8 text-[14px] font-medium text-ink/70 md:flex">
+            <Link href="/designs" className="transition hover:text-ink">Designs</Link>
+            <Link href="/#how-it-works" className="transition hover:text-ink">How it works</Link>
+            <Link href="/delivery-returns" className="transition hover:text-ink">Delivery</Link>
+            <Link href="/faq" className="transition hover:text-ink">FAQ</Link>
           </nav>
           <div className="flex items-center gap-2">
             <BasketButton />
-            <Link href="/build" className="btn-dark hidden min-h-[40px] px-4 text-sm sm:inline-flex">
+            <Link href="/build" className="btn-primary hidden min-h-[40px] px-5 text-sm sm:inline-flex">
               Build your set
             </Link>
           </div>

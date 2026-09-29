@@ -82,22 +82,22 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
       <div className="min-w-0">
         <div className="flex items-end justify-between">
           <h1 className="h-display text-5xl">Your set</h1>
-          <Link href="/build" className="text-sm font-bold underline">Edit set</Link>
+          <Link href="/build" className="text-sm font-medium text-ink/60 hover:text-ink">Edit set</Link>
         </div>
-        <ul className="mt-4 divide-y-2 divide-ink/10 rounded-2xl border-2 border-ink bg-chalk">
+        <ul className="mt-4 divide-y divide-ink/[0.06] card overflow-hidden">
           {people.map((p, i) => {
             const d = bySlug.get(p.design!);
             return (
               <li key={i} className="flex items-center gap-3 p-3">
-                <TeeArt name={d?.name ?? ""} color={d?.color ?? "#ddd"} imageUrl={d?.imageUrl} label={false} sizes="56px" className="h-14 w-14 shrink-0 rounded-lg border-2 border-ink" />
+                <TeeArt name={d?.name ?? ""} color={d?.color ?? "#ddd"} imageUrl={d?.imageUrl} label={false} sizes="56px" className="h-14 w-14 shrink-0 rounded-2xl" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-extrabold uppercase text-mute">
+                  <p className="text-[12px] font-medium text-mute">
                     {i === 0 ? "★ The Stag" : `Lad ${i + 1}`}
                     {p.nickname ? ` · ${p.nickname}` : ""}
                   </p>
-                  <p className="truncate font-extrabold">{d?.name}</p>
+                  <p className="truncate font-semibold">{d?.name}</p>
                 </div>
-                <span className="rounded-lg border-2 border-ink px-2 py-1 text-sm font-extrabold">{p.size}</span>
+                <span className="rounded-full bg-paper px-3 py-1 text-sm font-medium">{p.size}</span>
               </li>
             );
           })}
@@ -105,7 +105,7 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
       </div>
 
       <aside className="min-w-0 space-y-4 md:sticky md:top-24 md:self-start">
-        <div className="card p-5 shadow-hard">
+        <div className="card p-5 shadow-soft">
           <PriceBreakdown pricing={pricing} />
           {quote?.errors?.length ? <p className="mt-3 text-sm font-bold text-flare">{quote.errors[0]}</p> : null}
 
@@ -121,7 +121,7 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
             </fieldset>
           ) : null}
 
-          <p className="mt-4 rounded-xl bg-paper p-3 text-sm">
+          <p className="mt-4 rounded-2xl bg-paper p-4 text-sm">
             <strong>Estimated arrival:</strong> {formatDay(est.earliest)}
             {est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}
             {eventDate ? <span className="block text-xs text-mute">Stag date: {new Date(eventDate + "T12:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span> : null}
@@ -141,7 +141,7 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
               value={codeInput}
               onChange={(e) => setCodeInput(e.target.value)}
               placeholder="Discount code"
-              className="h-11 min-w-0 flex-1 rounded-xl border-2 border-ink bg-paper px-3 text-base uppercase"
+              className="h-11 min-w-0 flex-1 rounded-full border border-ink/10 bg-paper px-4 text-base"
               aria-label="Discount code"
             />
             <button type="submit" className="btn-ghost min-h-[44px] px-4 text-sm">Apply</button>

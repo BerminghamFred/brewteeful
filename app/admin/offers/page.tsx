@@ -82,7 +82,7 @@ export default async function OffersPage({ searchParams }: { searchParams: Promi
           {((offers ?? []) as Offer[]).map((o) => {
             const live = o.active && isInWindow(o, now);
             return (
-              <details key={o.id} className="rounded-lg border-2 border-ink/20 p-3">
+              <details key={o.id} className="rounded-lg border border-ink/10 p-3">
                 <summary className="flex cursor-pointer flex-wrap items-center gap-2 text-sm">
                   <span className={`rounded px-1.5 text-xs font-bold ${live ? "bg-pitch text-chalk" : "bg-ink/10"}`}>{live ? "LIVE" : o.active ? "scheduled" : "off"}</span>
                   <strong>{o.name}</strong>
@@ -91,11 +91,11 @@ export default async function OffersPage({ searchParams }: { searchParams: Promi
                     <form action={toggleOffer}>
                       <input type="hidden" name="id" value={o.id} />
                       <input type="hidden" name="active" value={String(!o.active)} />
-                      <button className="rounded border-2 border-ink px-2 text-xs font-bold">{o.active ? "Turn off" : "Turn on"}</button>
+                      <button className="rounded border border-ink/10 px-2 text-xs font-bold">{o.active ? "Turn off" : "Turn on"}</button>
                     </form>
                     <form action={deleteOffer}>
                       <input type="hidden" name="id" value={o.id} />
-                      <button className="rounded border-2 border-flare px-2 text-xs font-bold">Delete</button>
+                      <button className="rounded border border-flare/40 px-2 text-xs font-bold">Delete</button>
                     </form>
                   </span>
                 </summary>
@@ -127,7 +127,7 @@ export default async function OffersPage({ searchParams }: { searchParams: Promi
                   <form action={toggleDiscountCode}>
                     <input type="hidden" name="id" value={c.id} />
                     <input type="hidden" name="active" value={String(!c.active)} />
-                    <button className="rounded border-2 border-ink px-2 text-xs font-bold">{c.active ? "Disable" : "Enable"}</button>
+                    <button className="rounded border border-ink/10 px-2 text-xs font-bold">{c.active ? "Disable" : "Enable"}</button>
                   </form>
                 </td>
               </tr>

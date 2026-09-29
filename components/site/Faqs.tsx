@@ -5,20 +5,23 @@ import type { Faq } from "@/lib/types";
 
 export function Faqs({ faqs }: { faqs: Faq[] }) {
   return (
-    <div className="card divide-y-2 divide-ink overflow-hidden">
+    <div className="divide-y divide-ink/10 border-y border-ink/10">
       {faqs.map((f) => (
         <details
           key={f.id}
           className="group"
           onToggle={(e) => (e.currentTarget as HTMLDetailsElement).open && track("open_faq", { question: f.question })}
         >
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 font-bold md:px-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-[16px] font-medium [&::-webkit-details-marker]:hidden">
             {f.question}
-            <span className="text-xl leading-none transition group-open:rotate-45" aria-hidden>
+            <span
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink/60 transition duration-200 group-open:rotate-45 group-open:bg-ink group-open:text-chalk"
+              aria-hidden
+            >
               +
             </span>
           </summary>
-          <p className="px-4 pb-5 text-sm leading-relaxed text-ink/80 md:px-6">{f.answer}</p>
+          <p className="max-w-2xl pb-6 pr-10 text-[15px] leading-relaxed text-ink/65">{f.answer}</p>
         </details>
       ))}
     </div>

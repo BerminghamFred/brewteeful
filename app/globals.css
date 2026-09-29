@@ -8,42 +8,49 @@ html {
 
 body {
   @apply bg-paper text-ink antialiased;
+  font-feature-settings: "ss01", "cv11";
 }
 
 ::selection {
-  @apply bg-sun text-ink;
+  @apply bg-ink text-paper;
 }
 
 @layer components {
   .btn {
-    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-ink px-6 text-base font-extrabold uppercase tracking-wide transition active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:pointer-events-none disabled:opacity-40;
+    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold tracking-[-0.01em] transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-flare text-ink shadow-hard hover:bg-sun;
+    @apply btn bg-ink text-chalk shadow-soft hover:bg-pitch;
+  }
+  .btn-accent {
+    @apply btn bg-flare text-chalk shadow-soft hover:brightness-105;
   }
   .btn-dark {
-    @apply btn bg-ink text-paper shadow-hard hover:bg-pitch;
+    @apply btn bg-ink text-chalk hover:bg-pitch;
   }
   .btn-ghost {
-    @apply btn bg-chalk text-ink hover:bg-sun;
+    @apply btn border border-ink/15 bg-chalk/60 text-ink backdrop-blur hover:border-ink/40 hover:bg-chalk;
   }
   .card {
-    @apply rounded-2xl border-2 border-ink bg-chalk;
+    @apply rounded-3xl border border-ink/[0.07] bg-chalk shadow-soft;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-chalk px-3 py-1.5 text-[13px] font-medium;
   }
   .eyebrow {
-    @apply text-xs font-extrabold uppercase tracking-[0.18em];
+    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-mute;
   }
   .h-display {
-    @apply font-display uppercase leading-[0.9] tracking-tight;
+    @apply font-display font-bold leading-[0.95] tracking-tightest;
   }
   .prose-simple p {
-    @apply mb-4 leading-relaxed;
+    @apply mb-4 leading-relaxed text-ink/80;
   }
   .prose-simple h2 {
-    @apply mb-2 mt-8 font-display text-2xl uppercase;
+    @apply mb-2 mt-10 font-display text-2xl font-bold tracking-tight;
   }
   .prose-simple ul {
-    @apply mb-4 list-disc pl-5;
+    @apply mb-4 list-disc space-y-1 pl-5 text-ink/80;
   }
 }
 
@@ -56,5 +63,8 @@ body {
   }
   .no-scrollbar {
     scrollbar-width: none;
+  }
+  .glass {
+    @apply border-ink/[0.06] bg-paper/80 backdrop-blur-xl backdrop-saturate-150;
   }
 }

@@ -177,17 +177,21 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
 
   const quickSizes = Array.from({ length: Math.max(0, Math.min(10, max) - min + 1) }, (_, i) => min + i);
 
+  const sizeBtn = (active: boolean) =>
+    `h-11 min-w-0 rounded-full px-0 text-[15px] font-medium transition ${active ? "bg-ink text-chalk shadow-soft" : "text-ink/70 hover:bg-ink/5 hover:text-ink"}`;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-40 pt-6 md:pt-10">
-      <h1 className="h-display text-5xl md:text-6xl">Build your stag set</h1>
-      <p className="mt-2 text-ink/80">
+    <div className="mx-auto max-w-3xl px-4 pb-40 pt-8 md:px-6 md:pt-14">
+      <p className="eyebrow">Group builder</p>
+      <h1 className="h-display mt-3 text-[2.75rem] md:text-6xl">Build your stag set.</h1>
+      <p className="mt-3 text-[16px] text-ink/65">
         {gbp(pricing.unitPrices[0] ?? cfg.designs[0]?.pricePence ?? 2000)} a shirt · minimum {min} · everyone can pick a different design.
       </p>
 
-      {/* Step 1: group size */}
-      <section className="mt-6">
-        <h2 className="eyebrow">1 · How many of you?</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
+      {/* Step 1: group size + date */}
+      <section className="card mt-8 p-5 md:p-7">
+        <StepTitle n={1} title="How many of you?" />
+        <div className="mt-4 grid auto-cols-fr grid-flow-col gap-0.5 rounded-full bg-paper p-1">
           {quickSizes.map((n) => (
             <button
               key={n}
@@ -196,9 +200,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                 setCustomSize(false);
                 setSize(n);
               }}
-              className={`h-12 w-12 rounded-xl border-2 border-ink text-lg font-extrabold ${
-                people.length === n && !customSize ? "bg-ink text-paper" : "bg-chalk"
-              }`}
+              className={sizeBtn(people.length === n && !customSize)}
               aria-pressed={people.length === n && !customSize}
             >
               {n}
@@ -210,129 +212,137 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
               setCustomSize(true);
               if (people.length <= 10) setSize(11);
             }}
-            className={`h-12 rounded-xl border-2 border-ink px-4 text-lg font-extrabold ${customSize ? "bg-ink text-paper" : "bg-chalk"}`}
+            className={`${sizeBtn(customSize)} whitespace-nowrap`}
             aria-pressed={customSize}
           >
             10+
           </button>
         </div>
         {customSize ? (
-          <div className="mt-3 flex items-center gap-3">
-            <button type="button" className="btn-ghost h-11 min-h-0 w-11 px-0" onClick={() => setSize(people.length - 1)} aria-label="One fewer">−</button>
-            <span className="w-12 text-center text-2xl font-extrabold">{people.length}</span>
-            <button type="button" className="btn-ghost h-11 min-h-0 w-11 px-0" onClick={() => setSize(people.length + 1)} aria-label="One more">+</button>
-            <span className="text-sm text-mute">Up to {max}. Bigger group? <Link href="/contact" className="underline">Get in touch</Link>.</span>
+          <div className="mt-4 flex items-center gap-3">
+            <button type="button" className="btn-ghost h-11 min-h-0 w-11 px-0 text-lg" onClick={() => setSize(people.length - 1)} aria-label="One fewer">−</button>
+            <span className="w-10 text-center text-2xl font-semibold tabular-nums">{people.length}</span>
+            <button type="button" className="btn-ghost h-11 min-h-0 w-11 px-0 text-lg" onClick={() => setSize(people.length + 1)} aria-label="One more">+</button>
+            <span className="text-sm text-mute">Up to {max}. Bigger? <Link href="/contact" className="underline underline-offset-2">Get in touch</Link></span>
           </div>
         ) : null}
-      </section>
 
-      {/* Stag date */}
-      <section className="mt-6">
-        <label htmlFor="event-date" className="eyebrow">When&apos;s the stag? <span className="font-bold normal-case tracking-normal text-mute">(optional — we&apos;ll check delivery)</span></label>
-        <input
-          id="event-date"
-          type="date"
-          value={eventDate ?? ""}
-          min={new Date().toISOString().slice(0, 10)}
-          onChange={(e) => {
-            const v = e.target.value || null;
-            store.setEventDate(v);
-            if (v) {
-              const [y, m, d] = v.split("-").map(Number);
-              const c = checkEventDate(cfg.delivery, new Date(y!, m! - 1, d!));
-              track("set_event_date", { days_until: c.daysUntil, status: c.status });
-            }
-          }}
-          className="mt-2 block h-12 w-full rounded-xl border-2 border-ink bg-chalk px-3 text-base md:w-64"
-        />
-        {dateCheck ? (
-          <p
-            className={`mt-2 rounded-xl border-2 border-ink p-3 text-sm font-bold ${
-              dateCheck.status === "comfortable" ? "bg-pitch text-chalk" : dateCheck.status === "tight" ? "bg-sun" : "bg-flare"
-            }`}
-          >
-            {dateCheck.status === "comfortable" &&
-              `✓ Plenty of time — order today and it should arrive ${formatDay(dateCheck.estimate.earliest)}–${formatDay(dateCheck.estimate.latest)}.`}
-            {dateCheck.status === "tight" &&
-              `Tight but doable — estimated arrival ${formatDay(dateCheck.estimate.earliest)}–${formatDay(dateCheck.estimate.latest)}. Order today.`}
-            {dateCheck.status === "too_late" && (
-              <>
-                Our standard timeline (arrives {formatDay(dateCheck.estimate.earliest)}–{formatDay(dateCheck.estimate.latest)}) won&apos;t make it.{" "}
-                <Link href="/contact" className="underline">Message us</Link> before ordering and we&apos;ll tell you honestly if we can rush it.
-              </>
-            )}
-            {dateCheck.status === "past" && "That date's in the past — double-check it?"}
-          </p>
-        ) : null}
+        <div className="mt-6 border-t border-ink/[0.07] pt-6">
+          <label htmlFor="event-date" className="text-[15px] font-medium">
+            When&apos;s the stag? <span className="font-normal text-mute">Optional — we&apos;ll check delivery</span>
+          </label>
+          <input
+            id="event-date"
+            type="date"
+            value={eventDate ?? ""}
+            min={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => {
+              const v = e.target.value || null;
+              store.setEventDate(v);
+              if (v) {
+                const [y, m, d] = v.split("-").map(Number);
+                const c = checkEventDate(cfg.delivery, new Date(y!, m! - 1, d!));
+                track("set_event_date", { days_until: c.daysUntil, status: c.status });
+              }
+            }}
+            className="mt-2 block h-12 w-full rounded-2xl border border-ink/10 bg-paper px-4 text-base outline-none transition focus:border-ink/40 focus:bg-chalk md:w-72"
+          />
+          {dateCheck ? (
+            <p
+              className={`mt-3 flex gap-2 rounded-2xl px-4 py-3 text-sm leading-snug ${
+                dateCheck.status === "comfortable" ? "bg-pitch/[0.08] text-pitch" : dateCheck.status === "tight" ? "bg-sun text-ink" : "bg-flare/10 text-[#b3361a]"
+              }`}
+            >
+              {dateCheck.status === "comfortable" &&
+                `✓ Plenty of time — order today and it should arrive ${formatDay(dateCheck.estimate.earliest)}–${formatDay(dateCheck.estimate.latest)}.`}
+              {dateCheck.status === "tight" &&
+                `Tight but doable — estimated arrival ${formatDay(dateCheck.estimate.earliest)}–${formatDay(dateCheck.estimate.latest)}. Order today.`}
+              {dateCheck.status === "too_late" && (
+                <span>
+                  Our standard timeline (arrives {formatDay(dateCheck.estimate.earliest)}–{formatDay(dateCheck.estimate.latest)}) won&apos;t make it.{" "}
+                  <Link href="/contact" className="underline underline-offset-2">Message us</Link> before ordering and we&apos;ll tell you honestly if we can rush it.
+                </span>
+              )}
+              {dateCheck.status === "past" && "That date's in the past — double-check it?"}
+            </p>
+          ) : null}
+        </div>
       </section>
 
       {/* Step 2: lineup */}
-      <section className="mt-8">
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="eyebrow">2 · Give everyone a design &amp; size</h2>
-          <span className="text-sm font-bold">{readyCount}/{people.length} ready</span>
+      <section className="mt-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <StepTitle n={2} title="Give everyone a design & size" />
+          <span className="text-sm text-mute">
+            <span className="font-semibold text-ink">{readyCount}</span>/{people.length} ready
+          </span>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           <button type="button" onClick={allDifferent} className="btn-ghost min-h-[40px] px-4 text-sm">
-            🎲 Everyone different
+            Everyone different
           </button>
-          <label className="btn-ghost min-h-[40px] cursor-pointer px-4 text-sm">
-            <span>Unset sizes →</span>
+          <label className="btn-ghost min-h-[40px] cursor-pointer gap-1 px-4 text-sm">
+            <span>Fill sizes</span>
             <select
-              className="bg-transparent font-extrabold"
+              className="cursor-pointer bg-transparent font-semibold outline-none"
               value=""
               onChange={(e) => sizeForAll(e.target.value)}
               aria-label="Set a size for everyone without one"
             >
-              <option value="">pick</option>
+              <option value="">…</option>
               {cfg.sizes.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </label>
-          <Link href="/size-guide" target="_blank" onClick={() => track("open_size_guide", { from: "builder" })} className="self-center text-sm font-bold underline">
+          <Link href="/size-guide" target="_blank" onClick={() => track("open_size_guide", { from: "builder" })} className="ml-1 text-sm text-ink/60 underline underline-offset-2 hover:text-ink">
             Size guide
           </Link>
         </div>
 
-        <div className="mt-4 space-y-3">
+        <div className="mt-5 space-y-3">
           {people.map((p, i) => {
             const d = p.design ? bySlug.get(p.design) : null;
             const missing = highlight === i && (!p.design || !p.size);
+            const done = Boolean(p.design && p.size);
             return (
               <div
                 key={i}
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
-                className={`card p-3 md:p-4 ${missing ? "ring-4 ring-flare" : ""} ${p.design && p.size ? "" : "border-dashed"}`}
+                className={`card p-4 transition md:p-5 ${missing ? "ring-2 ring-flare" : ""}`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5">
                   <TeeArt
-                    name={d?.name ?? "Pick a design"}
-                    color={d?.color ?? "#e5ded2"}
+                    name={d?.name ?? " "}
+                    color={d?.color ?? "#d9d6cf"}
                     imageUrl={d?.imageUrl}
                     label={false}
-                    sizes="64px"
-                    className="h-16 w-16 shrink-0 rounded-xl border-2 border-ink"
+                    sizes="56px"
+                    className="h-14 w-14 shrink-0 rounded-2xl"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-extrabold uppercase text-mute">
-                      {i === 0 ? "★ The Stag" : `Lad ${i + 1}`}
+                    <p className="flex items-center gap-2 text-[12px] font-medium text-mute">
+                      {i === 0 ? <span className="text-flare">★ The Stag</span> : `Lad ${i + 1}`}
+                      {done ? <span className="h-1.5 w-1.5 rounded-full bg-pitch" aria-label="ready" /> : null}
                     </p>
-                    <p className="truncate text-lg font-extrabold leading-tight">{d?.name ?? "Choose a design"}</p>
+                    <p className="truncate text-[17px] font-semibold tracking-tight">
+                      {d?.name ?? <span className="text-ink/40">Choose a design</span>}
+                      {p.size ? <span className="ml-2 text-[15px] font-medium text-mute">{p.size}</span> : null}
+                    </p>
                     <input
                       value={p.nickname}
                       maxLength={24}
                       onChange={(e) => store.updatePerson(i, { nickname: e.target.value })}
-                      placeholder="Name / nickname (optional)"
+                      placeholder="Add a name (optional)"
                       aria-label={`Nickname for person ${i + 1}`}
-                      className="mt-1 w-full border-b border-ink/20 bg-transparent text-base placeholder:text-mute/70 focus:border-ink focus:outline-none md:text-sm"
+                      className="mt-0.5 w-full bg-transparent text-base text-ink/80 placeholder:text-ink/35 focus:outline-none md:text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="no-scrollbar -mx-3 mt-3 flex gap-2 overflow-x-auto px-3 pb-1 md:-mx-4 md:px-4" role="radiogroup" aria-label={`Design for person ${i + 1}`}>
+                <div className="no-scrollbar -mx-4 mt-3 flex gap-2.5 overflow-x-auto px-4 pb-1 pt-1 md:-mx-5 md:px-5" role="radiogroup" aria-label={`Design for person ${i + 1}`}>
                   {cfg.designs.map((opt) => {
                     const selected = p.design === opt.slug;
                     const uses = people.filter((x) => x.design === opt.slug).length;
@@ -343,7 +353,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => pickDesign(i, opt)}
-                        className="relative shrink-0 text-center"
+                        className="group relative shrink-0 text-center"
                         title={opt.name}
                       >
                         <TeeArt
@@ -351,19 +361,19 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                           color={opt.color}
                           imageUrl={opt.imageUrl}
                           label={false}
-                          sizes="72px"
-                          className={`h-[72px] w-[72px] rounded-xl border-2 ${selected ? "border-ink ring-4 ring-flare" : "border-ink/30"}`}
+                          sizes="68px"
+                          className={`h-[68px] w-[68px] rounded-2xl ring-offset-2 transition ${selected ? "ring-2 ring-ink" : "opacity-90 group-hover:opacity-100"}`}
                         />
-                        <span className="mt-1 block w-[72px] truncate text-[10px] font-bold uppercase">{opt.name}</span>
+                        <span className={`mt-1.5 block w-[68px] truncate text-[11px] ${selected ? "font-semibold text-ink" : "text-mute"}`}>{opt.name}</span>
                         {uses > 0 && !selected ? (
-                          <span className="absolute right-1 top-1 rounded-full bg-ink px-1.5 text-[10px] font-bold text-paper">×{uses}</span>
+                          <span className="absolute right-1.5 top-2.5 h-2 w-2 rounded-full bg-ink/70 ring-2 ring-chalk" title={`Already used ×${uses}`} />
                         ) : null}
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="mt-2 flex flex-wrap gap-1.5" role="radiogroup" aria-label={`Size for person ${i + 1}`}>
+                <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label={`Size for person ${i + 1}`}>
                   {(d?.sizes ?? cfg.sizes).map((s) => (
                     <button
                       key={s}
@@ -371,7 +381,9 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                       role="radio"
                       aria-checked={p.size === s}
                       onClick={() => pickSize(i, s)}
-                      className={`h-10 min-w-[48px] rounded-lg border-2 border-ink px-2 text-sm font-extrabold ${p.size === s ? "bg-ink text-paper" : "bg-paper"}`}
+                      className={`h-10 min-w-[48px] rounded-full px-3 text-sm font-medium transition ${
+                        p.size === s ? "bg-ink text-chalk" : "bg-paper text-ink/70 hover:bg-ink/[0.07] hover:text-ink"
+                      }`}
                     >
                       {s}
                     </button>
@@ -382,21 +394,22 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
           })}
         </div>
 
-        <button type="button" onClick={share} className="btn-ghost mt-4 w-full">
+        <button type="button" onClick={share} className="btn-ghost mt-5 w-full">
           {copied ? "Link copied ✓" : "Share lineup with the group"}
         </button>
-        <p className="mt-2 text-center text-xs text-mute">Not sure of everyone&apos;s size? Send the link to the group chat and come back to pay.</p>
+        <p className="mt-2 text-center text-[13px] text-mute">Not sure of everyone&apos;s size? Send the link to the group chat and come back to pay.</p>
       </section>
 
-      {/* Sticky summary */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-ink bg-paper pb-[max(12px,env(safe-area-inset-bottom))] pt-3">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-4">
+      {/* Floating summary */}
+      <div className="fixed inset-x-3 bottom-3 z-30" style={{ marginBottom: "env(safe-area-inset-bottom)" }}>
+        <div className="mx-auto flex max-w-3xl items-center gap-3 rounded-full bg-ink/95 py-2 pl-5 pr-2 text-chalk shadow-lift backdrop-blur md:pl-6">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-extrabold">
-              {people.length} shirts · {gbp(pricing.totalPence)}
-              {pricing.discountPence ? <span className="ml-1 text-pitch">(−{gbp(pricing.discountPence)})</span> : null}
+            <p className="text-[15px] font-semibold tabular-nums">
+              {gbp(pricing.totalPence)}
+              <span className="ml-1.5 font-normal text-chalk/60">· {people.length} shirts</span>
+              {pricing.discountPence ? <span className="ml-1.5 text-[13px] font-medium text-[#8fe3b8]">−{gbp(pricing.discountPence)}</span> : null}
             </p>
-            <p className="truncate text-xs text-mute">
+            <p className="truncate text-[12px] text-chalk/55">
               {!pricing.meetsMinimum
                 ? `Minimum ${min} shirts`
                 : pricing.freeShipping
@@ -405,11 +418,24 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
               {pricing.nextThreshold && pricing.meetsMinimum ? ` · add ${pricing.nextThreshold.itemsNeeded} for ${pricing.nextThreshold.label}` : ""}
             </p>
           </div>
-          <button type="button" onClick={addToBasket} className={`btn-primary min-h-[48px] px-5 text-sm ${complete && pricing.meetsMinimum ? "" : "opacity-60"}`}>
+          <button
+            type="button"
+            onClick={addToBasket}
+            className={`btn min-h-[46px] shrink-0 px-5 text-sm ${complete && pricing.meetsMinimum ? "bg-flare text-chalk" : "bg-chalk/10 text-chalk/80"}`}
+          >
             {complete ? "Review set →" : `${people.length - readyCount} to go`}
           </button>
         </div>
       </div>
     </div>
+  );
+}
+
+function StepTitle({ n, title }: { n: number; title: string }) {
+  return (
+    <h2 className="flex items-center gap-3 text-lg font-semibold tracking-tight">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-chalk">{n}</span>
+      {title}
+    </h2>
   );
 }

@@ -35,7 +35,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Prom
             <form action={toggleReview}>
               <input type="hidden" name="id" value={r.id} />
               <input type="hidden" name="approved" value={String(!r.approved)} />
-              <button className="rounded border-2 border-ink px-2 text-xs font-bold">{r.approved ? "Unpublish" : "Approve"}</button>
+              <button className="rounded border border-ink/10 px-2 text-xs font-bold">{r.approved ? "Unpublish" : "Approve"}</button>
             </form>
           </div>
         ))}

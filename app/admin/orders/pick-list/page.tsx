@@ -33,8 +33,8 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
     <>
       <PageTitle title="Production pick list" sub="Totals to send to the printer, plus each order's lineup for packing.">
         <div className="flex gap-2 text-sm">
-          <Link href="?s=unfulfilled" className={`rounded-full border-2 border-ink px-3 py-1 font-bold ${status === "unfulfilled" ? "bg-ink text-paper" : ""}`}>Not yet printed</Link>
-          <Link href="?s=in_production" className={`rounded-full border-2 border-ink px-3 py-1 font-bold ${status === "in_production" ? "bg-ink text-paper" : ""}`}>In production</Link>
+          <Link href="?s=unfulfilled" className={`rounded-full border border-ink/10 px-3 py-1 font-bold ${status === "unfulfilled" ? "bg-ink text-paper" : ""}`}>Not yet printed</Link>
+          <Link href="?s=in_production" className={`rounded-full border border-ink/10 px-3 py-1 font-bold ${status === "in_production" ? "bg-ink text-paper" : ""}`}>In production</Link>
         </div>
       </PageTitle>
       <Notice sp={sp} />
@@ -53,7 +53,7 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
                 <tr key={name} className="border-t border-ink/10">
                   <td className="py-2 font-bold">{name}</td>
                   {sizes.map((s) => <td key={s} className="text-right tabular-nums">{row.get(s) ?? ""}</td>)}
-                  <td className="text-right font-extrabold tabular-nums">{[...row.values()].reduce((a, b) => a + b, 0)}</td>
+                  <td className="text-right font-semibold tabular-nums">{[...row.values()].reduce((a, b) => a + b, 0)}</td>
                 </tr>
               ))}
             </tbody>
@@ -69,7 +69,7 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
               <label className="flex items-start gap-3">
                 <input type="checkbox" name="ids" value={o.id} defaultChecked className="mt-1" />
                 <div className="flex-1 text-sm">
-                  <p className="font-extrabold">
+                  <p className="font-semibold">
                     <Link href={`/admin/orders/${o.id}`} className="underline">#{o.order_number}</Link> — {o.customer_name} · {o.item_count} shirts
                     {o.event_date ? <span className="ml-2 rounded bg-sun px-1.5">Stag {o.event_date}</span> : null}
                     {o.shipping_method === "express" ? <span className="ml-2 rounded bg-flare px-1.5">EXPRESS</span> : null}

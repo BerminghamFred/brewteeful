@@ -20,7 +20,7 @@ export default async function AcquisitionPage({ searchParams }: { searchParams: 
       </PageTitle>
       <div className="mb-4 flex flex-wrap gap-2 text-sm">
         {Object.entries(DIMENSIONS).map(([k, label]) => (
-          <Link key={k} href={q(k)} className={`rounded-full border-2 border-ink px-3 py-1 font-bold ${k === by ? "bg-ink text-paper" : "bg-chalk"}`}>
+          <Link key={k} href={q(k)} className={`rounded-full border border-ink/10 px-3 py-1 font-bold ${k === by ? "bg-ink text-paper" : "bg-chalk"}`}>
             {label}
           </Link>
         ))}

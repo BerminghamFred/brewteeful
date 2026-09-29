@@ -61,27 +61,26 @@ export function ConsentAndPixel() {
       role="dialog"
       aria-label="Cookie preferences"
       // Top on mobile so it never covers the sticky "build / checkout" bars at the bottom.
-      className="fixed inset-x-2 top-2 z-[60] mx-auto max-w-xl rounded-2xl border-2 border-ink bg-paper p-3 shadow-hard md:inset-x-auto md:bottom-5 md:left-5 md:top-auto md:p-4"
+      className="fixed inset-x-3 top-3 z-[60] mx-auto max-w-md rounded-2xl border border-ink/[0.07] bg-chalk/95 p-4 shadow-lift backdrop-blur-xl md:inset-x-auto md:bottom-5 md:left-5 md:top-auto"
     >
-      <p className="text-xs leading-snug text-ink md:text-sm">
-        We use cookies to see which ads work and to show you our shirts elsewhere. Say no and the
-        site works exactly the same.{" "}
-        <Link href="/privacy" className="underline">
+      <p className="text-[13px] leading-snug text-ink/75">
+        We use cookies to see which ads work and to show you our shirts elsewhere. Say no and the site works exactly the same.{" "}
+        <Link href="/privacy" className="text-ink underline underline-offset-2">
           Privacy
         </Link>
       </p>
-      <div className="mt-2 flex gap-2 md:mt-3">
+      <div className="mt-3 flex gap-2">
         <button
           type="button"
           onClick={() => choose({ analytics: true, ads: true })}
-          className="flex-1 rounded-full bg-ink px-4 py-2 text-sm font-bold text-paper"
+          className="flex-1 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-chalk"
         >
-          Accept all
+          Accept
         </button>
         <button
           type="button"
           onClick={() => choose({ analytics: false, ads: false })}
-          className="flex-1 rounded-full border-2 border-ink px-4 py-2 text-sm font-bold text-ink"
+          className="flex-1 rounded-full border border-ink/15 px-4 py-2 text-[13px] font-semibold text-ink"
         >
           Reject
         </button>

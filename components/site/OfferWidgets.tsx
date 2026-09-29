@@ -41,18 +41,18 @@ export function OfferWidgets({ offers }: { offers: Offer[] }) {
       {b?.text ? (
         <Link
           href={b.link || "/build"}
-          className="fixed bottom-4 left-4 z-30 max-w-[70vw] rounded-full border-2 border-ink bg-sun px-4 py-2 text-xs font-extrabold uppercase shadow-hard"
+          className="fixed bottom-4 left-4 z-30 max-w-[70vw] rounded-full border border-ink/10 bg-sun px-4 py-2 text-xs font-semibold uppercase shadow-soft"
         >
           {b.text}
         </Link>
       ) : null}
       {showModal && m ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 p-4 md:items-center" onClick={() => setShowModal(false)}>
-          <div role="dialog" aria-modal className="card w-full max-w-md p-6 shadow-hard" onClick={(e) => e.stopPropagation()}>
+          <div role="dialog" aria-modal className="card w-full max-w-md p-6 shadow-soft" onClick={(e) => e.stopPropagation()}>
             <p className="h-display text-3xl">{m.title}</p>
             <p className="mt-2 text-sm">{m.body}</p>
             {m.code ? (
-              <p className="mt-4 rounded-xl border-2 border-dashed border-ink bg-paper p-3 text-center font-mono text-lg font-bold">{m.code}</p>
+              <p className="mt-4 rounded-xl border border-dashed border-ink/20 bg-paper p-3 text-center font-mono text-lg font-bold">{m.code}</p>
             ) : null}
             <div className="mt-5 flex gap-2">
               <Link href={m.cta_link || "/build"} className="btn-primary flex-1" onClick={() => setShowModal(false)}>

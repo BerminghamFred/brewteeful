@@ -36,7 +36,7 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
   const url = absoluteUrl(`/designs/${p.slug}`);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 md:pt-10">
+    <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 md:px-6 md:pt-14">
       <JsonLd
         data={[
           {
@@ -74,28 +74,28 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
         value={price / 100}
         items={[{ item_id: p.slug, item_name: p.name, price: price / 100, quantity: 1 }]}
       />
-      <nav className="text-xs font-bold uppercase text-mute" aria-label="Breadcrumb">
+      <nav className="text-[13px] text-mute" aria-label="Breadcrumb">
         <Link href="/">Home</Link> / <Link href="/designs">Designs</Link> / {p.name}
       </nav>
       <div className="mt-4 grid gap-8 md:grid-cols-2">
         <div className="space-y-3">
           {images.length ? (
             images.map((img, i) => (
-              <TeeArt key={img.id} name={img.alt ?? p.name} color={p.accent_color} imageUrl={img.url} priority={i === 0} sizes="(max-width: 768px) 100vw, 50vw" className="card aspect-square" />
+              <TeeArt key={img.id} name={img.alt ?? p.name} color={p.accent_color} imageUrl={img.url} priority={i === 0} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px]" />
             ))
           ) : (
-            <TeeArt name={p.name} color={p.accent_color} priority sizes="(max-width: 768px) 100vw, 50vw" className="card aspect-square" />
+            <TeeArt name={p.name} color={p.accent_color} priority sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px]" />
           )}
         </div>
         <div className="md:sticky md:top-24 md:self-start">
           <h1 className="h-display text-5xl md:text-6xl">{p.name}</h1>
-          <p className="mt-2 text-lg font-bold">{p.tagline}</p>
-          <p className="mt-3 text-2xl font-extrabold">
+          <p className="mt-3 text-lg text-ink/65">{p.tagline}</p>
+          <p className="mt-3 text-2xl font-semibold">
             {gbp(price)}
             {p.compare_at_price_pence && p.compare_at_price_pence > price ? (
               <s className="ml-2 text-base font-bold text-mute">{gbp(p.compare_at_price_pence)}</s>
             ) : null}
-            <span className="ml-2 text-sm font-bold text-mute">per shirt · min {settings.pricing.min_group_size} in a set</span>
+            <span className="ml-2 text-sm font-normal text-mute">per shirt · min {settings.pricing.min_group_size} in a set</span>
           </p>
           <p className="mt-4 leading-relaxed text-ink/85">{p.description}</p>
           <CtaLink href={`/build?design=${p.slug}`} location="design_page" className="btn-primary mt-6 w-full text-lg md:w-auto">
@@ -115,8 +115,8 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
       <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         {others.map((o) => (
           <Link key={o.id} href={`/designs/${o.slug}`} className="card overflow-hidden">
-            <TeeArt name={o.name} color={o.accent_color} imageUrl={o.images[0]?.url ?? o.hero_image_url} className="aspect-square border-b-2 border-ink" />
-            <p className="p-3 font-extrabold">{o.name}</p>
+            <TeeArt name={o.name} color={o.accent_color} imageUrl={o.images[0]?.url ?? o.hero_image_url} className="aspect-square border-b border-ink/10" />
+            <p className="p-3 font-semibold">{o.name}</p>
           </Link>
         ))}
       </div>

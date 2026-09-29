@@ -66,8 +66,8 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
       <PageTitle title="Content & settings" sub="Everything commercial is editable here — no code changes. Saved changes appear on the site within a few seconds." />
       <Notice sp={sp} />
       <nav className="mb-4 flex flex-wrap gap-2 text-sm">
-        {SETTINGS_KEYS.map((k) => <a key={k} href={`#${k}`} className="rounded-full border-2 border-ink px-3 py-1 font-bold">{GROUPS[k].title}</a>)}
-        <a href="#faqs" className="rounded-full border-2 border-ink px-3 py-1 font-bold">FAQs</a>
+        {SETTINGS_KEYS.map((k) => <a key={k} href={`#${k}`} className="rounded-full border border-ink/10 px-3 py-1 font-bold">{GROUPS[k].title}</a>)}
+        <a href="#faqs" className="rounded-full border border-ink/10 px-3 py-1 font-bold">FAQs</a>
       </nav>
       {SETTINGS_KEYS.map((k) => (
         <Card key={k} id={k} title={GROUPS[k].title}>
@@ -78,7 +78,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
       <Card id="faqs" title="FAQs">
         <div className="space-y-3">
           {((faqs ?? []) as Faq[]).map((f) => (
-            <details key={f.id} className="rounded-lg border-2 border-ink/20 p-3">
+            <details key={f.id} className="rounded-lg border border-ink/10 p-3">
               <summary className="cursor-pointer text-sm font-bold">{f.active ? "" : "(hidden) "}{f.question}</summary>
               <form action={saveFaq} className="mt-3 space-y-2">
                 <input type="hidden" name="id" value={f.id} />

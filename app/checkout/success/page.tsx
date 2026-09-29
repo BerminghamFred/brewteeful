@@ -59,17 +59,17 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
         {email ? <> · confirmation sent to <strong>{email}</strong></> : null}
       </p>
 
-      <ol className="card mt-6 divide-y-2 divide-ink/10">
+      <ol className="card mt-6 divide-y divide-ink/[0.06]">
         <li className="p-4">
-          <p className="font-extrabold">1. Printing</p>
+          <p className="font-semibold">1. Printing</p>
           <p className="text-sm text-ink/80">Your set goes to print within one working day and takes {settings.delivery.production_days_min}–{settings.delivery.production_days_max} working days.</p>
         </li>
         <li className="p-4">
-          <p className="font-extrabold">2. Dispatch</p>
+          <p className="font-semibold">2. Dispatch</p>
           <p className="text-sm text-ink/80">One parcel, tracked. We&apos;ll email your tracking link as soon as it ships.</p>
         </li>
         <li className="p-4">
-          <p className="font-extrabold">3. Arrives {formatDay(est.earliest)}{est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}</p>
+          <p className="font-semibold">3. Arrives {formatDay(est.earliest)}{est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}</p>
           {order.event_date ? <p className="text-sm text-ink/80">Stag date: {new Date(order.event_date + "T12:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</p> : null}
         </li>
       </ol>
@@ -82,10 +82,10 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
               <span className="font-bold">{i.is_stag ? "★ The Stag" : `Lad ${i.position}`}</span>
               {i.nickname ? ` (${i.nickname})` : ""} — {i.product_name}
             </span>
-            <span className="font-extrabold">{i.size}</span>
+            <span className="font-semibold">{i.size}</span>
           </li>
         ))}
-        <li className="flex justify-between p-3 font-extrabold">
+        <li className="flex justify-between p-3 font-semibold">
           <span>Total paid</span>
           <span>{gbp(session.amount_total ?? order.total_pence)}</span>
         </li>

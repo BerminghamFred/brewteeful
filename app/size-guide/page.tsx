@@ -14,7 +14,7 @@ export default async function SizeGuidePage() {
       <p>{settings.sizing.fit_note}</p>
       <div className="card my-6 overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="border-b-2 border-ink bg-sun text-xs uppercase">
+          <thead className="border-b border-ink/10 bg-sun text-xs uppercase">
             <tr>
               <th className="px-4 py-3">Size</th>
               <th className="px-4 py-3">Chest width (cm)</th>
@@ -24,7 +24,7 @@ export default async function SizeGuidePage() {
           <tbody>
             {settings.sizing.chart.map((r) => (
               <tr key={r.size} className="border-b border-ink/10 last:border-0">
-                <td className="px-4 py-3 font-extrabold">{r.size}</td>
+                <td className="px-4 py-3 font-semibold">{r.size}</td>
                 <td className="px-4 py-3">{r.chest_cm}</td>
                 <td className="px-4 py-3">{r.length_cm}</td>
               </tr>

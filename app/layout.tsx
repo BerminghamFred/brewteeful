@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { BRAND } from "@/lib/brand";
 import { getStorefrontContext } from "@/lib/store";
@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { OfferWidgets } from "@/components/site/OfferWidgets";
 import { Tracking } from "@/components/tracking/Tracking";
 
-const display = Anton({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
+const display = Inter_Tight({ weight: ["600", "700", "800"], subsets: ["latin"], variable: "--font-display", display: "swap" });
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = { themeColor: "#f4eee3", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#f6f5f1", width: "device-width", initialScale: 1 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { settings, offers } = await getStorefrontContext();

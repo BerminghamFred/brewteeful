@@ -22,7 +22,7 @@ export function PriceBreakdown({ pricing }: { pricing: PricingResult }) {
         <dt>Delivery</dt>
         <dd>{pricing.shippingPence ? gbp(pricing.shippingPence) : "Free"}</dd>
       </div>
-      <div className="flex justify-between border-t-2 border-ink pt-2 text-lg font-extrabold">
+      <div className="flex justify-between border-t border-ink/10 pt-2 text-lg font-semibold">
         <dt>Total</dt>
         <dd>{gbp(pricing.totalPence)}</dd>
       </div>

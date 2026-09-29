@@ -61,7 +61,7 @@ export function CheckoutPageBody({ guarantee }: { guarantee: string }) {
       {!publishableKey || !stripePromise ? (
         <p className="card p-4 text-sm">Payments aren&apos;t configured yet (missing Stripe publishable key).</p>
       ) : (
-        <div className="min-h-[520px] overflow-hidden rounded-2xl border-2 border-ink bg-white">
+        <div className="min-h-[520px] overflow-hidden rounded-2xl border border-ink/10 bg-white">
           <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
             <EmbeddedCheckout />
           </EmbeddedCheckoutProvider>

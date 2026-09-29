@@ -21,7 +21,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       </PageTitle>
 
       {spendMissing ? (
-        <p className="mb-4 rounded-lg border-2 border-flare bg-flare/10 p-3 text-sm font-bold">
+        <p className="mb-4 rounded-lg border border-flare/40 bg-flare/10 p-3 text-sm font-bold">
           Paid clicks recorded but no ad spend entered for this period — CPA/ROAS/contribution are overstated. <Link href="/admin/spend" className="underline">Add spend</Link>
         </p>
       ) : null}
@@ -95,7 +95,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
                 ["− Ad spend", -s.adSpendPence],
                 ["= Contribution after ads", s.contributionAfterAdsPence],
               ].map(([label, v]) => (
-                <tr key={label as string} className={`border-t border-ink/10 ${(label as string).startsWith("=") ? "font-extrabold" : ""}`}>
+                <tr key={label as string} className={`border-t border-ink/10 ${(label as string).startsWith("=") ? "font-semibold" : ""}`}>
                   <td className="py-2">{label}</td>
                   <td className="py-2 text-right tabular-nums">{gbp(v as number, { whole: false })}</td>
                 </tr>

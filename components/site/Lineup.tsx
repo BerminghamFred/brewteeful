@@ -17,35 +17,38 @@ export function Lineup({
 }) {
   if (photoUrl) {
     return (
-      <div className="card relative aspect-[4/3] overflow-hidden shadow-hard md:aspect-[16/10]">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] shadow-lift md:aspect-[5/4]">
         <Image src={photoUrl} alt={photoAlt ?? ""} fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
       </div>
     );
   }
   const row = products.slice(0, 8);
   return (
-    <div className="card relative overflow-hidden bg-pitch p-3 shadow-hard md:p-5">
-      <div className="grid grid-cols-4 gap-2 md:gap-3">
+    <div className="relative overflow-hidden rounded-[28px] bg-pitch p-4 shadow-lift md:p-6">
+      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+      <div className="relative flex items-center justify-between text-[12px] font-medium text-chalk/70">
+        <span>The lineup</span>
+        <span>{row.length} lads · {row.length} designs</span>
+      </div>
+      <div className="relative mt-4 grid grid-cols-4 gap-2.5 md:gap-3">
         {row.map((p, i) => (
-          <div key={p.id} className="relative">
+          <figure key={p.id}>
             <TeeArt
               name={p.name}
               color={p.accent_color}
               imageUrl={p.hero_image_url}
               label={false}
+              tone="dark"
               priority={i < 4}
               sizes="(max-width: 768px) 25vw, 12vw"
-              className="aspect-square rounded-xl border-2 border-ink"
+              className="aspect-[4/5] rounded-2xl"
             />
-            <span className="mt-1 block truncate text-center text-[10px] font-bold uppercase text-chalk md:text-xs">
-              {i === 0 ? "The Stag" : `Lad ${i + 1}`}
-            </span>
-          </div>
+            <figcaption className="mt-1.5 truncate text-center text-[10px] font-medium text-chalk/70 md:text-[11px]">
+              {i === 0 ? "★ The Stag" : p.name}
+            </figcaption>
+          </figure>
         ))}
       </div>
-      <p className="mt-3 text-center text-xs font-bold uppercase tracking-widest text-sun">
-        8 lads · 8 designs · 1 collection
-      </p>
     </div>
   );
 }

@@ -34,7 +34,7 @@ function AdminLoginForm() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center">
-      <h1 className="text-3xl font-extrabold">Admin sign in</h1>
+      <h1 className="text-3xl font-semibold">Admin sign in</h1>
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <input type="email" required autoComplete="username" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
         <input type="password" required autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" />

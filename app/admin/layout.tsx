@@ -20,8 +20,8 @@ const links = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-paper">
-      <style>{`.input{width:100%;border:2px solid #121212;border-radius:.5rem;background:#fffaf1;padding:.4rem .6rem;font-size:.875rem}`}</style>
-      <header className="border-b-2 border-ink bg-ink text-paper">
+      <style>{`.input{width:100%;border:1px solid rgba(14,14,16,.12);border-radius:.75rem;background:#fff;padding:.5rem .75rem;font-size:.875rem;outline:none}.input:focus{border-color:rgba(14,14,16,.4)}`}</style>
+      <header className="border-b border-ink/10 bg-ink text-paper">
         <div className="mx-auto flex max-w-7xl items-center gap-4 overflow-x-auto px-4 py-3 text-sm">
           <span className="shrink-0 font-display text-xl uppercase">Admin</span>
           <nav className="flex shrink-0 gap-3">
