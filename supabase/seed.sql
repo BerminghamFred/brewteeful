@@ -1,28 +1,42 @@
 -- Seed data for the stag-set MVP (run after migrations).
--- Placeholder designs mirror lib/catalogue-fallback.ts. Replace names, copy and images
--- with the real designs in /admin/products. No reviews are seeded — reviews must be real.
+-- Designs mirror lib/catalogue-fallback.ts. Bierry Henry is real; the rest are placeholders —
+-- replace them with the real designs in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
 values ('football', 'The Football Collection', 'Illustrated, terrace-culture designs that look unreal as a lineup.', 0)
 on conflict (slug) do nothing;
 
-insert into public.products (slug, name, collection_id, tagline, description, price_pence, cost_pence, status, sort_order, accent_color)
+insert into public.products (slug, name, collection_id, tagline, description, price_pence, cost_pence, status, sort_order, accent_color, hero_image_url)
 select d.slug, d.name, c.id, d.tagline,
-       d.tagline || ' Original illustrated artwork from the Football Collection, printed on a heavyweight relaxed-fit tee. Designed to sit alongside every other shirt in the set.',
-       2000, 1050, 'active', d.sort_order, d.color
+       coalesce(d.description, d.tagline || ' Original illustrated artwork from the Football Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.'),
+       2000, 1050, 'active', d.sort_order, d.color, d.hero
 from public.collections c
 cross join (values
-  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 0),
-  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 1),
-  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 2),
-  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 3),
-  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 4),
-  ('half-time-oranges', 'Half-Time Oranges', 'Peaked at under-11s.', '#ef7d1a', 5),
-  ('last-orders', 'Last Orders', 'Never, ever the first to leave.', '#7a1f3d', 6),
-  ('under-review', 'Under Review', 'Every decision questioned. Every round checked.', '#5b3a98', 7)
-) as d(slug, name, tagline, color, sort_order)
+  ('bierry-henry', 'Bierry Henry', 'Va-va-voom. Va-va-vino. A certain French No. 12, one bottle in.', '#1f3c9c', 0,
+   'Hand-illustrated tribute to a certain French No. 12 — hand on hip, drink in hand, completely unbothered. Small chest print up front; the full piece on the back, with splashes of stadium colour and ''Bierry Henry'' scrawled across the pitch. Oversized organic tee with a high neck.',
+   '/designs/bierry-henry/back.jpg'),
+  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 1, null, null),
+  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 2, null, null),
+  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 3, null, null),
+  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 4, null, null),
+  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 5, null, null),
+  ('half-time-oranges', 'Half-Time Oranges', 'Peaked at under-11s.', '#ef7d1a', 6, null, null),
+  ('last-orders', 'Last Orders', 'Never, ever the first to leave.', '#7a1f3d', 7, null, null)
+) as d(slug, name, tagline, color, sort_order, description, hero)
 where c.slug = 'football'
 on conflict (slug) do nothing;
+
+insert into public.product_images (product_id, url, alt, sort_order)
+select p.id, i.url, i.alt, i.sort_order
+from public.products p
+cross join (values
+  ('/designs/bierry-henry/back.jpg', 'Bierry Henry T-shirt — back print', 0),
+  ('/designs/bierry-henry/front.jpg', 'Bierry Henry T-shirt — front chest print', 1),
+  ('/designs/bierry-henry/folded.jpg', 'Bierry Henry T-shirt — folded', 2),
+  ('/designs/bierry-henry/side-left.jpg', 'Bierry Henry T-shirt — left side', 3),
+  ('/designs/bierry-henry/side-right.jpg', 'Bierry Henry T-shirt — right side', 4)
+) as i(url, alt, sort_order)
+where p.slug = 'bierry-henry';
 
 insert into public.product_variants (product_id, size, sku)
 select p.id, s.size, upper(left(p.slug, 12)) || '-' || s.size

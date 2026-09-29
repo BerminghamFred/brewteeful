@@ -9,7 +9,7 @@ export function SiteFooter({ contact }: { contact: ContactSettings }) {
         <div className="md:col-span-2">
           <p className="font-display text-2xl font-extrabold tracking-[-0.04em]">{BRAND.name}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-chalk/60">
-            {BRAND.tagline} Coordinated stag-do T-shirt sets, printed to order in the UK.
+            {BRAND.tagline} Coordinated stag-do T-shirt sets, printed to order.
           </p>
           <p className="mt-6 text-sm">
             <a href={`mailto:${contact.email}`} className="text-chalk/90 hover:text-chalk">{contact.email}</a>

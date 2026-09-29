@@ -44,7 +44,7 @@ export function Lineup({
               className="aspect-[4/5] rounded-2xl"
             />
             <figcaption className="mt-1.5 truncate text-center text-[10px] font-medium text-chalk/70 md:text-[11px]">
-              {i === 0 ? "★ The Stag" : p.name}
+              {p.slug === "the-stag" ? "★ The Stag" : p.name}
             </figcaption>
           </figure>
         ))}

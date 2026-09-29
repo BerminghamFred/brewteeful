@@ -78,11 +78,18 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
         <Link href="/">Home</Link> / <Link href="/designs">Designs</Link> / {p.name}
       </nav>
       <div className="mt-4 grid gap-8 md:grid-cols-2">
-        <div className="space-y-3">
+        <div>
           {images.length ? (
-            images.map((img, i) => (
-              <TeeArt key={img.id} name={img.alt ?? p.name} color={p.accent_color} imageUrl={img.url} priority={i === 0} sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px]" />
-            ))
+            <>
+              <TeeArt name={images[0]!.alt ?? p.name} color={p.accent_color} imageUrl={images[0]!.url} priority sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px] border border-ink/[0.06]" />
+              {images.length > 1 ? (
+                <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
+                  {images.slice(1).map((img) => (
+                    <TeeArt key={img.id} name={img.alt ?? p.name} color={p.accent_color} imageUrl={img.url} sizes="(max-width: 768px) 40vw, 12vw" className="aspect-square w-[40%] shrink-0 snap-start rounded-2xl border border-ink/[0.06] md:w-auto" />
+                  ))}
+                </div>
+              ) : null}
+            </>
           ) : (
             <TeeArt name={p.name} color={p.accent_color} priority sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px]" />
           )}

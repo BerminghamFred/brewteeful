@@ -169,7 +169,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     final_cta_headline: "Sort the shirts in five minutes.",
     final_cta_body: "Pick the group size, give everyone a design, done. The group chat can argue about something else.",
     garment_info:
-      "Heavyweight 100% combed ring-spun cotton, relaxed fit, printed in the UK. Wash inside out at 30°.",
+      "Organic cotton, oversized boxy fit with a high neck. Wash inside out at 30°.",
   },
   contact: {
     email: "hello@example.com",
@@ -197,7 +197,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       { size: "3XL", chest_cm: 66, length_cm: 81 },
     ],
     fit_note:
-      "Relaxed fit — true to size. Not sure? Most lads take L. Measure a T-shirt you like flat, armpit to armpit, and compare to chest width.",
+      "Oversized, boxy fit — take your normal size for the relaxed look, or size down for a closer fit. Not sure? Most lads take L. Measure a T-shirt you like flat, armpit to armpit, and compare to chest width.",
   },
 };
 
