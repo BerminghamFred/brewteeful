@@ -18,12 +18,14 @@ cross join (values
   ('osama-tin-laden', 'Osama Tin Laden', 'Strapped to the tits with tinnies. Nobody''s finding him at last orders.', '#f2a900', 1,
    'Satirical illustrated portrait with the vest swapped for five cans of the good stuff. Small chest print up front; the full portrait on the back against a bold mustard block, with ''Osama Tin Laden'' scrawled alongside. Oversized organic tee with a high neck.',
    '/designs/osama-tin-laden/back.jpg'),
-  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 2, null, null),
-  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 3, null, null),
-  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 4, null, null),
-  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 5, null, null),
-  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 6, null, null),
-  ('half-time-oranges', 'Half-Time Oranges', 'Peaked at under-11s.', '#ef7d1a', 7, null, null)
+  ('wayne-schooney', 'Wayne Schooney', 'Overhead kick, pint in hand. A certain Manchester No. 10, still hasn''t spilled a drop.', '#c8102e', 2,
+   'Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and ''Wayne Schooney'' scrawled across the stand. Oversized organic tee with a high neck.',
+   null),
+  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 3, null, null),
+  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 4, null, null),
+  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 5, null, null),
+  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 6, null, null),
+  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 7, null, null)
 ) as d(slug, name, tagline, color, sort_order, description, hero)
 where c.slug = 'football'
 on conflict (slug) do nothing;

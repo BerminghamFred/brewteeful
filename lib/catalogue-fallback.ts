@@ -58,12 +58,19 @@ const DESIGNS: DesignSeed[] = [
       { url: "/designs/osama-tin-laden/side-right.jpg", alt: "Osama Tin Laden T-shirt — right side" },
     ],
   },
+  {
+    slug: "wayne-schooney",
+    name: "Wayne Schooney",
+    tagline: "Overhead kick, pint in hand. A certain Manchester No. 10, still hasn't spilled a drop.",
+    color: "#c8102e",
+    description:
+      "Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and 'Wayne Schooney' scrawled across the stand. Oversized organic tee with a high neck.",
+  },
   { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
   { slug: "sunday-league-legend", name: "Sunday League Legend", tagline: "Hungover, unfit, undroppable.", color: "#1f6f43" },
   { slug: "away-day", name: "Away Day", tagline: "Train beers from 9am. Standard.", color: "#d4481c" },
   { slug: "golden-boot", name: "Golden Boot", tagline: "Scores more at the bar than on the pitch.", color: "#d9a400" },
   { slug: "the-gaffer", name: "The Gaffer", tagline: "Picks the team. Picks the bar. Picks the fights.", color: "#1d3b8b" },
-  { slug: "half-time-oranges", name: "Half-Time Oranges", tagline: "Peaked at under-11s.", color: "#ef7d1a" },
 ];
 
 const now = "2026-09-29T00:00:00.000Z";
