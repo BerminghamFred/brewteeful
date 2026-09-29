@@ -57,10 +57,10 @@ describe("delivery", () => {
   });
 
   it("classifies stag dates", () => {
-    const d = DEFAULT_SETTINGS.delivery; // 3-5 production + 1-3 delivery
+    const d = DEFAULT_SETTINGS.delivery; // 2-3 production + 1-2 delivery = 3-5 working days
     const now = new Date(2026, 9, 1); // Thu
     expect(checkEventDate(d, new Date(2026, 9, 3), "standard", now).status).toBe("too_late");
-    expect(checkEventDate(d, new Date(2026, 9, 14), "standard", now).status).toBe("tight");
+    expect(checkEventDate(d, new Date(2026, 9, 9), "standard", now).status).toBe("tight");
     expect(checkEventDate(d, new Date(2026, 10, 1), "standard", now).status).toBe("comfortable");
     expect(checkEventDate(d, new Date(2026, 8, 1), "standard", now).status).toBe("past");
   });

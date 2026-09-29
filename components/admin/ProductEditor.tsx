@@ -29,6 +29,9 @@ export function ProductEditor({ product, collections }: { product?: ProductWithR
             <Field label="Lineup / social image URL (optional)" hint="Used for OG image and when there are no gallery images.">
               <input name="hero_image_url" defaultValue={product?.hero_image_url ?? ""} className="input" />
             </Field>
+            <Field label="Artwork close-up URL (optional)" hint="Just the print, no shirt. Shown large when someone hovers the design in the homepage lineup.">
+              <input name="artwork_url" defaultValue={product?.artwork_url ?? ""} className="input" />
+            </Field>
           </div>
         </Card>
         <Card title="SEO">
@@ -67,7 +70,7 @@ export function ProductEditor({ product, collections }: { product?: ProductWithR
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Sort order"><input name="sort_order" type="number" defaultValue={product?.sort_order ?? 0} className="input" /></Field>
-              <Field label="Accent colour"><input name="accent_color" type="color" defaultValue={product?.accent_color ?? "#1f6f43"} className="input h-9 p-1" /></Field>
+              <Field label="Background colour"><input name="accent_color" type="color" defaultValue={product?.accent_color ?? "#1f6f43"} className="input h-9 p-1" /></Field>
             </div>
           </div>
           <button className="btn-dark mt-4 w-full">Save design</button>

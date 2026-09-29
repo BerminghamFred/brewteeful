@@ -55,7 +55,7 @@ const REVALIDATE = 300;
 
 // Anon can't read cost columns (see migration); costs come from the service role at checkout.
 export const PUBLIC_PRODUCT_COLS =
-  "id, slug, name, collection_id, tagline, description, price_pence, compare_at_price_pence, status, sort_order, hero_image_url, accent_color, seo_title, seo_description, created_at, updated_at";
+  "id, slug, name, collection_id, tagline, description, price_pence, compare_at_price_pence, status, sort_order, hero_image_url, artwork_url, accent_color, seo_title, seo_description, created_at, updated_at";
 const PUBLIC_VARIANT_COLS = "id, product_id, size, sku, active, stock";
 
 function sortRelations(p: ProductWithRelations): ProductWithRelations {

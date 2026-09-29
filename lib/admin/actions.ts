@@ -66,6 +66,7 @@ export async function saveProduct(f: FormData) {
     status: ["draft", "active", "archived"].includes(str(f, "status")) ? str(f, "status") : "draft",
     sort_order: int(f, "sort_order") ?? 0,
     hero_image_url: optStr(f, "hero_image_url"),
+    artwork_url: optStr(f, "artwork_url"),
     accent_color: str(f, "accent_color") || "#1f6f43",
     seo_title: optStr(f, "seo_title"),
     seo_description: optStr(f, "seo_description"),

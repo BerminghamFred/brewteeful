@@ -11,7 +11,7 @@ const EXAMPLE_VARIANTS: Record<string, string> = {
   hero_image: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Group photo 2","weight":50,"config":{"hero_image_url":"https://..."}}]`,
   offer: `[{"key":"control","name":"No offer","weight":50,"config":{"offer_ids":[]}},{"key":"b","name":"8+ £10 off","weight":50,"config":{"offer_ids":["<offer id>"]}}]`,
   free_shipping: `[{"key":"control","name":"Free on all sets","weight":50,"config":{}},{"key":"b","name":"Free on 8+","weight":50,"config":{"free_shipping_min_items":8}}]`,
-  min_group_size: `[{"key":"control","name":"Min 5","weight":50,"config":{}},{"key":"b","name":"Min 4","weight":50,"config":{"min_group_size":4}}]`,
+  min_group_size: `[{"key":"control","name":"Min 3","weight":50,"config":{}},{"key":"b","name":"Min 4","weight":50,"config":{"min_group_size":4}}]`,
 };
 
 export default async function ExperimentsPage({ searchParams }: { searchParams: Promise<{ saved?: string; error?: string }> }) {

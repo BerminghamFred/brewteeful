@@ -42,6 +42,8 @@ export type Product = {
   status: ProductStatus;
   sort_order: number;
   hero_image_url: string | null;
+  /** Close-up of the print itself, shown large on the homepage lineup hover. */
+  artwork_url: string | null;
   accent_color: string;
   seo_title: string | null;
   seo_description: string | null;

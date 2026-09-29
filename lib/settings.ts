@@ -107,24 +107,24 @@ export const SETTINGS_KEYS: SettingsKey[] = [
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   pricing: {
-    min_group_size: 5,
+    min_group_size: 3,
     max_group_size: 30,
     standard_shipping_pence: 499,
-    free_shipping_min_items: 5,
+    free_shipping_min_items: 3,
     express_enabled: false,
     express_shipping_pence: 995,
   },
   delivery: {
-    production_days_min: 3,
-    production_days_max: 5,
+    production_days_min: 2,
+    production_days_max: 3,
     standard_days_min: 1,
-    standard_days_max: 3,
+    standard_days_max: 2,
     express_days: 1,
     standard_label: "Tracked UK delivery",
     express_label: "Express (priority print + next-day)",
-    headline: "Printed to order · UK delivery in 4–8 working days",
+    headline: "Printed to order · UK delivery in 3–5 working days",
     details:
-      "Every set is printed to order once you check out. Printing takes 3–5 working days, then your set ships in one parcel by tracked UK delivery (1–3 working days). You'll get tracking by email as soon as it ships. Got a tight deadline? Tell us your stag date when you build your set and we'll tell you straight away whether we can make it.",
+      "Every set is printed to order once you check out. Printing takes 2–3 working days, then your set ships in one parcel by tracked UK delivery (1–2 working days). You'll get tracking by email as soon as it ships. Got a tight deadline? Tell us your stag date when you build your set and we'll tell you straight away whether we can make it.",
     returns_policy:
       "If anything arrives misprinted, damaged or wrong, we reprint and resend it free — just email us a photo within 14 days. Changed your mind? Unworn, unwashed shirts can be returned within 14 days of delivery for a refund (you cover return postage). Personalised items can't be returned unless faulty.",
   },
@@ -183,7 +183,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
-      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. From £20 a shirt, minimum 5, tracked UK delivery.",
+      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. From £20 a shirt, minimum 3, tracked UK delivery.",
     og_image_url: "",
   },
   sizing: {

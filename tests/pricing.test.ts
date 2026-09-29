@@ -36,10 +36,10 @@ const code = (partial: Partial<DiscountCode>): DiscountCode => ({
 
 describe("priceSet", () => {
   it("prices a basic set and enforces the minimum", () => {
-    const r = priceSet({ lines: lines(4), settings, offers: [], now });
-    expect(r.subtotalPence).toBe(8000);
+    const r = priceSet({ lines: lines(2), settings, offers: [], now });
+    expect(r.subtotalPence).toBe(4000);
     expect(r.meetsMinimum).toBe(false);
-    expect(r.errors[0]).toMatch(/Minimum order is 5/);
+    expect(r.errors[0]).toMatch(/Minimum order is 3/);
   });
 
   it("charges delivery below the free threshold and nudges toward it", () => {
