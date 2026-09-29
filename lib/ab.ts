@@ -65,7 +65,7 @@ export function resolveExperiments(
   const ctx: ExperimentContext = { assignments: {}, overrides: {} };
   if (!visitorId) return ctx;
   for (const exp of running) {
-    if (exp.status !== "running") continue;
+    if (exp.status !== "running" || !Array.isArray(exp.variants)) continue;
     const forcedVariant = exp.variants.find((v) => v.key === forced[exp.key]);
     const variant = forcedVariant ?? assignVariant(visitorId, exp);
     if (!variant) continue;
