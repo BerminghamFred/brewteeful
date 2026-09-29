@@ -42,6 +42,12 @@ describe("assignVariant", () => {
     expect(ctl.overrides.unit_price_pence).toBeUndefined();
     expect(resolveExperiments([{ ...exp, status: "ended" }], "x").assignments).toEqual({});
   });
+
+  it("ignores legacy experiments whose variants aren't a list (old schema)", () => {
+    const legacy = { ...exp, variants: { A: { headline: "x" } } as unknown as Experiment["variants"] };
+    expect(() => resolveExperiments([legacy], "visitor")).not.toThrow();
+    expect(resolveExperiments([legacy], "visitor").assignments).toEqual({});
+  });
 });
 
 describe("delivery", () => {

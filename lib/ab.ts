@@ -16,7 +16,8 @@ export function hash32(input: string): number {
 }
 
 export function assignVariant(visitorId: string, exp: Pick<Experiment, "key" | "variants">) {
-  const variants = exp.variants.filter((v) => v.weight > 0);
+  if (!Array.isArray(exp.variants)) return null;
+  const variants = exp.variants.filter((v) => v && v.weight > 0);
   if (!variants.length) return null;
   const total = variants.reduce((a, v) => a + v.weight, 0);
   const bucket = (hash32(`${visitorId}:${exp.key}`) % 10_000) / 10_000;

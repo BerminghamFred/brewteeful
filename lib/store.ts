@@ -33,9 +33,23 @@ export const STOREFRONT_TAG = "storefront";
  * data is never cached — the data cache survives rebuilds/deploys, so caching it would
  * serve stale catalogue code.
  */
-function dbCache<T>(fn: () => Promise<T>, key: string[], opts: { tags: string[]; revalidate: number }) {
+function dbCache<T>(
+  fn: () => Promise<T>,
+  fallback: () => T,
+  key: string[],
+  opts: { tags: string[]; revalidate: number }
+) {
   const cached = unstable_cache(fn, key, opts);
-  return (): Promise<T> => (publicClient() ? cached() : fn());
+  return async (): Promise<T> => {
+    if (!publicClient()) return fallback();
+    try {
+      return await cached();
+    } catch (e) {
+      // A database problem must never take the storefront down.
+      console.error(`storefront data (${key.join("/")})`, e);
+      return fallback();
+    }
+  };
 }
 const REVALIDATE = 300;
 
@@ -53,10 +67,12 @@ function sortRelations(p: ProductWithRelations): ProductWithRelations {
   };
 }
 
+const fallbackCatalogue = () => ({ collections: [FALLBACK_COLLECTION], products: FALLBACK_PRODUCTS });
+
 export const getCatalogue = dbCache(
   async (): Promise<{ collections: Collection[]; products: ProductWithRelations[] }> => {
     const sb = publicClient();
-    if (!sb) return { collections: [FALLBACK_COLLECTION], products: FALLBACK_PRODUCTS };
+    if (!sb) return fallbackCatalogue();
     const [cols, prods] = await Promise.all([
       sb.from("collections").select("*").order("sort_order"),
       sb
@@ -66,14 +82,17 @@ export const getCatalogue = dbCache(
         .order("sort_order"),
     ]);
     if (prods.error) {
+      // Also the path for a database that hasn't had the stag-sets migration applied yet.
       console.error("catalogue", prods.error);
-      return { collections: [FALLBACK_COLLECTION], products: FALLBACK_PRODUCTS };
+      return fallbackCatalogue();
     }
+    if (!prods.data?.length) return fallbackCatalogue();
     return {
       collections: (cols.data ?? []) as Collection[],
       products: ((prods.data ?? []) as ProductWithRelations[]).map(sortRelations),
     };
   },
+  fallbackCatalogue,
   ["catalogue"],
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
@@ -92,6 +111,7 @@ export const getSettings = dbCache(
     if (error) console.error("settings", error);
     return mergeSettings(data);
   },
+  () => DEFAULT_SETTINGS,
   ["settings"],
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
@@ -107,9 +127,14 @@ export const getOffers = dbCache(
   async (): Promise<Offer[]> => {
     const sb = publicClient();
     if (!sb) return [];
-    const { data } = await sb.from("offers").select("*").eq("active", true);
+    const { data, error } = await sb
+      .from("offers")
+      .select("id, name, kind, config, starts_at, ends_at, active, priority")
+      .eq("active", true);
+    if (error) return [];
     return (data ?? []) as Offer[];
   },
+  () => [],
   ["offers"],
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
@@ -118,9 +143,15 @@ export const getFaqs = dbCache(
   async (): Promise<Faq[]> => {
     const sb = publicClient();
     if (!sb) return FALLBACK_FAQS;
-    const { data } = await sb.from("faqs").select("*").eq("active", true).order("sort_order");
-    return (data ?? []) as Faq[];
+    const { data, error } = await sb
+      .from("faqs")
+      .select("id, question, answer, sort_order, active")
+      .eq("active", true)
+      .order("sort_order");
+    if (error || !data?.length) return FALLBACK_FAQS;
+    return data as Faq[];
   },
+  () => FALLBACK_FAQS,
   ["faqs"],
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
@@ -129,14 +160,18 @@ export const getApprovedReviews = dbCache(
   async (): Promise<Review[]> => {
     const sb = publicClient();
     if (!sb) return [];
-    const { data } = await sb
+    // Selecting `verified` means an old pre-migration reviews table (which held seeded,
+    // non-genuine reviews) errors out here and nothing is shown.
+    const { data, error } = await sb
       .from("reviews")
-      .select("*")
+      .select("id, order_id, product_id, author_name, rating, body, approved, verified, created_at")
       .eq("approved", true)
       .order("created_at", { ascending: false })
       .limit(12);
+    if (error) return [];
     return (data ?? []) as Review[];
   },
+  () => [],
   ["reviews"],
   { tags: [STOREFRONT_TAG], revalidate: REVALIDATE }
 );
@@ -145,9 +180,14 @@ export const getRunningExperiments = dbCache(
   async (): Promise<Experiment[]> => {
     const sb = publicClient();
     if (!sb) return [];
-    const { data } = await sb.from("experiments").select("*").eq("status", "running");
-    return (data ?? []) as Experiment[];
+    const { data, error } = await sb
+      .from("experiments")
+      .select("id, key, name, hypothesis, variable, status, variants, started_at, ended_at, winner, created_at")
+      .eq("status", "running");
+    if (error) return [];
+    return ((data ?? []) as Experiment[]).filter((e) => Array.isArray(e.variants) && e.variable);
   },
+  () => [],
   ["experiments"],
   { tags: [STOREFRONT_TAG], revalidate: 60 }
 );
