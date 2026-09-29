@@ -2,38 +2,28 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        brand: {
-          dark: "var(--color-brand-dark)",
-          ink: "var(--color-brand-ink)",
-          concrete: "var(--color-brand-concrete)",
-          accent: "var(--color-brand-accent)",
-          muted: "var(--color-brand-muted)",
-        },
+        paper: "#f4eee3",
+        chalk: "#fffaf1",
+        ink: "#121212",
+        pitch: "#1f6f43",
+        flare: "#ff5a1f",
+        sun: "#ffd23f",
+        mute: "#6b655c",
       },
       fontFamily: {
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Impact", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
-      animation: {
-        "fade-in": "fadeIn 0.5s ease-out forwards",
-        "slide-up": "slideUp 0.5s ease-out forwards",
-      },
-      keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        slideUp: {
-          "0%": { opacity: "0", transform: "translateY(12px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
+      boxShadow: {
+        hard: "4px 4px 0 0 #121212",
+        "hard-sm": "2px 2px 0 0 #121212",
       },
     },
   },

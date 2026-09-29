@@ -1,12 +1,17 @@
-import { ProductForm } from "@/components/admin/ProductForm";
+import { requireAdmin } from "@/lib/admin/auth";
+import { ProductEditor } from "@/components/admin/ProductEditor";
+import { Notice, PageTitle } from "@/components/admin/ui";
+import type { Collection } from "@/lib/types";
 
-export default function NewProductPage() {
+export default async function NewProductPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const sp = await searchParams;
+  const db = await requireAdmin();
+  const { data } = await db.from("collections").select("*").order("sort_order");
   return (
-    <div>
-      <h1 className="font-display text-4xl text-white">New product</h1>
-      <div className="mt-8">
-        <ProductForm />
-      </div>
-    </div>
+    <>
+      <PageTitle title="New design" />
+      <Notice sp={sp} />
+      <ProductEditor collections={(data ?? []) as Collection[]} />
+    </>
   );
 }

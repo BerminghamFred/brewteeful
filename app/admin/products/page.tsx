@@ -1,62 +1,54 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { formatGbp } from "@/lib/money";
-import type { ProductRow } from "@/types/database";
-import { MOCK_PRODUCTS } from "@/lib/data/mock-products";
+import { requireAdmin } from "@/lib/admin/auth";
+import { Card, PageTitle } from "@/components/admin/ui";
+import { TeeArt } from "@/components/site/TeeArt";
+import { gbp } from "@/lib/format";
+import type { ProductWithRelations } from "@/lib/types";
 
-export default async function AdminProductsPage() {
-  let rows: ProductRow[] = [];
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .order("updated_at", { ascending: false });
-    rows = (data ?? []) as ProductRow[];
-  } catch {
-    rows = MOCK_PRODUCTS;
-  }
-
+export default async function ProductsPage() {
+  const db = await requireAdmin();
+  const { data } = await db.from("products").select("*, images:product_images(*), variants:product_variants(*)").order("status").order("sort_order");
+  const products = (data ?? []) as ProductWithRelations[];
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-4xl text-white">Products</h1>
-        <Link
-          href="/admin/products/new"
-          className="rounded-full bg-brand-accent px-4 py-2 text-sm font-semibold text-brand-dark"
-        >
-          Add product
-        </Link>
-      </div>
-      <table className="mt-8 w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-white/10 text-white/45">
-            <th className="pb-2">Title</th>
-            <th className="pb-2">Slug</th>
-            <th className="pb-2">Price</th>
-            <th className="pb-2">Status</th>
-            <th className="pb-2" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((p) => (
-            <tr key={p.id} className="border-b border-white/5">
-              <td className="py-3 text-white">{p.title}</td>
-              <td className="text-white/55">{p.slug}</td>
-              <td>{formatGbp(p.price_pence)}</td>
-              <td className="capitalize text-white/70">{p.status}</td>
-              <td>
-                <Link
-                  href={`/admin/products/${p.id}`}
-                  className="text-brand-accent hover:underline"
-                >
-                  Edit
-                </Link>
-              </td>
+    <>
+      <PageTitle title="Products" sub="Each design is one product; sizes are variants.">
+        <Link href="/admin/products/new" className="btn-dark min-h-[38px] px-4 text-xs">New design</Link>
+      </PageTitle>
+      <Card>
+        <table className="w-full text-sm">
+          <thead className="text-left text-xs uppercase text-mute">
+            <tr>
+              <th className="py-1" />
+              <th>Design</th>
+              <th>Status</th>
+              <th className="text-right">Price</th>
+              <th className="text-right">Cost</th>
+              <th className="text-right">Margin</th>
+              <th>Sizes</th>
+              <th>Photos</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id} className="border-t border-ink/10">
+                <td className="py-2">
+                  <TeeArt name={p.name} color={p.accent_color} imageUrl={p.images[0]?.url ?? p.hero_image_url} label={false} sizes="40px" className="h-10 w-10 rounded border border-ink" />
+                </td>
+                <td>
+                  <Link href={`/admin/products/${p.id}`} className="font-bold underline">{p.name}</Link>
+                  <span className="block text-xs text-mute">/{p.slug}</span>
+                </td>
+                <td>{p.status}</td>
+                <td className="text-right tabular-nums">{gbp(p.price_pence, { whole: false })}</td>
+                <td className="text-right tabular-nums">{gbp(p.cost_pence, { whole: false })}</td>
+                <td className="text-right tabular-nums">{gbp(p.price_pence - p.cost_pence, { whole: false })}</td>
+                <td className="text-xs">{p.variants.filter((v) => v.active).map((v) => v.size).join(" ")}</td>
+                <td>{p.images.length ? p.images.length : <span className="font-bold text-flare">none</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </>
   );
 }

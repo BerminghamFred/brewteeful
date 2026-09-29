@@ -2,31 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-brand-dark: #0a0a0b;
-  --color-brand-ink: #121214;
-  --color-brand-concrete: #1c1c20;
-  --color-brand-accent: #e8ff5a;
-  --color-brand-muted: #8a8a93;
-  --color-surface: #fafafa;
-  --radius-card: 12px;
-}
-
 html {
-  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  @apply bg-brand-dark text-white antialiased;
+  @apply bg-paper text-ink antialiased;
 }
 
 ::selection {
-  background: var(--color-brand-accent);
-  color: var(--color-brand-dark);
+  @apply bg-sun text-ink;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-ink px-6 text-base font-extrabold uppercase tracking-wide transition active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:pointer-events-none disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply btn bg-flare text-ink shadow-hard hover:bg-sun;
+  }
+  .btn-dark {
+    @apply btn bg-ink text-paper shadow-hard hover:bg-pitch;
+  }
+  .btn-ghost {
+    @apply btn bg-chalk text-ink hover:bg-sun;
+  }
+  .card {
+    @apply rounded-2xl border-2 border-ink bg-chalk;
+  }
+  .eyebrow {
+    @apply text-xs font-extrabold uppercase tracking-[0.18em];
+  }
+  .h-display {
+    @apply font-display uppercase leading-[0.9] tracking-tight;
+  }
+  .prose-simple p {
+    @apply mb-4 leading-relaxed;
+  }
+  .prose-simple h2 {
+    @apply mb-2 mt-8 font-display text-2xl uppercase;
+  }
+  .prose-simple ul {
+    @apply mb-4 list-disc pl-5;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
   }
 }
