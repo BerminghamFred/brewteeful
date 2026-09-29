@@ -280,7 +280,7 @@ Phase 2: /stag-do-t-shirts, /football-stag-do-t-shirts, /group/[code], /collecti
 - [ ] Manual CPC or Maximise Clicks with a max CPC cap (smart bidding has no conversion data yet). Daily budget £15–20 → 15–20 days.
 - [ ] Negative list: `fancy dress` (if you exclude C), `mankini`, `inflatable`, `free`, `cheap`, `diy`, `template`, `ideas pinterest`, `hen`, `personalised`/`custom` (until supported), `jobs`, `print your own`.
 - [ ] UK-only location targeting ("presence", not "interest"), no Display network, no Search partners for the test.
-- [ ] Sitelinks (Designs, How it works, Delivery), callouts (Different design for every lad, Free UK delivery, Apple Pay), structured snippet (Styles).
+- [ ] Sitelinks (Designs, How it works, Delivery), callouts (Different design for everyone, Free UK delivery, Apple Pay), structured snippet (Styles).
 
 **Pre-registered decision rules (after £300 or 21 days)**
 

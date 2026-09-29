@@ -143,14 +143,14 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     hero_eyebrow: "Stag do T-shirts",
     hero_headline: "Stag shirts that aren't shit.",
     hero_subheadline:
-      "A different design for every lad. One football-inspired collection that looks unreal together — and shirts you'll actually wear again.",
+      "A different design for everyone in the group. One football-inspired collection that looks unreal together — and shirts you'll actually wear again.",
     hero_cta: "Build your stag set",
     hero_image_url: "",
     hero_image_alt: "A stag group wearing different designs from the collection",
     why_points: [
       {
         title: "Everyone gets a different shirt",
-        body: "No matching 'Dave's Last Ride' tees. Each lad picks his own design; the collection ties the group together.",
+        body: "No matching 'Dave's Last Ride' tees. Everyone picks their own design; the collection ties the group together.",
       },
       {
         title: "Designed, not templated",
@@ -181,7 +181,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     instagram: "",
   },
   seo: {
-    default_title: "Stag Do T-Shirts — A Different Design For Every Lad",
+    default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
       "Coordinated stag do T-shirt sets with a different football-inspired design for each person. From £20 a shirt, minimum 5, tracked UK delivery.",
     og_image_url: "",
@@ -197,7 +197,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       { size: "3XL", chest_cm: 66, length_cm: 81 },
     ],
     fit_note:
-      "Oversized, boxy fit — take your normal size for the relaxed look, or size down for a closer fit. Not sure? Most lads take L. Measure a T-shirt you like flat, armpit to armpit, and compare to chest width.",
+      "Oversized, boxy fit — take your normal size for the relaxed look, or size down for a closer fit. Not sure? Most people take L. Measure a T-shirt you like flat, armpit to armpit, and compare to chest width.",
   },
 };
 

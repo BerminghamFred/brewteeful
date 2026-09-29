@@ -103,7 +103,7 @@ export default async function HomePage() {
         <ol className="mt-10 grid gap-4 md:grid-cols-3">
           {[
             ["How many of you?", `Pick your group size — ${min} or more. Add the stag date and we'll check delivery.`],
-            ["Everyone gets a design", "Give each lad his own design and size. Different shirts, one collection. The Stag gets his own."],
+            ["Everyone gets a design", "Give everyone their own design and size. Different shirts, one collection. The Stag gets his own."],
             ["Pay once, one parcel", `Apple Pay, Google Pay or card. Printed to order and delivered in ${deliveryWindow}.`],
           ].map(([t, d], i) => (
             <li key={t} className="card p-6 md:p-7">

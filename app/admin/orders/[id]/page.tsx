@@ -53,7 +53,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                 {(items ?? []).map((i) => (
                   <tr key={i.id} className="border-t border-ink/10">
                     <td className="py-2">{i.position}</td>
-                    <td>{i.is_stag ? "★ Stag" : "Lad"}{i.nickname ? ` — ${i.nickname}` : ""}</td>
+                    <td>{i.is_stag ? "★ Stag" : `Person ${i.position}`}{i.nickname ? ` — ${i.nickname}` : ""}</td>
                     <td className="font-bold">{i.product_name}</td>
                     <td className="font-semibold">{i.size}</td>
                     <td className="text-xs text-mute">{i.sku}</td>

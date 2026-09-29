@@ -79,7 +79,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
         {(items ?? []).map((i) => (
           <li key={i.id} className="flex justify-between gap-3 p-3 text-sm">
             <span>
-              <span className="font-bold">{i.is_stag ? "★ The Stag" : `Lad ${i.position}`}</span>
+              <span className="font-bold">{i.is_stag ? "★ The Stag" : `Person ${i.position}`}</span>
               {i.nickname ? ` (${i.nickname})` : ""} — {i.product_name}
             </span>
             <span className="font-semibold">{i.size}</span>

@@ -58,7 +58,7 @@ insert into public.faqs (question, answer, sort_order) values
   ('What''s the minimum order?', '5 shirts. Most groups order 6–10. Over 30? Get in touch and we''ll sort a bulk price.', 1),
   ('How much does it cost?', '£20 a shirt, with free tracked UK delivery on sets. You''ll see the exact total before you pay — no surprises at checkout.', 2),
   ('How long does delivery take?', 'Every set is printed to order: 3–5 working days to print, then 1–3 working days tracked delivery. Enter your stag date in the builder and we''ll tell you straight away if we can make it.', 3),
-  ('I don''t know everyone''s size yet.', 'Build the set anyway and hit ''Share lineup'' — send the link to the group chat so everyone can check their design and size, then come back and pay. Most lads take L if you''re really stuck.', 4),
+  ('I don''t know everyone''s size yet.', 'Build the set anyway and hit ''Share lineup'' — send the link to the group chat so everyone can check their design and size, then come back and pay. Most people take L if you''re really stuck.', 4),
   ('Can I put names on the shirts?', 'Add a nickname to each person in the builder so we know who''s who in the parcel. Printed names aren''t available yet.', 5),
   ('What if something''s wrong with a shirt?', 'If anything arrives misprinted, damaged or wrong we''ll reprint and resend it free. Just email us a photo within 14 days.', 6),
   ('Can I return shirts?', 'Yes — unworn, unwashed shirts can be returned within 14 days of delivery for a refund. Full details on our delivery & returns page.', 7),

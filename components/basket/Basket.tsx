@@ -92,7 +92,7 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
                 <TeeArt name={d?.name ?? ""} color={d?.color ?? "#ddd"} imageUrl={d?.imageUrl} label={false} sizes="56px" className="h-14 w-14 shrink-0 rounded-2xl" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[12px] font-medium text-mute">
-                    {i === 0 ? "★ The Stag" : `Lad ${i + 1}`}
+                    {i === 0 ? "★ The Stag" : `Person ${i + 1}`}
                     {p.nickname ? ` · ${p.nickname}` : ""}
                   </p>
                   <p className="truncate font-semibold">{d?.name}</p>

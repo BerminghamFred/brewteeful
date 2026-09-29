@@ -324,7 +324,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-2 text-[12px] font-medium text-mute">
-                      {i === 0 ? <span className="text-flare">★ The Stag</span> : `Lad ${i + 1}`}
+                      {i === 0 ? <span className="text-flare">★ The Stag</span> : `Person ${i + 1}`}
                       {done ? <span className="h-1.5 w-1.5 rounded-full bg-pitch" aria-label="ready" /> : null}
                     </p>
                     <p className="truncate text-[17px] font-semibold tracking-tight">

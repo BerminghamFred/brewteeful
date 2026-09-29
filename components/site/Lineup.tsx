@@ -28,7 +28,7 @@ export function Lineup({
       <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
       <div className="relative flex items-center justify-between text-[12px] font-medium text-chalk/70">
         <span>The lineup</span>
-        <span>{row.length} lads · {row.length} designs</span>
+        <span>{row.length} shirts · {row.length} designs</span>
       </div>
       <div className="relative mt-4 grid grid-cols-4 gap-2.5 md:gap-3">
         {row.map((p, i) => (

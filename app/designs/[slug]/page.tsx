@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!p) return {};
   return {
     title: p.seo_title ?? `${p.name} Stag Do T-Shirt`,
-    description: p.seo_description ?? `${p.tagline ?? ""} Part of a coordinated stag set — a different design for every lad.`.trim(),
+    description: p.seo_description ?? `${p.tagline ?? ""} Part of a coordinated stag set — a different design for everyone in the group.`.trim(),
     alternates: { canonical: `/designs/${p.slug}` },
     openGraph: { images: p.hero_image_url ? [p.hero_image_url] : undefined },
   };
