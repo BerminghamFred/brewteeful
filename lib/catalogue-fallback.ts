@@ -66,11 +66,32 @@ const DESIGNS: DesignSeed[] = [
     description:
       "Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and 'Wayne Schooney' scrawled across the stand. Oversized organic tee with a high neck.",
   },
+  {
+    slug: "pamela-canderson",
+    name: "Pamela Canderson",
+    tagline: "The beach's finest lifeguard, running in slow motion with a tray of ice-cold ones.",
+    color: "#e0301e",
+    description:
+      "Hand-painted 90s lifeguard icon in the red swimsuit, wading out of the surf with a full tray of cold ones. Small chest print up front; the full beach scene on the back with 'Pamela Canderson' in red across the sky. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/pamela-canderson/back.jpg", alt: "Pamela Canderson T-shirt — back print" },
+      { url: "/designs/pamela-canderson/front.jpg", alt: "Pamela Canderson T-shirt — front chest print" },
+      { url: "/designs/pamela-canderson/folded.jpg", alt: "Pamela Canderson T-shirt — folded" },
+      { url: "/designs/pamela-canderson/side-left.jpg", alt: "Pamela Canderson T-shirt — left side" },
+      { url: "/designs/pamela-canderson/side-right.jpg", alt: "Pamela Canderson T-shirt — right side" },
+    ],
+  },
+  {
+    slug: "marilyn-monrose",
+    name: "Marilyn Monrosé",
+    tagline: "Some like it pink. Skirt up, glass up, never spilled a drop.",
+    color: "#e8303f",
+    description:
+      "Hand-painted Hollywood icon in that white halter dress, mid-breeze, with a glass of rosé raised. Small chest print up front; the full piece on the back against a bold red block with 'Marilyn Monrosé' across the top. Oversized organic tee with a high neck.",
+  },
   { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
   { slug: "sunday-league-legend", name: "Sunday League Legend", tagline: "Hungover, unfit, undroppable.", color: "#1f6f43" },
   { slug: "away-day", name: "Away Day", tagline: "Train beers from 9am. Standard.", color: "#d4481c" },
-  { slug: "golden-boot", name: "Golden Boot", tagline: "Scores more at the bar than on the pitch.", color: "#d9a400" },
-  { slug: "the-gaffer", name: "The Gaffer", tagline: "Picks the team. Picks the bar. Picks the fights.", color: "#1d3b8b" },
 ];
 
 const now = "2026-09-29T00:00:00.000Z";

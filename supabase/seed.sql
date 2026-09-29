@@ -1,5 +1,5 @@
 -- Seed data for the stag-set MVP (run after migrations).
--- Designs mirror lib/catalogue-fallback.ts. Bierry Henry and Osama Tin Laden are real; the rest are placeholders —
+-- Designs mirror lib/catalogue-fallback.ts. Bierry Henry, Osama Tin Laden, Wayne Schooney, Pamela Canderson and Marilyn Monrosé are real; the rest are placeholders —
 -- replace them with the real designs in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
@@ -21,11 +21,15 @@ cross join (values
   ('wayne-schooney', 'Wayne Schooney', 'Overhead kick, pint in hand. A certain Manchester No. 10, still hasn''t spilled a drop.', '#c8102e', 2,
    'Hand-painted homage to the most famous derby-day overhead kick — with a pint where the ball should be. Small chest print of the moment up front; the full scene on the back with the crowd behind and ''Wayne Schooney'' scrawled across the stand. Oversized organic tee with a high neck.',
    null),
-  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 3, null, null),
-  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 4, null, null),
-  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 5, null, null),
-  ('golden-boot', 'Golden Boot', 'Scores more at the bar than on the pitch.', '#d9a400', 6, null, null),
-  ('the-gaffer', 'The Gaffer', 'Picks the team. Picks the bar. Picks the fights.', '#1d3b8b', 7, null, null)
+  ('pamela-canderson', 'Pamela Canderson', 'The beach''s finest lifeguard, running in slow motion with a tray of ice-cold ones.', '#e0301e', 3,
+   'Hand-painted 90s lifeguard icon in the red swimsuit, wading out of the surf with a full tray of cold ones. Small chest print up front; the full beach scene on the back with ''Pamela Canderson'' in red across the sky. Oversized organic tee with a high neck.',
+   '/designs/pamela-canderson/back.jpg'),
+  ('marilyn-monrose', 'Marilyn Monrosé', 'Some like it pink. Skirt up, glass up, never spilled a drop.', '#e8303f', 4,
+   'Hand-painted Hollywood icon in that white halter dress, mid-breeze, with a glass of rosé raised. Small chest print up front; the full piece on the back against a bold red block with ''Marilyn Monrosé'' across the top. Oversized organic tee with a high neck.',
+   null),
+  ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 5, null, null),
+  ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 6, null, null),
+  ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 7, null, null)
 ) as d(slug, name, tagline, color, sort_order, description, hero)
 where c.slug = 'football'
 on conflict (slug) do nothing;
@@ -40,7 +44,7 @@ cross join (values
   ('side-left.jpg', 'left side', 3),
   ('side-right.jpg', 'right side', 4)
 ) as i(file, label, sort_order)
-where p.slug in ('bierry-henry', 'osama-tin-laden');
+where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson');
 
 
 insert into public.product_variants (product_id, size, sku)
