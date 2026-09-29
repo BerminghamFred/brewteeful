@@ -88,6 +88,13 @@ const DESIGNS: DesignSeed[] = [
     color: "#e8303f",
     description:
       "Hand-painted Hollywood icon in that white halter dress, mid-breeze, with a glass of rosé raised. Small chest print up front; the full piece on the back against a bold red block with 'Marilyn Monrosé' across the top. Oversized organic tee with a high neck.",
+    images: [
+      { url: "/designs/marilyn-monrose/back.jpg", alt: "Marilyn Monrosé T-shirt — back print" },
+      { url: "/designs/marilyn-monrose/front.jpg", alt: "Marilyn Monrosé T-shirt — front chest print" },
+      { url: "/designs/marilyn-monrose/folded.jpg", alt: "Marilyn Monrosé T-shirt — folded" },
+      { url: "/designs/marilyn-monrose/side-left.jpg", alt: "Marilyn Monrosé T-shirt — left side" },
+      { url: "/designs/marilyn-monrose/side-right.jpg", alt: "Marilyn Monrosé T-shirt — right side" },
+    ],
   },
   { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
   { slug: "sunday-league-legend", name: "Sunday League Legend", tagline: "Hungover, unfit, undroppable.", color: "#1f6f43" },

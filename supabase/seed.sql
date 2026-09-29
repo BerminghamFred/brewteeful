@@ -26,7 +26,7 @@ cross join (values
    '/designs/pamela-canderson/back.jpg'),
   ('marilyn-monrose', 'Marilyn Monrosé', 'Some like it pink. Skirt up, glass up, never spilled a drop.', '#e8303f', 4,
    'Hand-painted Hollywood icon in that white halter dress, mid-breeze, with a glass of rosé raised. Small chest print up front; the full piece on the back against a bold red block with ''Marilyn Monrosé'' across the top. Oversized organic tee with a high neck.',
-   null),
+   '/designs/marilyn-monrose/back.jpg'),
   ('the-stag', 'The Stag', 'Reserved for the man of the hour.', '#b3862a', 5, null, null),
   ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 6, null, null),
   ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 7, null, null)
@@ -44,7 +44,7 @@ cross join (values
   ('side-left.jpg', 'left side', 3),
   ('side-right.jpg', 'right side', 4)
 ) as i(file, label, sort_order)
-where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson');
+where p.slug in ('bierry-henry', 'osama-tin-laden', 'pamela-canderson', 'marilyn-monrose');
 
 
 insert into public.product_variants (product_id, size, sku)
