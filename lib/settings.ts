@@ -141,9 +141,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   content: {
     hero_eyebrow: "Stag do T-shirts",
-    hero_headline: "Stag shirts that aren't shit.",
+    hero_headline: "Pick your legend. Pick your pint.",
     hero_subheadline:
-      "A different design for everyone in the group. One football-inspired collection that looks unreal together — and shirts you'll actually wear again.",
+      "Stag shirts starring hand-illustrated icons. A different one for each member of the group, including Bierry Henry, Wayne Schooney, Osama Tin Laden and more.",
     hero_cta: "Build your stag set",
     hero_image_url: "",
     hero_image_alt: "A stag group wearing different designs from the collection",
@@ -183,7 +183,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
-      "Coordinated stag do T-shirt sets with a different football-inspired design for each person. From £20 a shirt, minimum 5, tracked UK delivery.",
+      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. From £20 a shirt, minimum 5, tracked UK delivery.",
     og_image_url: "",
   },
   sizing: {
