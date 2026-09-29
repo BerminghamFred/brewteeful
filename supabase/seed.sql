@@ -3,12 +3,12 @@
 -- replace them with the real designs in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
-values ('football', 'The Football Collection', 'Illustrated, terrace-culture designs that look unreal as a lineup.', 0)
+values ('legends', 'The Legends Collection', 'Hand-illustrated icons, each with a drink in hand. Made to look unreal as a lineup.', 0)
 on conflict (slug) do nothing;
 
 insert into public.products (slug, name, collection_id, tagline, description, price_pence, cost_pence, status, sort_order, accent_color, hero_image_url)
 select d.slug, d.name, c.id, d.tagline,
-       coalesce(d.description, d.tagline || ' Original illustrated artwork from the Football Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.'),
+       coalesce(d.description, d.tagline || ' Original illustrated artwork from the Legends Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.'),
        2000, 1050, 'active', d.sort_order, d.color, d.hero
 from public.collections c
 cross join (values
@@ -31,7 +31,7 @@ cross join (values
   ('sunday-league-legend', 'Sunday League Legend', 'Hungover, unfit, undroppable.', '#1f6f43', 6, null, null),
   ('away-day', 'Away Day', 'Train beers from 9am. Standard.', '#d4481c', 7, null, null)
 ) as d(slug, name, tagline, color, sort_order, description, hero)
-where c.slug = 'football'
+where c.slug = 'legends'
 on conflict (slug) do nothing;
 
 insert into public.product_images (product_id, url, alt, sort_order)

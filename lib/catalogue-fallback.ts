@@ -7,10 +7,10 @@ import type { Collection, Faq, ProductWithRelations } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 
 export const FALLBACK_COLLECTION: Collection = {
-  id: "col-football",
-  slug: "football",
-  name: "The Football Collection",
-  description: "Illustrated, terrace-culture designs that look unreal as a lineup.",
+  id: "col-legends",
+  slug: "legends",
+  name: "The Legends Collection",
+  description: "Hand-illustrated icons, each with a drink in hand. Made to look unreal as a lineup.",
   sort_order: 0,
   active: true,
 };
@@ -120,7 +120,7 @@ export const FALLBACK_PRODUCTS: ProductWithRelations[] = DESIGNS.map((d, i) => {
     tagline: d.tagline,
     description:
       d.description ??
-      `${d.tagline} Original illustrated artwork from the Football Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.`,
+      `${d.tagline} Original illustrated artwork from the Legends Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.`,
     price_pence: 2000,
     compare_at_price_pence: null,
     cost_pence: 1050,

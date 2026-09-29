@@ -143,7 +143,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     hero_eyebrow: "Stag do T-shirts",
     hero_headline: "Pick your legend. Pick your pint.",
     hero_subheadline:
-      "Stag shirts starring hand-illustrated icons. A different one for each member of the group, including Bierry Henry, Wayne Schooney, Osama Tin Laden and more.",
+      "Stag shirts starring hand-illustrated icons. A different one for each member of the group, including Bierry Henry, Wayne Schooney, Pamela Canderson and more.",
     hero_cta: "Build your stag set",
     hero_image_url: "",
     hero_image_alt: "A stag group wearing different designs from the collection",
@@ -154,7 +154,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       },
       {
         title: "Designed, not templated",
-        body: "Original illustrated artwork with a streetwear feel. You'll wear it to five-a-side long after the stag.",
+        body: "Original illustrated artwork with a streetwear feel. You'll still be wearing it long after the stag.",
       },
       {
         title: "Ordering for 8 feels like ordering 1",

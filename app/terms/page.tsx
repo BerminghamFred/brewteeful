@@ -23,7 +23,7 @@ export default async function TermsPage() {
       <h2>Your right to return</h2>
       <p>{settings.delivery.returns_policy} This doesn&apos;t affect your statutory rights under the Consumer Rights Act 2015 and the Consumer Contracts Regulations 2013.</p>
       <h2>Designs</h2>
-      <p>All artwork is original. Designs are inspired by football culture and are not affiliated with or endorsed by any club, league or player.</p>
+      <p>All artwork is original. Designs are affectionate parodies of well-known figures and are not affiliated with or endorsed by any person, club, brand or organisation.</p>
     </InfoPage>
   );
 }
