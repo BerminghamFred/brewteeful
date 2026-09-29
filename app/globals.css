@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-brand-dark: #0a0a0b;
+  --color-brand-ink: #121214;
+  --color-brand-concrete: #1c1c20;
+  --color-brand-accent: #e8ff5a;
+  --color-brand-muted: #8a8a93;
+  --color-surface: #fafafa;
+  --radius-card: 12px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-dark text-white antialiased;
+}
+
+::selection {
+  background: var(--color-brand-accent);
+  color: var(--color-brand-dark);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
