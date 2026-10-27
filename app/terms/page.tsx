@@ -12,7 +12,7 @@ export default async function TermsPage() {
     <InfoPage title="Terms of sale">
       <p>
         These terms apply to orders placed with {c.company_name || BRAND.name}
-        {c.business_address ? `, ${c.business_address}` : ""}. Contact: <a className="underline" href={`mailto:${c.email}`}>{c.email}</a>.
+        {c.business_address ? `, ${c.business_address}` : ""}.{c.company_registration ? ` ${c.company_registration}` : ""} Contact: <a className="underline" href={`mailto:${c.email}`}>{c.email}</a>.
       </p>
       <h2>Orders</h2>
       <p>Sets have a minimum of {settings.pricing.min_group_size} shirts. Your order is accepted when payment is taken and you receive a confirmation. Prices are shown in GBP and include any applicable taxes. The total shown before payment is the total you pay.</p>

@@ -45,7 +45,7 @@ function footer(settings: SiteSettings) {
   <tr><td style="padding:24px 32px 32px;font:13px/1.6 ${FONT};color:${C.mute};">
     Questions? Just reply to this email${c.email ? ` or write to <a href="mailto:${esc(c.email)}" style="color:${C.pitch};">${esc(c.email)}</a>` : ""}. ${esc(c.response_time)}<br>
     ${esc(settings.content.guarantee)}<br><br>
-    <span style="color:#9a958c;">${legal}</span>
+    <span style="color:#9a958c;">${legal}${c.company_registration ? `<br>${esc(c.company_registration)}` : ""}</span>
   </td></tr>`;
 }
 

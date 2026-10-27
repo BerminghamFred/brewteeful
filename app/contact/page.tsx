@@ -29,6 +29,7 @@ export default async function ContactPage() {
         <p className="text-sm text-mute">
           {c.company_name}
           {c.business_address ? `, ${c.business_address}` : ""}
+          {c.company_registration ? <><br />{c.company_registration}</> : null}
         </p>
       ) : null}
     </InfoPage>
