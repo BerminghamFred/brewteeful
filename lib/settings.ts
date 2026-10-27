@@ -68,6 +68,8 @@ export type ContactSettings = {
   business_address: string;
   /** Companies Act disclosure, e.g. "Registered in England & Wales, company no. 12345678". */
   company_registration: string;
+  /** Where new-order alerts go (comma-separate several). Blank = no alerts. */
+  order_alert_email: string;
   response_time: string;
   instagram: string;
 };
@@ -180,6 +182,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     company_name: "F Bermingham Ltd (trading as BrewTeeFul)",
     business_address: "Friars Ford, Manor Road, Goring, RG8 9EL",
     company_registration: "Registered in England & Wales, company no. 17123579. Registered office as above.",
+    order_alert_email: "freddie@pubclubapp.co.uk",
     response_time: "We reply within one working day.",
     instagram: "",
   },

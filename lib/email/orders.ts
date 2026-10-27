@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSettings } from "@/lib/store";
 import type { Order, OrderItem } from "@/lib/types";
 import { emailConfigured, sendEmail } from "@/lib/email/send";
-import { orderConfirmationEmail, orderShippedEmail, type EmailProduct } from "@/lib/email/templates";
+import { newOrderAlertEmail, orderConfirmationEmail, orderShippedEmail, type EmailProduct } from "@/lib/email/templates";
 
 type Kind = "confirmation" | "shipped";
 const COLUMN: Record<Kind, "confirmation_email_sent_at" | "shipped_email_sent_at"> = {
@@ -66,6 +66,26 @@ export async function sendOrderEmail(orderId: string, kind: Kind, opts: { force?
     console.error(`order email (${kind})`, orderId, e);
     // Release the claim so a later retry (webhook redelivery / admin resend) can send it.
     if (!opts.force) await db.from("orders").update({ [col]: null }).eq("id", orderId);
+    return false;
+  }
+}
+
+/** Tells the shop owner a new order has been paid (contact.order_alert_email). Never throws. */
+export async function sendNewOrderAlert(orderId: string): Promise<boolean> {
+  if (!emailConfigured()) return false;
+  try {
+    const settings = await getSettings();
+    const to = settings.contact.order_alert_email
+      .split(/[,;\s]+/)
+      .map((s) => s.trim())
+      .filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+    if (!to.length) return false;
+    const data = await load(orderId);
+    if (!data) return false;
+    const msg = newOrderAlertEmail({ order: data.order, items: data.items, settings });
+    return await sendEmail({ to, ...msg, replyTo: data.order.email, idempotencyKey: `alert-${orderId}` });
+  } catch (e) {
+    console.error("new order alert", orderId, e);
     return false;
   }
 }

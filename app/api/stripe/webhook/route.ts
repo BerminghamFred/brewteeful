@@ -4,7 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendMetaPurchase } from "@/lib/meta-capi";
 import { absoluteUrl } from "@/lib/brand";
-import { sendOrderEmail } from "@/lib/email/orders";
+import { sendNewOrderAlert, sendOrderEmail } from "@/lib/email/orders";
 
 export const runtime = "nodejs";
 
@@ -117,6 +117,7 @@ async function markPaid(session: Stripe.Checkout.Session) {
   if (order.discount_code) await db.rpc("redeem_discount_code", { p_code: order.discount_code });
 
   await sendOrderEmail(order.id, "confirmation");
+  await sendNewOrderAlert(order.id);
 
   const { data: items } = await db.from("order_items").select("product_id, product_name").eq("order_id", orderId);
   const contentIds = [...new Set((items ?? []).map((i) => i.product_id ?? i.product_name))];

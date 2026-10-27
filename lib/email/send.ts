@@ -3,7 +3,7 @@
  * EMAIL_FROM isn't set, sending is skipped and logged, so nothing else breaks.
  */
 export type OutgoingEmail = {
-  to: string;
+  to: string | string[];
   subject: string;
   html: string;
   text: string;
@@ -30,7 +30,7 @@ export async function sendEmail(email: OutgoingEmail): Promise<boolean> {
     },
     body: JSON.stringify({
       from: process.env.EMAIL_FROM!.trim(),
-      to: [email.to],
+      to: Array.isArray(email.to) ? email.to : [email.to],
       subject: email.subject,
       html: email.html,
       text: email.text,
