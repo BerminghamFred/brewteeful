@@ -2,31 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-brand-dark: #0a0a0b;
-  --color-brand-ink: #121214;
-  --color-brand-concrete: #1c1c20;
-  --color-brand-accent: #e8ff5a;
-  --color-brand-muted: #8a8a93;
-  --color-surface: #fafafa;
-  --radius-card: 12px;
-}
-
 html {
-  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  @apply bg-brand-dark text-white antialiased;
+  @apply bg-paper text-ink antialiased;
+  font-feature-settings: "ss01", "cv11";
 }
 
 ::selection {
-  background: var(--color-brand-accent);
-  color: var(--color-brand-dark);
+  @apply bg-ink text-paper;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold tracking-[-0.01em] transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply btn bg-ink text-chalk shadow-soft hover:bg-pitch;
+  }
+  .btn-accent {
+    @apply btn bg-flare text-chalk shadow-soft hover:brightness-105;
+  }
+  .btn-dark {
+    @apply btn bg-ink text-chalk hover:bg-pitch;
+  }
+  .btn-ghost {
+    @apply btn border border-ink/15 bg-chalk/60 text-ink backdrop-blur hover:border-ink/40 hover:bg-chalk;
+  }
+  .card {
+    @apply rounded-3xl border border-ink/[0.07] bg-chalk shadow-soft;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-chalk px-3 py-1.5 text-[13px] font-medium;
+  }
+  .eyebrow {
+    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-mute;
+  }
+  .h-display {
+    @apply font-display font-bold leading-[0.95] tracking-tightest;
+  }
+  .prose-simple p {
+    @apply mb-4 leading-relaxed text-ink/80;
+  }
+  .prose-simple h2 {
+    @apply mb-2 mt-10 font-display text-2xl font-bold tracking-tight;
+  }
+  .prose-simple ul {
+    @apply mb-4 list-disc space-y-1 pl-5 text-ink/80;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .glass {
+    @apply border-ink/[0.06] bg-paper/80 backdrop-blur-xl backdrop-saturate-150;
   }
 }

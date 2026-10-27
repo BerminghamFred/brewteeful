@@ -1,49 +1,30 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { ProductForm } from "@/components/admin/ProductForm";
-import type { ProductRow } from "@/types/database";
-import { MOCK_PRODUCTS } from "@/lib/data/mock-products";
-import { deleteProduct } from "@/lib/actions/products";
+import { requireAdmin } from "@/lib/admin/auth";
+import { ProductEditor } from "@/components/admin/ProductEditor";
+import { Notice, PageTitle } from "@/components/admin/ui";
+import type { Collection, ProductWithRelations } from "@/lib/types";
 
-export default async function EditProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  let product: ProductRow | null = null;
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .single();
-    product = data as ProductRow | null;
-  } catch {
-    product = MOCK_PRODUCTS.find((p) => p.id === id) ?? null;
-  }
+export default async function EditProductPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> }) {
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  const db = await requireAdmin();
+  const [{ data: product }, { data: collections }] = await Promise.all([
+    db.from("products").select("*, images:product_images(*), variants:product_variants(*)").eq("id", id).maybeSingle(),
+    db.from("collections").select("*").order("sort_order"),
+  ]);
   if (!product) notFound();
-
-  async function del() {
-    "use server";
-    await deleteProduct(id);
-  }
-
+  const p = product as ProductWithRelations;
+  p.images.sort((a, b) => a.sort_order - b.sort_order);
   return (
-    <div>
-      <h1 className="font-display text-4xl text-white">Edit product</h1>
-      <div className="mt-8">
-        <ProductForm product={product} />
-      </div>
-      <form action={del} className="mt-8">
-        <button
-          type="submit"
-          className="rounded-full border border-red-500/40 bg-transparent px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
-        >
-          Delete product
-        </button>
-      </form>
-    </div>
+    <>
+      <PageTitle title={p.name} sub="Archive instead of deleting — past orders reference this design.">
+        <div className="flex gap-3 text-sm">
+          {p.status === "active" ? <Link href={`/designs/${p.slug}`} target="_blank" className="underline">View ↗</Link> : null}
+          <Link href="/admin/products" className="underline">← Products</Link>
+        </div>
+      </PageTitle>
+      <Notice sp={sp} />
+      <ProductEditor product={p} collections={(collections ?? []) as Collection[]} />
+    </>
   );
 }
