@@ -1,7 +1,6 @@
 /**
  * Catalogue used when Supabase isn't configured (local dev, previews), mirrored in
- * supabase/seed.sql. Designs with `images` are real; The Stag is a placeholder to be
- * replaced with a real design + photography in /admin/products before launch.
+ * supabase/seed.sql. Every design here has real artwork and photography.
  */
 import type { Collection, Faq, ProductWithRelations } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
@@ -136,7 +135,6 @@ const DESIGNS: DesignSeed[] = [
       { url: "/designs/mother-beeresa/colour/front.jpg", alt: "Mother Beeresa T-shirt — front chest print" },
     ],
   },
-  { slug: "the-stag", name: "The Stag", tagline: "Reserved for the man of the hour.", color: "#b3862a" },
 ];
 
 const now = "2026-09-29T00:00:00.000Z";

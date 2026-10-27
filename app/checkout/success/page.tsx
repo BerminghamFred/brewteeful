@@ -8,6 +8,7 @@ import { estimateDelivery, formatDay } from "@/lib/delivery";
 import { gbp } from "@/lib/format";
 import type { Order, OrderItem } from "@/lib/types";
 import { PurchaseComplete } from "@/components/checkout/PurchaseComplete";
+import { emailConfigured } from "@/lib/email/send";
 
 export const metadata = { title: "Order confirmed", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -56,7 +57,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
       <h1 className="h-display mt-1 text-5xl md:text-6xl">{paid ? "Shirts sorted. Legend." : "Nearly there…"}</h1>
       <p className="mt-3 text-lg">
         Order <strong>#{order.order_number}</strong>
-        {email ? <> · confirmation sent to <strong>{email}</strong></> : null}
+        {email && emailConfigured() ? <> · confirmation sent to <strong>{email}</strong></> : null}
       </p>
 
       <ol className="card mt-6 divide-y divide-ink/[0.06]">

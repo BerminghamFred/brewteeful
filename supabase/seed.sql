@@ -1,6 +1,6 @@
 -- Seed data for the stag-set MVP (run after migrations).
--- Designs mirror lib/catalogue-fallback.ts. Bierry Henry, Osama Tin Laden, Wayne Schooney, Pamela Canderson, Marilyn Monrosé, Nelson Manstella and Mother Beeresa are real; The Stag is a placeholder —
--- replace it with a real design in /admin/products. No reviews are seeded — reviews must be real.
+-- Designs mirror lib/catalogue-fallback.ts. Bierry Henry, Osama Tin Laden, Wayne Schooney, Pamela Canderson, Marilyn Monrosé, Nelson Manstella and Mother Beeresa are real; The Stag is a draft placeholder —
+-- give it real artwork and set it active in /admin/products. No reviews are seeded — reviews must be real.
 
 insert into public.collections (slug, name, description, sort_order)
 values ('legends', 'The Legends Collection', 'Hand-illustrated icons, each with a drink in hand. Made to look unreal as a lineup.', 0)
@@ -9,7 +9,7 @@ on conflict (slug) do nothing;
 insert into public.products (slug, name, collection_id, tagline, description, price_pence, cost_pence, status, sort_order, accent_color, hero_image_url, artwork_url)
 select d.slug, d.name, c.id, d.tagline,
        coalesce(d.description, d.tagline || ' Original illustrated artwork from the Legends Collection, printed on a heavyweight tee. Designed to sit alongside every other shirt in the set.'),
-       2000, 1050, 'active', d.sort_order, d.color, d.hero,
+       2000, 1050, case when d.hero is null then 'draft' else 'active' end, d.sort_order, d.color, d.hero,
        case when d.hero is not null then '/designs/' || d.slug || '/art.jpg' end
 from public.collections c
 cross join (values

@@ -21,7 +21,7 @@ export default async function DesignsPage() {
       </nav>
       <h1 className="h-display mt-2 text-5xl md:text-6xl">The designs</h1>
       <p className="mt-2 max-w-xl text-ink/80">
-        Pick a different one for everyone in the group (minimum {settings.pricing.min_group_size}). The Stag gets his own.
+        Pick a different one for everyone in the group (minimum {settings.pricing.min_group_size}).
       </p>
       <TrackOnView event="view_collection" props={{ list_id: "designs", count: products.length }} immediate>
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
