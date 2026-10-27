@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
-import { updateOrder } from "@/lib/admin/actions";
+import { resendOrderEmail, updateOrder } from "@/lib/admin/actions";
+import { emailConfigured } from "@/lib/email/send";
 import { Card, Field, Notice, PageTitle, Stat } from "@/components/admin/ui";
 import { gbp } from "@/lib/format";
 import { mergeSettings } from "@/lib/settings";
@@ -84,11 +85,12 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           </Card>
         </div>
 
+        <div>
         <Card title="Fulfilment">
           <form action={updateOrder} className="space-y-3">
             <input type="hidden" name="id" value={order.id} />
             <input type="hidden" name="shipped_at" value={order.shipped_at ?? ""} />
-            <Field label="Status">
+            <Field label="Status" hint="Saving as shipped emails the customer once — add the tracking details first.">
               <select name="fulfilment_status" defaultValue={order.fulfilment_status} className="input">
                 {["unfulfilled", "in_production", "shipped", "delivered", "cancelled"].map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -102,6 +104,31 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <button className="btn-dark w-full">Save</button>
           </form>
         </Card>
+        <Card title="Customer emails">
+          {!emailConfigured() ? (
+            <p className="mb-3 text-sm text-flare">Email isn&apos;t set up yet — add RESEND_API_KEY and EMAIL_FROM in Vercel.</p>
+          ) : null}
+          {(
+            [
+              ["confirmation", "Order confirmation", order.confirmation_email_sent_at],
+              ["shipped", "Shipped + tracking", order.shipped_email_sent_at],
+            ] as const
+          ).map(([kind, label, sentAt]) => (
+            <form key={kind} action={resendOrderEmail} className="flex items-center justify-between gap-3 border-t border-ink/10 py-2 text-sm first-of-type:border-t-0">
+              <input type="hidden" name="id" value={order.id} />
+              <input type="hidden" name="kind" value={kind} />
+              <span>
+                <strong>{label}</strong>
+                <br />
+                <span className="text-mute">{sentAt ? `Sent ${new Date(sentAt).toLocaleString("en-GB")}` : "Not sent"}</span>
+              </span>
+              <button className="rounded-full border border-ink/20 px-3 py-1 text-xs font-semibold" disabled={!order.email}>
+                {sentAt ? "Resend" : "Send"}
+              </button>
+            </form>
+          ))}
+        </Card>
+        </div>
       </div>
     </>
   );

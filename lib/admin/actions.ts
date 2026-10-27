@@ -7,6 +7,7 @@ import { STOREFRONT_TAG } from "@/lib/store";
 import { DEFAULT_SETTINGS, SETTINGS_KEYS, type SettingsKey } from "@/lib/settings";
 import { parseSpendCsv } from "@/lib/spend-csv";
 import { createClient } from "@/lib/supabase/server";
+import { sendOrderEmail } from "@/lib/email/orders";
 
 const str = (f: FormData, k: string) => {
   const v = f.get(k);
@@ -122,7 +123,17 @@ export async function updateOrder(f: FormData) {
   };
   if (fulfilment === "shipped" && !str(f, "shipped_at")) patch.shipped_at = new Date().toISOString();
   const { error } = await db.from("orders").update(patch).eq("id", id);
+  // First time an order is marked shipped, the customer gets their tracking email.
+  if (!error && fulfilment === "shipped") await sendOrderEmail(id, "shipped");
   done(`/admin/orders/${id}`, error?.message);
+}
+
+export async function resendOrderEmail(f: FormData) {
+  await requireAdmin();
+  const id = str(f, "id");
+  const kind = str(f, "kind") === "shipped" ? "shipped" : "confirmation";
+  const ok = await sendOrderEmail(id, kind, { force: true });
+  done(`/admin/orders/${id}`, ok ? undefined : "Email not sent — check RESEND_API_KEY / EMAIL_FROM in Vercel and that the order has an email address.");
 }
 
 export async function bulkFulfilment(f: FormData) {
@@ -134,6 +145,7 @@ export async function bulkFulfilment(f: FormData) {
       .from("orders")
       .update({ fulfilment_status: to, ...(to === "shipped" ? { shipped_at: new Date().toISOString() } : {}) })
       .in("id", ids);
+    if (to === "shipped") for (const id of ids) await sendOrderEmail(id, "shipped");
   }
   done("/admin/orders/pick-list");
 }

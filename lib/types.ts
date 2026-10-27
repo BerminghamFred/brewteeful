@@ -123,6 +123,8 @@ export type Order = {
   consent: { analytics?: boolean; ads?: boolean } | null;
   created_at: string;
   paid_at: string | null;
+  confirmation_email_sent_at: string | null;
+  shipped_email_sent_at: string | null;
 };
 
 export type OrderItem = {
