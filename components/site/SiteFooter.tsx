@@ -35,6 +35,7 @@ export function SiteFooter({ contact }: { contact: ContactSettings }) {
       <div className="border-t border-chalk/10 px-4 py-5 text-center text-xs text-chalk/40">
         © {new Date().getFullYear()} {contact.company_name || BRAND.legalName}
         {contact.business_address ? ` · ${contact.business_address}` : ""} · Secure payments by Stripe
+        {contact.company_registration ? <span className="mt-1 block">{contact.company_registration}</span> : null}
       </div>
     </footer>
   );

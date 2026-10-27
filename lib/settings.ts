@@ -66,6 +66,8 @@ export type ContactSettings = {
   whatsapp: string;
   company_name: string;
   business_address: string;
+  /** Companies Act disclosure, e.g. "Registered in England & Wales, company no. 12345678". */
+  company_registration: string;
   response_time: string;
   instagram: string;
 };
@@ -177,6 +179,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     whatsapp: "",
     company_name: "F Bermingham Ltd (trading as BrewTeeFul)",
     business_address: "Friars Ford, Manor Road, Goring, RG8 9EL",
+    company_registration: "Registered in England & Wales, company no. 17123579. Registered office as above.",
     response_time: "We reply within one working day.",
     instagram: "",
   },

@@ -26,6 +26,7 @@ describe("order emails", () => {
     expect(m.html).toContain("SAVE5");
     expect(m.text).toContain("Total paid: £35");
     expect(m.text).toContain("LS1 1AA");
+    expect(m.html).toContain("company no. 17123579");
   });
 
   it("shipped email never links a non-http tracking URL", () => {
