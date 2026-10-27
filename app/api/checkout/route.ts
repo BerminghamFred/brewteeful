@@ -9,6 +9,13 @@ import { getStorefrontContext } from "@/lib/store";
 import { COOKIES, parseConsent } from "@/lib/cookies";
 import { absoluteUrl } from "@/lib/brand";
 
+/** The public origin of this request (Vercel sets x-forwarded-host/proto). */
+function requestOrigin(req: Request) {
+  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+  if (host) return `${(req.headers.get("x-forwarded-proto") ?? "https").split(",")[0]!.trim()}://${host.split(",")[0]!.trim()}`;
+  return absoluteUrl("/").replace(/\/$/, "");
+}
+
 export const runtime = "nodejs";
 
 /**
@@ -109,11 +116,18 @@ export async function POST(req: Request) {
     g.sizes.push(l.size);
     grouped.set(key, g);
   }
+  // Links Stripe follows are built from the address the customer is actually on, so
+  // checkout works on every domain/preview and never depends on NEXT_PUBLIC_SITE_URL.
+  const origin = requestOrigin(req);
   // Stripe only accepts absolute, publicly reachable image URLs; skip them on localhost.
   const stripeImage = (url?: string | null) => {
     if (!url) return undefined;
-    const abs = /^https?:\/\//.test(url) ? url : absoluteUrl(url);
-    return abs.startsWith("https://") ? [abs] : undefined;
+    try {
+      const abs = new URL(url, origin);
+      return abs.protocol === "https:" ? [abs.toString()] : undefined;
+    } catch {
+      return undefined;
+    }
   };
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [...grouped.values()].map((g) => ({
     quantity: g.sizes.length,
@@ -166,7 +180,7 @@ export async function POST(req: Request) {
         metadata: { order_id: order.id, order_number: String(order.order_number) },
         description: `Stag set #${order.order_number} (${p.itemCount} shirts)`,
       },
-      return_url: `${absoluteUrl("/checkout/success")}?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     });
     await db.from("orders").update({ stripe_session_id: session.id }).eq("id", order.id);
     return NextResponse.json({ clientSecret: session.client_secret, orderId: order.id });
