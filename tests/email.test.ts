@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { orderConfirmationEmail, orderShippedEmail } from "@/lib/email/templates";
+import { newOrderAlertEmail, orderConfirmationEmail, orderShippedEmail } from "@/lib/email/templates";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 import type { Order, OrderItem } from "@/lib/types";
 
@@ -34,5 +34,14 @@ describe("order emails", () => {
     expect(m.html).not.toContain("javascript:");
     expect(m.html).toContain("AB1GB");
     expect(m.text).toContain("Mother Beeresa, size M");
+  });
+
+  it("owner alert summarises the order with an admin link, escaping input", () => {
+    const m = newOrderAlertEmail({ order, items, settings: DEFAULT_SETTINGS });
+    expect(m.subject).toBe("New order #1008 — £35 (2 shirts)");
+    expect(m.html).toContain("/admin/orders/o1");
+    expect(m.html).toContain("&lt;b&gt;Tom&lt;/b&gt;");
+    expect(m.text).toContain("- Bierry Henry, L (★ The Stag)");
+    expect(DEFAULT_SETTINGS.contact.order_alert_email).toBe("freddie@pubclubapp.co.uk");
   });
 });

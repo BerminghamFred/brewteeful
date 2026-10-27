@@ -49,7 +49,7 @@ function footer(settings: SiteSettings) {
   </td></tr>`;
 }
 
-function shell(opts: { preheader: string; body: string; settings: SiteSettings }) {
+function shell(opts: { preheader: string; body: string; settings: SiteSettings; internal?: boolean }) {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(BRAND.name)}</title></head>
 <body style="margin:0;padding:0;background:${C.paper};">
@@ -60,7 +60,7 @@ function shell(opts: { preheader: string; body: string; settings: SiteSettings }
       <a href="${esc(BRAND.siteUrl)}" style="font:800 22px/1 ${FONT};letter-spacing:-0.5px;color:#ffffff;text-decoration:none;">${esc(BRAND.name)}</a>
     </td></tr>
     ${opts.body}
-    ${footer(opts.settings)}
+    ${opts.internal ? `<tr><td style="padding:8px 32px 28px;font:12px/1.5 ${FONT};color:#9a958c;">Order alert · reply goes to the customer.</td></tr>` : footer(opts.settings)}
   </table>
 </td></tr></table>
 </body></html>`;
@@ -206,4 +206,52 @@ export function orderShippedEmail(args: {
   ].join("\n");
 
   return { subject, html: shell({ preheader: `Expected ${range(eta.earliest, eta.latest)}.`, body, settings }), text };
+}
+
+/** Internal "you've got an order" alert for the shop owner — plain, scannable, links to admin. */
+export function newOrderAlertEmail(args: { order: Order; items: OrderItem[]; settings: SiteSettings }) {
+  const { order, items, settings } = args;
+  const d = settings.delivery;
+  const est = estimateDelivery(d, order.shipping_method === "express" ? "express" : "standard", new Date(order.paid_at ?? order.created_at));
+  const stag = order.event_date ? new Date(`${order.event_date}T12:00`) : null;
+  const addr = addressLines(order);
+  const adminUrl = `${BRAND.siteUrl}/admin/orders/${order.id}`;
+  const subject = `New order #${order.order_number} — ${gbp(order.total_pence)} (${order.item_count} shirts)`;
+  const row = (k: string, v: string) =>
+    `<tr><td style="padding:3px 12px 3px 0;font:14px/1.5 ${FONT};color:${C.mute};white-space:nowrap;vertical-align:top;">${k}</td><td style="padding:3px 0;font:14px/1.5 ${FONT};color:${C.ink};">${v}</td></tr>`;
+
+  const body = `
+    <tr><td style="padding:32px 32px 8px;">
+      ${h1(`New order #${order.order_number}`)}
+      ${p(`<strong>${gbp(order.total_pence)}</strong> · ${order.item_count} shirts${order.discount_code ? ` · code ${esc(order.discount_code)}` : ""}`)}
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:14px;">
+        ${row("Customer", esc(order.customer_name ?? "—"))}
+        ${row("Email", order.email ? `<a href="mailto:${esc(order.email)}" style="color:${C.pitch};">${esc(order.email)}</a>` : "—")}
+        ${order.phone ? row("Phone", esc(order.phone)) : ""}
+        ${row("Stag date", stag ? esc(formatDay(stag)) : "not given")}
+        ${row("Promised", esc(range(est.earliest, est.latest)))}
+      </table>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0 8px;"><tr><td style="border-radius:999px;background:${C.ink};">
+        <a href="${esc(adminUrl)}" style="display:inline-block;padding:12px 22px;font:700 14px/1 ${FONT};color:#ffffff;text-decoration:none;">Open in admin →</a>
+      </td></tr></table>
+    </td></tr>
+    ${section(`${h2("To print")}<p style="margin:0;font:14px/1.7 ${FONT};color:${C.ink};">${items
+      .map((i) => `<strong>${esc(i.product_name)}</strong> · ${esc(i.size)} <span style="color:${C.mute};">— ${esc(personLabel(i))}</span>`)
+      .join("<br>")}</p>`)}
+    ${addr.length ? section(`${h2("Ship to")}<p style="margin:0;font:14px/1.6 ${FONT};color:${C.ink};">${addr.map(esc).join("<br>")}</p>`) : ""}
+  `;
+
+  const text = [
+    `New order #${order.order_number} — ${gbp(order.total_pence)} (${order.item_count} shirts)${order.discount_code ? `, code ${order.discount_code}` : ""}`,
+    `Customer: ${order.customer_name ?? "—"} <${order.email ?? "—"}>${order.phone ? ` ${order.phone}` : ""}`,
+    `Stag date: ${stag ? formatDay(stag) : "not given"} · Promised: ${range(est.earliest, est.latest)}`,
+    ``,
+    `TO PRINT`,
+    ...items.map((i) => `- ${i.product_name}, ${i.size} (${personLabel(i)})`),
+    ...(addr.length ? [``, `SHIP TO`, ...addr] : []),
+    ``,
+    adminUrl,
+  ].join("\n");
+
+  return { subject, html: shell({ preheader: `${order.item_count} shirts · ${gbp(order.total_pence)}`, body, settings, internal: true }), text };
 }
