@@ -92,7 +92,7 @@ async function markPaid(session: Stripe.Checkout.Session) {
     .from("orders")
     .update({
       status: "paid",
-      paid_at: new Date((session.created ?? Date.now() / 1000) * 1000).toISOString(),
+      paid_at: new Date().toISOString(),
       email: details?.email ?? null,
       customer_name: ship?.name ?? details?.name ?? null,
       phone: details?.phone ?? null,

@@ -109,6 +109,12 @@ export async function POST(req: Request) {
     g.sizes.push(l.size);
     grouped.set(key, g);
   }
+  // Stripe only accepts absolute, publicly reachable image URLs; skip them on localhost.
+  const stripeImage = (url?: string | null) => {
+    if (!url) return undefined;
+    const abs = /^https?:\/\//.test(url) ? url : absoluteUrl(url);
+    return abs.startsWith("https://") ? [abs] : undefined;
+  };
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [...grouped.values()].map((g) => ({
     quantity: g.sizes.length,
     price_data: {
@@ -117,7 +123,7 @@ export async function POST(req: Request) {
       product_data: {
         name: `${g.name} T-shirt`,
         description: `Sizes: ${g.sizes.join(", ")}`,
-        images: g.image ? [g.image] : undefined,
+        images: stripeImage(g.image),
       },
     },
   }));
