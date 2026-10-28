@@ -11,6 +11,7 @@ const EXAMPLE_VARIANTS: Record<string, string> = {
   hero_image: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Group photo 2","weight":50,"config":{"hero_image_url":"https://..."}}]`,
   offer: `[{"key":"control","name":"No offer","weight":50,"config":{"offer_ids":[]}},{"key":"b","name":"8+ £10 off","weight":50,"config":{"offer_ids":["<offer id>"]}}]`,
   free_shipping: `[{"key":"control","name":"Free on all sets","weight":50,"config":{}},{"key":"b","name":"Free on 8+","weight":50,"config":{"free_shipping_min_items":8}}]`,
+  homepage: `[{"key":"a","name":"Current homepage","weight":50,"config":{}},{"key":"b","name":"Ad-matched hero + big designs","weight":50,"config":{"home_layout":"b"}}]`,
   min_group_size: `[{"key":"control","name":"Min 3","weight":50,"config":{}},{"key":"b","name":"Min 4","weight":50,"config":{"min_group_size":4}}]`,
 };
 
@@ -23,7 +24,7 @@ export default async function ExperimentsPage({ searchParams }: { searchParams: 
     <>
       <PageTitle
         title="Experiments"
-        sub="Winners are judged on contribution per visitor, not conversion rate. Rough guide: you need ~1,000+ visitors per variant before anything but huge differences is real — don't run tests during the first £300."
+        sub="Long-run winners are judged on contribution per visitor. At small volumes (a few hundred visitors), test one bold change at a time and judge it on engaged % and builder % among ad visitors — orders are too few to compare."
       />
       <Notice sp={sp} />
       <Card>
