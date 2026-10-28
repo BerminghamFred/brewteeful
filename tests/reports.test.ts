@@ -10,15 +10,18 @@ const s = (flags: Partial<SessionRow>): SessionRow =>
 describe("funnel", () => {
   it("computes step rates and the biggest drop", () => {
     const rows = [
-      ...Array.from({ length: 100 }, () => s({})),
-      ...Array.from({ length: 40 }, () => s({ started_builder: true })),
-      ...Array.from({ length: 10 }, () => s({ started_builder: true, completed_builder: true, added_to_cart: true, began_checkout: true })),
-      ...Array.from({ length: 2 }, () => s({ started_builder: true, completed_builder: true, added_to_cart: true, began_checkout: true, purchased: true })),
+      ...Array.from({ length: 70 }, () => s({})),
+      ...Array.from({ length: 30 }, () => s({ engaged: true })),
+      ...Array.from({ length: 40 }, () => s({ engaged: true, started_builder: true })),
+      ...Array.from({ length: 10 }, () => s({ engaged: true, started_builder: true, completed_builder: true, added_to_cart: true, began_checkout: true })),
+      ...Array.from({ length: 2 }, () => s({ engaged: true, started_builder: true, completed_builder: true, added_to_cart: true, began_checkout: true, purchased: true })),
     ];
     const f = funnel(rows);
     expect(f.steps[0]!.count).toBe(152);
-    expect(f.steps[1]!.count).toBe(52);
-    expect(f.steps[2]!.stepRate).toBeCloseTo(12 / 52);
+    expect(f.steps[1]!.key).toBe("engaged");
+    expect(f.steps[1]!.count).toBe(82);
+    expect(f.steps[2]!.count).toBe(52);
+    expect(f.steps[3]!.stepRate).toBeCloseTo(12 / 52);
     expect(f.biggestDrop).toBe("purchased"); // 12 -> 2 is an 83% loss
   });
 });

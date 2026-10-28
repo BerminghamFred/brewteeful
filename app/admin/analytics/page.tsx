@@ -32,6 +32,8 @@ export default async function AcquisitionPage({ searchParams }: { searchParams: 
               <tr>
                 <th className="py-1">{DIMENSIONS[by]}</th>
                 <th className="text-right">Sessions</th>
+                <th className="text-right" title="10s+ on screen, scrolled half a page, 2+ pages, or interacted">Engaged</th>
+                <th className="text-right" title="Median on-screen time of engaged sessions">Time</th>
                 <th className="text-right">Builder</th>
                 <th className="text-right">Configured</th>
                 <th className="text-right">Basket</th>
@@ -52,6 +54,8 @@ export default async function AcquisitionPage({ searchParams }: { searchParams: 
                   <tr key={r.key} className="border-t border-ink/10">
                     <td className="max-w-[260px] truncate py-2 font-bold" title={r.key}>{r.key}</td>
                     <td className="text-right tabular-nums">{r.sessions}</td>
+                    <td className="text-right tabular-nums">{r.engaged} <span className="text-mute">{r.sessions ? pct(r.engaged / r.sessions, 0) : ""}</span></td>
+                    <td className="text-right tabular-nums">{r.medianSecs != null ? `${r.medianSecs}s` : "—"}</td>
                     <td className="text-right tabular-nums">{r.started} <span className="text-mute">{r.sessions ? pct(r.started / r.sessions, 0) : ""}</span></td>
                     <td className="text-right tabular-nums">{r.configured}</td>
                     <td className="text-right tabular-nums">{r.carts}</td>
@@ -71,7 +75,7 @@ export default async function AcquisitionPage({ searchParams }: { searchParams: 
         </div>
         {!rows.length ? <p className="text-sm text-mute">No sessions in this period.</p> : null}
         <p className="mt-3 text-xs text-mute">
-          Keyword data needs <code>utm_term={"{keyword}"}</code> in your Google Ads tracking template (see docs/PLAN.md §8). Low-volume rows are noise — judge on totals until each row has 100+ clicks.
+          Engaged = on screen 10s+, scrolled half a page, viewed 2+ pages or used the builder — bots almost never are, so judge traffic on engaged sessions. Keyword data needs <code>utm_term={"{keyword}"}</code> in your Google Ads tracking template (see docs/PLAN.md §8). Low-volume rows are noise — judge on totals until each row has 100+ clicks.
         </p>
       </Card>
     </>
