@@ -4,6 +4,7 @@ import { priceSet } from "@/lib/pricing";
 import { gbp, deliveryWindowText } from "@/lib/format";
 import { BRAND, absoluteUrl } from "@/lib/brand";
 import { Lineup } from "@/components/site/Lineup";
+import { HeroB } from "@/components/site/HeroB";
 import { TeeArt } from "@/components/site/TeeArt";
 import { CtaLink } from "@/components/site/CtaLink";
 import { Faqs } from "@/components/site/Faqs";
@@ -35,6 +36,8 @@ export default async function HomePage() {
     }),
   }));
   const freeFrom = settings.pricing.free_shipping_min_items;
+  // Homepage A/B test (admin → Experiments, variable "homepage").
+  const isB = experiments.overrides.home_layout === "b";
 
   return (
     <>
@@ -60,6 +63,16 @@ export default async function HomePage() {
       />
 
       {/* 1. Hero */}
+      {isB ? (
+        <HeroB
+          products={products}
+          price={gbp(fromPrice)}
+          min={min}
+          deliveryWindow={deliveryWindow}
+          freeDelivery={freeFrom <= min}
+          cta={c.hero_cta}
+        />
+      ) : (
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-x-0 -top-40 h-[480px] bg-[radial-gradient(60%_60%_at_70%_30%,rgba(15,59,44,0.10),transparent)]" />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-8 md:grid-cols-[1.05fr_1fr] md:items-center md:gap-14 md:px-6 md:pb-24 md:pt-16">
@@ -95,6 +108,7 @@ export default async function HomePage() {
           <Lineup products={products} photoUrl={c.hero_image_url} photoAlt={c.hero_image_alt} />
         </div>
       </section>
+      )}
 
       {/* 2. How it works */}
       <section id="how-it-works" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 md:px-6 md:py-24">
@@ -115,7 +129,8 @@ export default async function HomePage() {
         </ol>
       </section>
 
-      {/* 3. Designs */}
+      {/* 3. Designs (variant B shows them in the hero instead) */}
+      {!isB ? (
       <section id="designs" className="scroll-mt-20 bg-chalk py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4 md:px-6">
           <TrackOnView event="view_collection" props={{ list_id: "home", count: products.length }}>
@@ -143,6 +158,7 @@ export default async function HomePage() {
           </TrackOnView>
         </div>
       </section>
+      ) : null}
 
       {/* 4. Pricing */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">

@@ -43,6 +43,20 @@ describe("assignVariant", () => {
     expect(resolveExperiments([{ ...exp, status: "ended" }], "x").assignments).toEqual({});
   });
 
+  it("homepage experiments switch the layout only for the B variant", () => {
+    const home: Experiment = {
+      ...exp,
+      key: "home-v2",
+      variable: "homepage",
+      variants: [
+        { key: "a", name: "Current", weight: 50, config: {} },
+        { key: "b", name: "New hero", weight: 50, config: { home_layout: "b" } },
+      ],
+    };
+    expect(resolveExperiments([home], "v", { "home-v2": "b" }).overrides.home_layout).toBe("b");
+    expect(resolveExperiments([home], "v", { "home-v2": "a" }).overrides.home_layout).toBeUndefined();
+  });
+
   it("ignores legacy experiments whose variants aren't a list (old schema)", () => {
     const legacy = { ...exp, variants: { A: { headline: "x" } } as unknown as Experiment["variants"] };
     expect(() => resolveExperiments([legacy], "visitor")).not.toThrow();

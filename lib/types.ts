@@ -222,7 +222,8 @@ export type ExperimentVariable =
   | "hero_image"
   | "offer"
   | "free_shipping"
-  | "min_group_size";
+  | "min_group_size"
+  | "homepage";
 
 export type ExperimentVariant = {
   key: string;

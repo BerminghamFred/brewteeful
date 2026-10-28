@@ -31,16 +31,20 @@ export default async function ExperimentPage({ params, searchParams }: { params:
           <>
             {minSessions < 1000 ? (
               <p className="mb-3 rounded bg-sun p-2 text-xs font-bold">
-                Not enough data yet ({minSessions} sessions in the smallest variant). Treat differences as noise until each variant has ~1,000 sessions and 20+ orders.
+                Early days ({minSessions} sessions in the smallest variant). With a few hundred visitors, only big gaps in <strong>Ad engaged %</strong> and <strong>Ad builder %</strong> mean anything; orders need ~1,000 sessions and 20+ orders per variant.
               </p>
             ) : null}
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[800px] text-sm">
+              <table className="w-full min-w-[1000px] text-sm">
                 <thead className="text-left text-xs uppercase text-mute">
                   <tr>
                     <th className="py-1">Variant</th>
                     <th className="text-right">Sessions</th>
+                    <th className="text-right">Engaged %</th>
                     <th className="text-right">Builder %</th>
+                    <th className="text-right" title="Google Ads visitors only">Ad visits</th>
+                    <th className="text-right" title="Google Ads visitors only">Ad engaged %</th>
+                    <th className="text-right" title="Google Ads visitors only">Ad builder %</th>
                     <th className="text-right">Basket %</th>
                     <th className="text-right">Checkout %</th>
                     <th className="text-right">Orders</th>
@@ -57,7 +61,11 @@ export default async function ExperimentPage({ params, searchParams }: { params:
                       <tr key={r.key} className="border-t border-ink/10">
                         <td className="py-2 font-bold">{r.name} <span className="text-xs text-mute">{r.key}</span></td>
                         <td className="text-right tabular-nums">{r.sessions}</td>
+                        <td className="text-right tabular-nums">{pct(r.engagedRate)}</td>
                         <td className="text-right tabular-nums">{pct(r.builderRate)}</td>
+                        <td className="text-right tabular-nums">{r.adSessions}</td>
+                        <td className="text-right tabular-nums font-semibold">{pct(r.adEngagedRate)}</td>
+                        <td className="text-right tabular-nums font-semibold">{pct(r.adBuilderRate)}</td>
                         <td className="text-right tabular-nums">{pct(r.cartRate)}</td>
                         <td className="text-right tabular-nums">{pct(r.checkoutRate)}</td>
                         <td className="text-right tabular-nums">{r.orders}</td>

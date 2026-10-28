@@ -39,6 +39,8 @@ export type ExperimentOverrides = {
   min_group_size?: number;
   /** Only these offer ids are active for this visitor (offer experiments). */
   offer_ids?: string[];
+  /** Homepage layout variant ("b" = ad-matched hero with big swipeable designs). */
+  home_layout?: string;
 };
 
 export type ExperimentContext = {
@@ -55,6 +57,7 @@ const OVERRIDE_KEYS: Record<ExperimentVariable, (keyof ExperimentOverrides)[]> =
   offer: ["offer_ids"],
   free_shipping: ["free_shipping_min_items"],
   min_group_size: ["min_group_size"],
+  homepage: ["home_layout"],
 };
 
 export function resolveExperiments(

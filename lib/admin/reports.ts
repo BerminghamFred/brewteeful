@@ -233,11 +233,16 @@ export function experimentResults(
     const summary = summarise(orders, sessions.length, 0, data.settings.economics);
     const f = funnel(sessions).steps;
     const rate = (k: string) => (sessions.length ? (f.find((x) => x.key === k)?.count ?? 0) / sessions.length : 0);
+    const ads = sessions.filter((s) => s.has_click_id);
     return {
       ...v,
       sessions: sessions.length,
       visitors,
+      engagedRate: rate("engaged"),
       builderRate: rate("started_builder"),
+      adSessions: ads.length,
+      adEngagedRate: ads.length ? ads.filter((s) => s.engaged).length / ads.length : 0,
+      adBuilderRate: ads.length ? ads.filter((s) => s.started_builder).length / ads.length : 0,
       cartRate: rate("added_to_cart"),
       checkoutRate: rate("began_checkout"),
       orders: summary.orders,
