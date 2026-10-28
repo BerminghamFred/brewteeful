@@ -7,6 +7,8 @@ export const COOKIES = {
   consent: "stg_consent",
   /** QA-only forced experiment variants. */
   force: "stg_force",
+  /** "1" = the owner's own browser (set via ?internal=1): never tracked or counted. */
+  internal: "stg_internal",
 } as const;
 
 export const VISITOR_MAX_AGE = 60 * 60 * 24 * 395;
