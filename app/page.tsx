@@ -5,6 +5,7 @@ import { gbp, deliveryWindowText } from "@/lib/format";
 import { BRAND, absoluteUrl } from "@/lib/brand";
 import { Lineup } from "@/components/site/Lineup";
 import { HeroB } from "@/components/site/HeroB";
+import { KeepTogether } from "@/components/site/KeepTogether";
 import { TeeArt } from "@/components/site/TeeArt";
 import { CtaLink } from "@/components/site/CtaLink";
 import { Faqs } from "@/components/site/Faqs";
@@ -71,6 +72,7 @@ export default async function HomePage() {
           deliveryWindow={deliveryWindow}
           freeDelivery={freeFrom <= min}
           cta={c.hero_cta}
+          headline={c.hero_headline}
         />
       ) : (
       <section className="relative overflow-hidden">
@@ -80,7 +82,7 @@ export default async function HomePage() {
             <p className="chip border-pitch/15 bg-pitch/[0.06] text-pitch">
               <span className="h-1.5 w-1.5 rounded-full bg-flare" /> {c.hero_eyebrow}
             </p>
-            <h1 className="h-display mt-5 text-balance text-[3.25rem] md:text-[5.25rem]">{c.hero_headline}</h1>
+            <h1 className="h-display mt-5 text-balance text-[3.25rem] md:text-[5.25rem]"><KeepTogether text={c.hero_headline} /></h1>
             <p className="mt-5 max-w-md text-[17px] leading-relaxed text-ink/70 md:text-lg">{c.hero_subheadline}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <CtaLink href="/build" location="hero" className="btn-primary h-14 px-8 text-base">
