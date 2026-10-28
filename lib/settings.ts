@@ -145,7 +145,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   content: {
     hero_eyebrow: "Stag do T-shirts",
-    hero_headline: "Pick your legend. Pick your pint.",
+    hero_headline: "The stag do T-shirt, done properly.",
     hero_subheadline:
       "Stag shirts starring hand-illustrated icons. A different one for each member of the group, including Bierry Henry, Wayne Schooney, Pamela Canderson and more.",
     hero_cta: "Build your stag set",

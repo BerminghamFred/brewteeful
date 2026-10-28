@@ -2,6 +2,7 @@ import Link from "next/link";
 import { TeeArt } from "@/components/site/TeeArt";
 import { CtaLink } from "@/components/site/CtaLink";
 import { TrackOnView } from "@/components/site/TrackOnView";
+import { KeepTogether } from "@/components/site/KeepTogether";
 import type { ProductWithRelations } from "@/lib/types";
 
 /**
@@ -17,6 +18,7 @@ export function HeroB({
   deliveryWindow,
   freeDelivery,
   cta,
+  headline,
 }: {
   products: ProductWithRelations[];
   price: string;
@@ -24,6 +26,8 @@ export function HeroB({
   deliveryWindow: string;
   freeDelivery: boolean;
   cta: string;
+  /** Same headline as A (content.hero_headline), so the test only compares layout. */
+  headline: string;
 }) {
   return (
     <section className="relative overflow-hidden bg-pitch text-chalk">
@@ -31,7 +35,7 @@ export function HeroB({
       <div className="relative mx-auto max-w-6xl px-4 pb-2 pt-6 md:px-6 md:pt-14">
         <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-chalk/60">Stag do T-shirts</p>
         <h1 className="h-display mt-2 max-w-3xl text-balance text-[2.5rem] leading-[0.95] md:text-[4.5rem]">
-          A different legend for every one of you.
+          <KeepTogether text={headline} />
         </h1>
         <p className="mt-3 text-[16px] text-chalk/80 md:text-lg">
           <strong className="text-chalk">{price} a shirt</strong> · min {min} · {freeDelivery ? "free UK delivery" : "UK delivery"} in {deliveryWindow}
