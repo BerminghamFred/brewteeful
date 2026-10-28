@@ -20,6 +20,13 @@ type Body = {
 
 const clip = (v: unknown, n = 500) => (typeof v === "string" ? v.slice(0, n) : null);
 
+/** Only two bounded integers are kept for engagement events. */
+function engagementProps(p: unknown) {
+  const o = (p && typeof p === "object" ? p : {}) as Record<string, unknown>;
+  const int = (v: unknown, max: number) => (typeof v === "number" && Number.isFinite(v) ? Math.min(max, Math.max(0, Math.round(v))) : 0);
+  return { secs: int(o.secs, 1800), scroll: int(o.scroll, 100) };
+}
+
 /** First-party event ingestion. Browsers never write to the DB directly. */
 export async function POST(req: Request) {
   if (!hasServiceRole()) return NextResponse.json({ ok: true, skipped: "no_db" });
@@ -65,12 +72,16 @@ export async function POST(req: Request) {
       visitor_id: visitorId,
       session_id: sessionId,
       path: clip(e.path, 300),
-      props: e.props && typeof e.props === "object" ? e.props : {},
+      props: e.name === "page_engagement" ? engagementProps(e.props) : e.props && typeof e.props === "object" ? e.props : {},
       value_pence: Number.isFinite(e.value_pence) ? Math.round(e.value_pence!) : null,
     }));
   if (events.length) {
-    const { error } = await db.from("events").insert(events);
+    const [{ error }, { error: seenError }] = await Promise.all([
+      db.from("events").insert(events),
+      db.from("visitor_sessions").update({ last_seen_at: new Date().toISOString() }).eq("id", sessionId),
+    ]);
     if (error) console.error("events insert", error);
+    if (seenError) console.error("session last_seen", seenError);
   }
   return NextResponse.json({ ok: true });
 }

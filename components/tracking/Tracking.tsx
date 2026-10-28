@@ -2,6 +2,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 import { ConsentAndPixel } from "@/components/tracking/ConsentAndPixel";
 import { PageViewTracker } from "@/components/tracking/PageViewTracker";
+import { EngagementTracker } from "@/components/tracking/EngagementTracker";
 import { COOKIES } from "@/lib/cookies";
 
 /**
@@ -43,6 +44,7 @@ ${adsId ? `gtag('config', '${adsId}', { allow_enhanced_conversions: true });` : 
       <ConsentAndPixel />
       <Suspense fallback={null}>
         <PageViewTracker />
+        <EngagementTracker />
       </Suspense>
     </>
   );

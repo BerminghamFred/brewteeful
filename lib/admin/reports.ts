@@ -29,6 +29,11 @@ export type SessionRow = {
   added_to_cart: boolean | null;
   began_checkout: boolean | null;
   purchased: boolean | null;
+  page_views: number;
+  engaged_secs: number;
+  max_scroll: number;
+  /** 10s+ on screen, scrolled half a page, 2+ pages, or interacted. Bots are ~never engaged. */
+  engaged: boolean | null;
 };
 
 export type Range = { from: Date; to: Date };
@@ -81,6 +86,7 @@ export type FunnelStep = { key: string; label: string; count: number; stepRate: 
 export function funnel(sessions: SessionRow[]): { steps: FunnelStep[]; biggestDrop: string | null } {
   const counts: Record<string, number> = {
     sessions: sessions.length,
+    engaged: sessions.filter((s) => s.engaged).length,
     started_builder: sessions.filter((s) => s.started_builder).length,
     completed_builder: sessions.filter((s) => s.completed_builder).length,
     added_to_cart: sessions.filter((s) => s.added_to_cart).length,
@@ -108,6 +114,7 @@ export function businessSummary(data: Awaited<ReturnType<typeof loadReportData>>
 }
 
 export const DIMENSIONS = {
+  has_click_id: "Google Ads vs other",
   utm_campaign: "Campaign",
   utm_content: "Ad group (utm_content)",
   utm_term: "Keyword (utm_term)",
@@ -120,6 +127,9 @@ export type Dimension = keyof typeof DIMENSIONS;
 export type BreakdownRow = {
   key: string;
   sessions: number;
+  engaged: number;
+  /** Median on-screen seconds across engaged sessions. */
+  medianSecs: number | null;
   started: number;
   configured: number;
   carts: number;
@@ -133,6 +143,11 @@ export type BreakdownRow = {
 
 function dimValue(row: { [k: string]: unknown }, dim: Dimension): string {
   const v = row[dim];
+  if (dim === "has_click_id") {
+    // Sessions carry has_click_id; orders carry the raw ids in their attribution.
+    const ads = v ?? (row.gclid || row.gbraid || row.wbraid);
+    return ads ? "Google Ads click" : "Other (direct, organic, bots)";
+  }
   if (dim === "landing_page" && typeof v === "string") return v.split("?")[0] || "/";
   return (typeof v === "string" && v) || "(none)";
 }
@@ -143,14 +158,20 @@ export function breakdown(data: Awaited<ReturnType<typeof loadReportData>>, dim:
   const get = (key: string) => {
     let r = rows.get(key);
     if (!r) {
-      r = { key, sessions: 0, started: 0, configured: 0, carts: 0, checkouts: 0, orders: 0, units: 0, revenuePence: 0, contributionPence: 0, spendPence: null };
+      r = { key, sessions: 0, engaged: 0, medianSecs: null, started: 0, configured: 0, carts: 0, checkouts: 0, orders: 0, units: 0, revenuePence: 0, contributionPence: 0, spendPence: null };
       rows.set(key, r);
     }
     return r;
   };
+  const secs = new Map<string, number[]>();
   for (const s of data.sessions) {
-    const r = get(dimValue(s, dim));
+    const key = dimValue(s, dim);
+    const r = get(key);
     r.sessions++;
+    if (s.engaged) {
+      r.engaged++;
+      secs.set(key, [...(secs.get(key) ?? []), s.engaged_secs ?? 0]);
+    }
     if (s.started_builder) r.started++;
     if (s.completed_builder) r.configured++;
     if (s.added_to_cart) r.carts++;
@@ -173,6 +194,10 @@ export function breakdown(data: Awaited<ReturnType<typeof loadReportData>>, dim:
       const r = get(k);
       r.spendPence = (r.spendPence ?? 0) + s.spend_pence;
     }
+  }
+  for (const [key, list] of secs) {
+    const sorted = list.sort((a, b) => a - b);
+    get(key).medianSecs = sorted.length ? sorted[Math.floor((sorted.length - 1) / 2)]! : null;
   }
   return [...rows.values()].sort((a, b) => b.sessions - a.sessions || b.orders - a.orders);
 }

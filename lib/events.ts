@@ -19,6 +19,7 @@ export const EVENT_NAMES = [
   "consent_update",
   "open_size_guide",
   "open_faq",
+  "page_engagement",
 ] as const;
 
 /** `purchase` and `session_start` are server-generated only. */
@@ -31,6 +32,7 @@ export function isClientEvent(name: string): name is ClientEventName {
 
 export const FUNNEL_STEPS = [
   { key: "sessions", label: "Sessions" },
+  { key: "engaged", label: "Engaged (10s+, scrolled half, or clicked on)" },
   { key: "started_builder", label: "Started group builder" },
   { key: "completed_builder", label: "Configured group" },
   { key: "added_to_cart", label: "Added to basket" },

@@ -27,6 +27,8 @@ type TrackOptions = {
   /** Monetary value in pounds (GA/Meta convention). Stored as pence first-party. */
   value?: number;
   items?: GaItem[];
+  /** Override the page the event belongs to (defaults to the current URL). */
+  path?: string;
 };
 
 const GA_NAME: Partial<Record<ClientEventName, string>> = {
@@ -74,6 +76,11 @@ function sessionAttribution(): SessionAttribution | undefined {
   return attr;
 }
 
+/** Send anything queued now (beacon when the page is being hidden/closed). */
+export function flushEvents(useBeacon = false) {
+  flush(useBeacon);
+}
+
 function flush(useBeacon = false) {
   if (timer) clearTimeout(timer);
   timer = null;
@@ -101,7 +108,7 @@ if (typeof window !== "undefined") {
 
 export function track(name: ClientEventName, props: Record<string, unknown> = {}, opts: TrackOptions = {}) {
   if (typeof window === "undefined") return;
-  const path = window.location.pathname;
+  const path = opts.path ?? window.location.pathname;
   queue.push({
     name,
     path,
@@ -117,6 +124,9 @@ export function track(name: ClientEventName, props: Record<string, unknown> = {}
     window.fbq?.("track", "PageView");
     return;
   }
+  // First-party only: GA4 measures engagement time and scrolling itself.
+  if (name === "page_engagement") return;
+
   const gaParams: Record<string, unknown> = { ...props };
   if (opts.value != null) Object.assign(gaParams, { value: opts.value, currency: "GBP" });
   if (opts.items) gaParams.items = opts.items;
