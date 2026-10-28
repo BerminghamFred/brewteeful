@@ -32,8 +32,16 @@ export async function middleware(request: NextRequest) {
   }
   if (force !== undefined) request.cookies.set(COOKIES.force, force);
 
+  // ?internal=1 marks this browser as the owner's (excluded from all tracking); ?internal=0 undoes it.
+  const internalParam = searchParams.get("internal");
+  if (internalParam === "1") request.cookies.set(COOKIES.internal, "1");
+  if (internalParam === "0") request.cookies.delete(COOKIES.internal);
+
   const response = NextResponse.next({ request: { headers: request.headers } });
   const secure = process.env.NODE_ENV === "production";
+  if (internalParam === "1")
+    response.cookies.set(COOKIES.internal, "1", { path: "/", maxAge: 60 * 60 * 24 * 400, sameSite: "lax", secure });
+  if (internalParam === "0") response.cookies.set(COOKIES.internal, "", { path: "/", maxAge: 0 });
   response.cookies.set(COOKIES.visitor, vid, { path: "/", maxAge: VISITOR_MAX_AGE, sameSite: "lax", secure });
   // Rolling 30-minute session; readable by JS so the tracker can tag events with it.
   response.cookies.set(COOKIES.session, sid, { path: "/", maxAge: SESSION_MAX_AGE, sameSite: "lax", secure });

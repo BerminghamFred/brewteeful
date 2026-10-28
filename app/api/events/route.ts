@@ -41,6 +41,7 @@ export async function POST(req: Request) {
   }
 
   const jar = await cookies();
+  if (jar.get(COOKIES.internal)?.value === "1") return NextResponse.json({ ok: true, skipped: "internal" });
   const visitorId = jar.get(COOKIES.visitor)?.value;
   const sessionId = jar.get(COOKIES.session)?.value;
   if (!visitorId || !sessionId || !/^[0-9a-f-]{36}$/i.test(sessionId))

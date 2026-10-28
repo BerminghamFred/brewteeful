@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { ConsentAndPixel } from "@/components/tracking/ConsentAndPixel";
 import { PageViewTracker } from "@/components/tracking/PageViewTracker";
 import { EngagementTracker } from "@/components/tracking/EngagementTracker";
+import { InternalBadge } from "@/components/tracking/InternalBadge";
 import { COOKIES } from "@/lib/cookies";
 
 /**
@@ -23,6 +24,10 @@ export function Tracking() {
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
+if (document.cookie.match(/(?:^|; )${COOKIES.internal}=1/)) {
+  ${gaId ? `window['ga-disable-${gaId}'] = true;` : ""}
+  ${adsId ? `window['ga-disable-${adsId}'] = true;` : ""}
+}
 var c = (document.cookie.match(/(?:^|; )${COOKIES.consent}=a([01])m([01])/) || []);
 gtag('consent', 'default', {
   analytics_storage: c[1] === '1' ? 'granted' : 'denied',
@@ -42,6 +47,7 @@ ${adsId ? `gtag('config', '${adsId}', { allow_enhanced_conversions: true });` : 
         </>
       ) : null}
       <ConsentAndPixel />
+      <InternalBadge />
       <Suspense fallback={null}>
         <PageViewTracker />
         <EngagementTracker />

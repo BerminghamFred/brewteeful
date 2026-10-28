@@ -84,6 +84,10 @@ export function flushEvents(useBeacon = false) {
 function flush(useBeacon = false) {
   if (timer) clearTimeout(timer);
   timer = null;
+  if (isInternal()) {
+    queue = [];
+    return;
+  }
   const session = sessionAttribution();
   if (!queue.length && !session) return;
   const payload = JSON.stringify({ events: queue, session });
@@ -106,8 +110,13 @@ if (typeof window !== "undefined") {
   window.addEventListener("pagehide", () => flush(true));
 }
 
+/** The owner's own browser (?internal=1): nothing is tracked anywhere. */
+export function isInternal() {
+  return readCookie(COOKIES.internal) === "1";
+}
+
 export function track(name: ClientEventName, props: Record<string, unknown> = {}, opts: TrackOptions = {}) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || isInternal()) return;
   const path = opts.path ?? window.location.pathname;
   queue.push({
     name,
@@ -153,6 +162,7 @@ export function trackPurchaseTags(p: {
   items: GaItem[];
   email?: string | null;
 }) {
+  if (isInternal()) return;
   const key = `stg_purchase_${p.orderId}`;
   try {
     if (localStorage.getItem(key)) return;

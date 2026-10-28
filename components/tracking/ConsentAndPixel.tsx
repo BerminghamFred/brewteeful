@@ -8,7 +8,7 @@ import { readCookie, track } from "@/lib/track";
 
 function loadMetaPixel() {
   const id = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-  if (!id || window.fbq) return;
+  if (!id || window.fbq || readCookie(COOKIES.internal) === "1") return;
   /* eslint-disable */
   (function (f: any, b: Document, e: string, v: string) {
     if (f.fbq) return;
