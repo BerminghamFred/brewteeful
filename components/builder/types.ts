@@ -8,6 +8,8 @@ export type BuilderDesign = {
   tagline: string | null;
   color: string;
   imageUrl: string | null;
+  /** Close-up of the print (no shirt) — easier to tell designs apart at small sizes. */
+  artworkUrl: string | null;
   pricePence: number;
   sizes: string[];
 };

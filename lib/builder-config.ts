@@ -14,6 +14,7 @@ export async function getBuilderConfig(): Promise<BuilderConfig> {
     tagline: p.tagline,
     color: p.accent_color,
     imageUrl: p.images[0]?.url ?? p.hero_image_url,
+    artworkUrl: p.artwork_url,
     pricePence: p.price_pence,
     sizes: settings.sizing.sizes.filter((s) => p.variants.some((v) => v.size === s)),
   }));
