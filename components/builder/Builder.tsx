@@ -1,15 +1,28 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { decodeLineup, encodeLineup, useSetStore, type Person } from "@/stores/set-store";
+import { fillDesigns } from "@/lib/lineup";
 import { TeeArt } from "@/components/site/TeeArt";
 import { gbp } from "@/lib/format";
 import { checkEventDate, formatDay } from "@/lib/delivery";
 import { track, type GaItem } from "@/lib/track";
 import type { BuilderConfig, BuilderDesign } from "@/components/builder/types";
 import { isComplete, useSetPricing } from "@/components/builder/useSetPricing";
+
+/** A design's artwork on its own colour; falls back to the shirt photo. */
+function DesignThumb({ d, className, sizes }: { d: BuilderDesign | null | undefined; className: string; sizes: string }) {
+  if (d?.artworkUrl)
+    return (
+      <div className={`relative overflow-hidden ${className}`} style={{ backgroundColor: d.color }}>
+        <Image src={d.artworkUrl} alt={d.name} fill sizes={sizes} className="object-contain p-1" />
+      </div>
+    );
+  return <TeeArt name={d?.name ?? " "} color={d?.color ?? "#d9d6cf"} imageUrl={d?.imageUrl} label={false} sizes={sizes} className={className} />;
+}
 
 export function Builder({ cfg }: { cfg: BuilderConfig }) {
   const router = useRouter();
@@ -26,6 +39,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
   const min = cfg.pricing.min_group_size;
   const max = cfg.pricing.max_group_size;
   const bySlug = useMemo(() => new Map(cfg.designs.map((d) => [d.slug, d])), [cfg.designs]);
+  const designOrder = useMemo(() => cfg.designs.map((d) => d.slug).filter((s) => s !== cfg.stagSlug), [cfg.designs, cfg.stagSlug]);
 
   // Hydrate: shared link > existing set > ?design= prefill > fresh set of `min`.
   useEffect(() => {
@@ -47,6 +61,13 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
         if (idx >= 0) useSetStore.getState().updatePerson(idx, { design: prefill });
       }
       source = "design_page";
+    }
+    // Start with a ready-made lineup: everyone gets a different design, so the only
+    // job left is sizes (anything already chosen, shared or prefilled is kept).
+    if (!shared) {
+      const st = useSetStore.getState();
+      const filled = fillDesigns(st.people, designOrder);
+      if (filled.some((p, i) => p !== st.people[i])) st.replaceAll(filled, st.eventDate);
     }
     if (useSetStore.getState().people.length > 10) setCustomSize(true);
     setMounted(true);
@@ -98,6 +119,9 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
     // Record attempts below the minimum: it tells us whether min group size is costing orders.
     const clamped = Math.max(min, Math.min(max, n));
     store.setGroupSize(clamped);
+    // New people join with a design nobody else has yet.
+    const st = useSetStore.getState();
+    st.replaceAll(fillDesigns(st.people, designOrder), st.eventDate);
     store.setInBasket(false);
     track("select_group_size", { group_size: clamped, attempted: n, below_min_attempt: n < min });
   }
@@ -277,6 +301,9 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
             <span className="font-semibold text-ink">{readyCount}</span>/{people.length} ready
           </span>
         </div>
+        <p className="mt-2 text-[15px] text-ink/70">
+          We&apos;ve given everyone a different design. Tap to swap any, then pick sizes.
+        </p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <button type="button" onClick={allDifferent} className="btn-ghost min-h-[40px] px-4 text-sm">
             Everyone different
@@ -314,14 +341,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                 className={`card p-4 transition md:p-5 ${missing ? "ring-2 ring-flare" : ""}`}
               >
                 <div className="flex items-center gap-3.5">
-                  <TeeArt
-                    name={d?.name ?? " "}
-                    color={d?.color ?? "#d9d6cf"}
-                    imageUrl={d?.imageUrl}
-                    label={false}
-                    sizes="56px"
-                    className="h-14 w-14 shrink-0 rounded-2xl"
-                  />
+                  <DesignThumb d={d} sizes="64px" className="h-16 w-14 shrink-0 rounded-2xl" />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-2 text-[12px] font-medium text-mute">
                       {i === 0 ? <span className="text-flare">★ The Stag</span> : `Person ${i + 1}`}
@@ -356,15 +376,12 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                         className="group relative shrink-0 text-center"
                         title={opt.name}
                       >
-                        <TeeArt
-                          name={opt.name}
-                          color={opt.color}
-                          imageUrl={opt.imageUrl}
-                          label={false}
-                          sizes="68px"
-                          className={`h-[68px] w-[68px] rounded-2xl ring-offset-2 transition ${selected ? "ring-2 ring-ink" : "opacity-90 group-hover:opacity-100"}`}
+                        <DesignThumb
+                          d={opt}
+                          sizes="96px"
+                          className={`h-[104px] w-[84px] rounded-2xl ring-offset-2 transition ${selected ? "ring-[3px] ring-ink" : "opacity-85 group-hover:opacity-100"}`}
                         />
-                        <span className={`mt-1.5 block w-[68px] truncate text-[11px] ${selected ? "font-semibold text-ink" : "text-mute"}`}>{opt.name}</span>
+                        <span className={`mt-1.5 block w-[84px] truncate text-[11px] ${selected ? "font-semibold text-ink" : "text-mute"}`}>{opt.name}</span>
                         {uses > 0 && !selected ? (
                           <span className="absolute right-1.5 top-2.5 h-2 w-2 rounded-full bg-ink/70 ring-2 ring-chalk" title={`Already used ×${uses}`} />
                         ) : null}
