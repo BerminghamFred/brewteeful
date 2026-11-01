@@ -1,5 +1,6 @@
 import { CheckoutPageBody } from "./CheckoutPageBody";
 import { getStorefrontContext } from "@/lib/store";
+import { parseSizeFlow } from "@/components/builder/types";
 
 export const metadata = {
   title: "Checkout",
@@ -7,6 +8,6 @@ export const metadata = {
 };
 
 export default async function CheckoutPage() {
-  const { settings } = await getStorefrontContext();
-  return <CheckoutPageBody guarantee={settings.content.guarantee} />;
+  const { settings, experiments } = await getStorefrontContext();
+  return <CheckoutPageBody guarantee={settings.content.guarantee} sizesLater={parseSizeFlow(experiments.overrides.size_flow) === "pay_first"} />;
 }

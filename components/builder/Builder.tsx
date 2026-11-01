@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { decodeLineup, encodeLineup, useSetStore, type Person } from "@/stores/set-store";
-import { fillDesigns } from "@/lib/lineup";
+import { fillDesigns, fillSizes } from "@/lib/lineup";
+import { SaveLineup } from "@/components/builder/SaveLineup";
 import { TeeArt } from "@/components/site/TeeArt";
 import { gbp } from "@/lib/format";
 import { checkEventDate, formatDay } from "@/lib/delivery";
@@ -40,6 +41,10 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
   const max = cfg.pricing.max_group_size;
   const bySlug = useMemo(() => new Map(cfg.designs.map((d) => [d.slug, d])), [cfg.designs]);
   const designOrder = useMemo(() => cfg.designs.map((d) => d.slug).filter((s) => s !== cfg.stagSlug), [cfg.designs, cfg.stagSlug]);
+  // Size-step A/B/C test.
+  const flow = cfg.sizeFlow;
+  const sizesLater = flow === "pay_first";
+  const DEFAULT_SIZE = "L";
 
   // Hydrate: shared link > existing set > ?design= prefill > fresh set of `min`.
   useEffect(() => {
@@ -66,7 +71,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
     // job left is sizes (anything already chosen, shared or prefilled is kept).
     if (!shared) {
       const st = useSetStore.getState();
-      const filled = fillDesigns(st.people, designOrder);
+      let filled = fillDesigns(st.people, designOrder);
+      if (flow === "default_l") filled = fillSizes(filled, DEFAULT_SIZE);
       if (filled.some((p, i) => p !== st.people[i])) st.replaceAll(filled, st.eventDate);
     }
     if (useSetStore.getState().people.length > 10) setCustomSize(true);
@@ -83,8 +89,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
   }, []);
 
   const pricing = useSetPricing(cfg, people);
-  const complete = isComplete(people);
-  const readyCount = people.filter((p) => p.design && p.size).length;
+  const complete = isComplete(people, sizesLater);
+  const readyCount = people.filter((p) => p.design && (p.size || sizesLater)).length;
   const distinct = new Set(people.map((p) => p.design).filter(Boolean)).size;
 
   const items: GaItem[] = useMemo(() => {
@@ -121,7 +127,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
     store.setGroupSize(clamped);
     // New people join with a design nobody else has yet.
     const st = useSetStore.getState();
-    st.replaceAll(fillDesigns(st.people, designOrder), st.eventDate);
+    const filled = fillDesigns(st.people, designOrder);
+    st.replaceAll(flow === "default_l" ? fillSizes(filled, DEFAULT_SIZE) : filled, st.eventDate);
     store.setInBasket(false);
     track("select_group_size", { group_size: clamped, attempted: n, below_min_attempt: n < min });
   }
@@ -183,7 +190,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
 
   function addToBasket() {
     if (!complete || !pricing.meetsMinimum) {
-      const idx = people.findIndex((p) => !p.design || !p.size);
+      const idx = people.findIndex((p) => !p.design || (!p.size && !sizesLater));
       if (idx >= 0) {
         setHighlight(idx);
         cardRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -191,7 +198,11 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
       return;
     }
     store.setInBasket(true);
-    track("add_to_cart", { group_size: people.length, distinct_designs: distinct }, { value: pricing.totalPence / 100, items });
+    track(
+      "add_to_cart",
+      { group_size: people.length, distinct_designs: distinct, size_flow: flow, sizes_missing: people.filter((p) => !p.size).length },
+      { value: pricing.totalPence / 100, items }
+    );
     router.push("/basket");
   }
 
@@ -302,8 +313,39 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
           </span>
         </div>
         <p className="mt-2 text-[15px] text-ink/70">
-          We&apos;ve given everyone a different design. Tap to swap any, then pick sizes.
+          {flow === "default_l"
+            ? "We've given everyone a different design and set everyone to L. Tap to swap any design or size."
+            : sizesLater
+              ? "We've given everyone a different design. Tap to swap any. Sizes are optional for now."
+              : "We've given everyone a different design. Tap to swap any, then pick sizes."}
         </p>
+
+        {sizesLater ? (
+          <div className="mt-4 rounded-3xl bg-pitch p-5 text-chalk">
+            <p className="text-[17px] font-semibold">Pay now, add sizes later</p>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-chalk/80">
+              Don&apos;t know everyone&apos;s size yet? Pay for the set now and we&apos;ll send you a link for the group chat, so
+              everyone adds their own size. <strong className="text-chalk">Printing starts as soon as the last size is in</strong>, so the
+              sooner sizes are filled in, the sooner your shirts arrive.
+            </p>
+          </div>
+        ) : flow === "share" ? (
+          <div className="mt-4 rounded-3xl bg-pitch p-5 text-chalk">
+            <p className="text-[17px] font-semibold">Don&apos;t know everyone&apos;s size?</p>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-chalk/80">
+              Send the lineup to the group chat: everyone picks their size, then you check out. Or email it to yourself and come back later.
+            </p>
+            <button type="button" onClick={share} className="btn mt-4 w-full bg-chalk text-ink hover:bg-sun">
+              {copied ? "Link copied ✓" : "Send to the group chat"}
+            </button>
+            <SaveLineup lineupUrl={() => `${window.location.origin}/build?${encodeLineup(people, eventDate)}`} groupSize={people.length} />
+          </div>
+        ) : (
+          <div className="mt-4 rounded-3xl bg-paper p-4 text-[15px] text-ink/80">
+            <strong className="text-ink">Everyone&apos;s set to L to start.</strong> Change any that need it — the{" "}
+            <Link href="/size-guide" target="_blank" className="underline">size guide</Link> has the measurements for every size.
+          </div>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <button type="button" onClick={allDifferent} className="btn-ghost min-h-[40px] px-4 text-sm">
             Everyone different
@@ -330,8 +372,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
         <div className="mt-5 space-y-3">
           {people.map((p, i) => {
             const d = p.design ? bySlug.get(p.design) : null;
-            const missing = highlight === i && (!p.design || !p.size);
-            const done = Boolean(p.design && p.size);
+            const missing = highlight === i && (!p.design || (!p.size && !sizesLater));
+            const done = Boolean(p.design && (p.size || sizesLater));
             return (
               <div
                 key={i}
@@ -390,7 +432,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
                   })}
                 </div>
 
-                <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label={`Size for person ${i + 1}`}>
+                {sizesLater ? <p className="mt-3 text-[12px] font-medium text-mute">Size (optional — or add after paying)</p> : null}
+                <div className={`${sizesLater ? "mt-1.5" : "mt-3"} flex flex-wrap gap-1.5`} role="radiogroup" aria-label={`Size for person ${i + 1}`}>
                   {(d?.sizes ?? cfg.sizes).map((s) => (
                     <button
                       key={s}

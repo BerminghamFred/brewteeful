@@ -63,7 +63,10 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
                   <td className="text-right tabular-nums">{o.item_count}</td>
                   <td className="text-right tabular-nums">{gbp(o.total_pence, { whole: false })}</td>
                   <td>{o.status}</td>
-                  <td>{o.fulfilment_status}</td>
+                  <td>
+                    {o.fulfilment_status}
+                    {o.sizes_token && !o.sizes_completed_at ? <span className="ml-1 rounded bg-sun px-1.5 text-xs font-semibold">sizes pending</span> : null}
+                  </td>
                   <td>{o.event_date ?? "—"}</td>
                   <td className="max-w-[180px] truncate text-xs text-mute">
                     {[o.attribution?.utm_source, o.attribution?.utm_term].filter(Boolean).join(" · ") || (o.attribution?.gclid ? "google (gclid)" : "direct")}

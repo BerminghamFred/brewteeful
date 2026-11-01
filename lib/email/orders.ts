@@ -6,7 +6,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSettings } from "@/lib/store";
 import type { Order, OrderItem } from "@/lib/types";
 import { emailConfigured, sendEmail } from "@/lib/email/send";
-import { newOrderAlertEmail, orderConfirmationEmail, orderShippedEmail, type EmailProduct } from "@/lib/email/templates";
+import {
+  newOrderAlertEmail,
+  orderConfirmationEmail,
+  orderShippedEmail,
+  sizesCompleteAlertEmail,
+  sizesCompleteEmail,
+  type EmailProduct,
+} from "@/lib/email/templates";
 
 type Kind = "confirmation" | "shipped";
 const COLUMN: Record<Kind, "confirmation_email_sent_at" | "shipped_email_sent_at"> = {
@@ -87,5 +94,41 @@ export async function sendNewOrderAlert(orderId: string): Promise<boolean> {
   } catch (e) {
     console.error("new order alert", orderId, e);
     return false;
+  }
+}
+
+function alertRecipients(raw: string) {
+  return raw
+    .split(/[,;\s]+/)
+    .map((s) => s.trim())
+    .filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+}
+
+/** Pay-now-sizes-later: the last size is in. Tells the customer and the owner (once). */
+export async function sendSizesComplete(orderId: string): Promise<void> {
+  if (!emailConfigured()) return;
+  try {
+    const data = await load(orderId);
+    if (!data) return;
+    const settings = await getSettings();
+    if (data.order.email) {
+      await sendEmail({
+        to: data.order.email,
+        ...sizesCompleteEmail({ ...data, settings }),
+        replyTo: settings.contact.email,
+        idempotencyKey: `sizes-complete-${orderId}`,
+      });
+    }
+    const to = alertRecipients(settings.contact.order_alert_email);
+    if (to.length) {
+      await sendEmail({
+        to,
+        ...sizesCompleteAlertEmail({ order: data.order, items: data.items, settings }),
+        replyTo: data.order.email,
+        idempotencyKey: `sizes-alert-${orderId}`,
+      });
+    }
+  } catch (e) {
+    console.error("sizes complete emails", orderId, e);
   }
 }

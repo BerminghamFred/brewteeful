@@ -1,6 +1,6 @@
 import "server-only";
 import { getCatalogue, getStorefrontContext } from "@/lib/store";
-import type { BuilderConfig } from "@/components/builder/types";
+import { parseSizeFlow, type BuilderConfig } from "@/components/builder/types";
 
 export async function getBuilderConfig(): Promise<BuilderConfig> {
   const [{ settings, offers, experiments }, { products }] = await Promise.all([
@@ -26,5 +26,6 @@ export async function getBuilderConfig(): Promise<BuilderConfig> {
     offers,
     unitPriceOverridePence: experiments.overrides.unit_price_pence ?? null,
     stagSlug: designs.find((d) => d.slug === "the-stag")?.slug ?? null,
+    sizeFlow: parseSizeFlow(experiments.overrides.size_flow),
   };
 }

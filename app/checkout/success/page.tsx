@@ -9,6 +9,9 @@ import { gbp } from "@/lib/format";
 import type { Order, OrderItem } from "@/lib/types";
 import { PurchaseComplete } from "@/components/checkout/PurchaseComplete";
 import { emailConfigured } from "@/lib/email/send";
+import { SIZE_TBC } from "@/lib/sizes";
+import { sizesUrl } from "@/lib/email/templates";
+import { ShareSizesLink } from "@/components/sizes/ShareSizesLink";
 
 export const metadata = { title: "Order confirmed", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -29,6 +32,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
   if (!order) notFound();
   const { data: items } = await db.from("order_items").select("*").eq("order_id", order.id).order("position").returns<OrderItem[]>();
 
+  const awaitingSizes = Boolean(order.sizes_token && !order.sizes_completed_at && (items ?? []).some((i) => i.size === SIZE_TBC));
   const est = estimateDelivery(settings.delivery, order.shipping_method === "express" ? "express" : "standard", new Date(order.created_at));
   const email = session.customer_details?.email ?? order.email;
 
@@ -53,6 +57,25 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
           email={email}
         />
       ) : null}
+      {(() => {
+        const missing = (items ?? []).filter((i) => i.size === SIZE_TBC).length;
+        if (!paid || !order.sizes_token || order.sizes_completed_at || !missing) return null;
+        const d = settings.delivery;
+        return (
+          <div className="mb-8 rounded-3xl bg-pitch p-6 text-chalk">
+            <p className="eyebrow text-chalk/60">One last step</p>
+            <p className="h-display mt-2 text-3xl">Now add everyone&apos;s sizes.</p>
+            <p className="mt-2 text-[15px] leading-relaxed text-chalk/80">
+              {missing} {missing === 1 ? "size is" : "sizes are"} still needed. Send this link to the group chat so everyone taps their own size.{" "}
+              <strong className="text-chalk">Printing starts as soon as the last size is in</strong>, then it&apos;s{" "}
+              {d.production_days_min + d.standard_days_min}–{d.production_days_max + d.standard_days_max} working days to arrive. The sooner
+              everyone&apos;s done, the sooner your shirts turn up.
+            </p>
+            <ShareSizesLink url={sizesUrl(order.sizes_token)} />
+            <p className="mt-3 text-xs text-chalk/60">We&apos;ve emailed you this link too.</p>
+          </div>
+        );
+      })()}
       <p className="eyebrow text-pitch">{paid ? "Order confirmed" : "Payment processing"}</p>
       <h1 className="h-display mt-1 text-5xl md:text-6xl">{paid ? "Shirts sorted. Legend." : "Nearly there…"}</h1>
       <p className="mt-3 text-lg">
@@ -63,14 +86,21 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
       <ol className="card mt-6 divide-y divide-ink/[0.06]">
         <li className="p-4">
           <p className="font-semibold">1. Printing</p>
-          <p className="text-sm text-ink/80">Your set goes to print within one working day and takes {settings.delivery.production_days_min}–{settings.delivery.production_days_max} working days.</p>
+          <p className="text-sm text-ink/80">
+            {awaitingSizes ? "Your set goes to print as soon as the last size is in" : "Your set goes to print within one working day"} and takes{" "}
+            {settings.delivery.production_days_min}–{settings.delivery.production_days_max} working days.
+          </p>
         </li>
         <li className="p-4">
           <p className="font-semibold">2. Dispatch</p>
           <p className="text-sm text-ink/80">One parcel, tracked. We&apos;ll email your tracking link as soon as it ships.</p>
         </li>
         <li className="p-4">
-          <p className="font-semibold">3. Arrives {formatDay(est.earliest)}{est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}</p>
+          <p className="font-semibold">
+            3. {awaitingSizes ? "Arrives (if all sizes are in today) " : "Arrives "}
+            {formatDay(est.earliest)}
+            {est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}
+          </p>
           {order.event_date ? <p className="text-sm text-ink/80">Stag date: {new Date(order.event_date + "T12:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</p> : null}
         </li>
       </ol>
@@ -83,7 +113,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
               <span className="font-bold">{i.is_stag ? "★ The Stag" : `Person ${i.position}`}</span>
               {i.nickname ? ` (${i.nickname})` : ""} — {i.product_name}
             </span>
-            <span className="font-semibold">{i.size}</span>
+            <span className={`font-semibold ${i.size === SIZE_TBC ? "text-flare" : ""}`}>{i.size === SIZE_TBC ? "Size to follow" : i.size}</span>
           </li>
         ))}
         <li className="flex justify-between p-3 font-semibold">

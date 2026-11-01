@@ -41,6 +41,11 @@ export type ExperimentOverrides = {
   offer_ids?: string[];
   /** Homepage layout variant ("b" = ad-matched hero with big swipeable designs). */
   home_layout?: string;
+  /**
+   * Builder size step: "pay_first" (sizes optional, collected by link after paying),
+   * "share" (share/save lineup up top), "default_l" (everyone starts as L).
+   */
+  size_flow?: string;
 };
 
 export type ExperimentContext = {
@@ -58,6 +63,7 @@ const OVERRIDE_KEYS: Record<ExperimentVariable, (keyof ExperimentOverrides)[]> =
   free_shipping: ["free_shipping_min_items"],
   min_group_size: ["min_group_size"],
   homepage: ["home_layout"],
+  size_flow: ["size_flow"],
 };
 
 export function resolveExperiments(

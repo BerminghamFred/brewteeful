@@ -24,3 +24,25 @@ describe("fillDesigns", () => {
     expect(out[1]).toBe(people[1]);
   });
 });
+
+import { fillSizes } from "@/lib/lineup";
+import { isComplete } from "@/components/builder/useSetPricing";
+import { parseSizeFlow } from "@/components/builder/types";
+
+describe("size flows", () => {
+  it("fillSizes only fills blanks", () => {
+    expect(fillSizes([p("a", "M"), p("b")], "L").map((x) => x.size)).toEqual(["M", "L"]);
+  });
+  it("sizes are optional only for pay-now-sizes-later", () => {
+    const people = [p("a", "M"), p("b")];
+    expect(isComplete(people)).toBe(false);
+    expect(isComplete(people, true)).toBe(true);
+    expect(isComplete([p(null)], true)).toBe(false);
+  });
+  it("unknown flow values fall back to share", () => {
+    expect(parseSizeFlow("pay_first")).toBe("pay_first");
+    expect(parseSizeFlow("default_l")).toBe("default_l");
+    expect(parseSizeFlow(undefined)).toBe("share");
+    expect(parseSizeFlow("nonsense")).toBe("share");
+  });
+});

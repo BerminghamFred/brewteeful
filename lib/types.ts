@@ -125,6 +125,9 @@ export type Order = {
   paid_at: string | null;
   confirmation_email_sent_at: string | null;
   shipped_email_sent_at: string | null;
+  /** Pay-now-sizes-later: secret for /sizes/<token>; null for normal orders. */
+  sizes_token: string | null;
+  sizes_completed_at: string | null;
 };
 
 export type OrderItem = {
@@ -223,7 +226,8 @@ export type ExperimentVariable =
   | "offer"
   | "free_shipping"
   | "min_group_size"
-  | "homepage";
+  | "homepage"
+  | "size_flow";
 
 export type ExperimentVariant = {
   key: string;

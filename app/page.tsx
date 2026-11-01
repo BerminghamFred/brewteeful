@@ -37,8 +37,9 @@ export default async function HomePage() {
     }),
   }));
   const freeFrom = settings.pricing.free_shipping_min_items;
-  // Homepage A/B test (admin → Experiments, variable "homepage").
-  const isB = experiments.overrides.home_layout === "b";
+  // B (ad-matched hero) won home-v2 and is the default; a "homepage" experiment can still
+  // force the old layout with home_layout = "a".
+  const isB = (experiments.overrides.home_layout ?? "b") === "b";
 
   return (
     <>

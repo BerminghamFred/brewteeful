@@ -20,6 +20,7 @@ export const EVENT_NAMES = [
   "open_size_guide",
   "open_faq",
   "page_engagement",
+  "save_lineup",
 ] as const;
 
 /** `purchase` and `session_start` are server-generated only. */

@@ -12,6 +12,7 @@ const EXAMPLE_VARIANTS: Record<string, string> = {
   offer: `[{"key":"control","name":"No offer","weight":50,"config":{"offer_ids":[]}},{"key":"b","name":"8+ £10 off","weight":50,"config":{"offer_ids":["<offer id>"]}}]`,
   free_shipping: `[{"key":"control","name":"Free on all sets","weight":50,"config":{}},{"key":"b","name":"Free on 8+","weight":50,"config":{"free_shipping_min_items":8}}]`,
   homepage: `[{"key":"a","name":"Current homepage","weight":50,"config":{}},{"key":"b","name":"Ad-matched hero + big designs","weight":50,"config":{"home_layout":"b"}}]`,
+  size_flow: `[{"key":"pay_first","name":"1: Pay now, sizes later","weight":34,"config":{"size_flow":"pay_first"}},{"key":"share","name":"2: Share/save lineup","weight":33,"config":{"size_flow":"share"}},{"key":"default_l","name":"3: Everyone starts as L","weight":33,"config":{"size_flow":"default_l"}}]`,
   min_group_size: `[{"key":"control","name":"Min 3","weight":50,"config":{}},{"key":"b","name":"Min 4","weight":50,"config":{"min_group_size":4}}]`,
 };
 

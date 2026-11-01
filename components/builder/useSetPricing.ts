@@ -23,6 +23,7 @@ export function useSetPricing(cfg: BuilderConfig, people: Person[], shippingMeth
   }, [cfg, people, shippingMethod]);
 }
 
-export function isComplete(people: Person[]) {
-  return people.length > 0 && people.every((p) => p.design && p.size);
+/** Ready for the basket. With `sizesLater` (pay now, sizes later) only designs are required. */
+export function isComplete(people: Person[], sizesLater = false) {
+  return people.length > 0 && people.every((p) => p.design && (p.size || sizesLater));
 }
