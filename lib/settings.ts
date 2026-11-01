@@ -189,7 +189,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
-      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. From £20 a shirt, minimum 3, tracked UK delivery.",
+      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. Minimum 3 shirts, free tracked UK delivery.",
     og_image_url: "",
   },
   sizing: {

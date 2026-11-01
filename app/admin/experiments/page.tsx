@@ -5,7 +5,7 @@ import { Card, Field, Notice, PageTitle } from "@/components/admin/ui";
 import type { Experiment } from "@/lib/types";
 
 const EXAMPLE_VARIANTS: Record<string, string> = {
-  price: `[{"key":"control","name":"£20","weight":50,"config":{}},{"key":"p2199","name":"£21.99","weight":50,"config":{"unit_price_pence":2199}}]`,
+  price: `[{"key":"p1400","name":"£14","weight":34,"config":{"unit_price_pence":1400}},{"key":"p1700","name":"£17","weight":33,"config":{"unit_price_pence":1700}},{"key":"p2000","name":"£20","weight":33,"config":{"unit_price_pence":2000}}]`,
   headline: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Different design for everyone","weight":50,"config":{"headline":"A different shirt for everyone.","subheadline":"..."}}]`,
   cta: `[{"key":"control","name":"Build your stag set","weight":50,"config":{}},{"key":"b","name":"Sort the shirts","weight":50,"config":{"cta":"Sort the shirts"}}]`,
   hero_image: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Group photo 2","weight":50,"config":{"hero_image_url":"https://..."}}]`,

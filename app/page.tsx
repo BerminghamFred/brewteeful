@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getApprovedReviews, getCatalogue, getFaqs, getStorefrontContext } from "@/lib/store";
 import { priceSet } from "@/lib/pricing";
-import { gbp, deliveryWindowText } from "@/lib/format";
+import { gbp, deliveryWindowText, fillPrice } from "@/lib/format";
 import { BRAND, absoluteUrl } from "@/lib/brand";
 import { Lineup } from "@/components/site/Lineup";
 import { HeroB } from "@/components/site/HeroB";
@@ -16,7 +16,7 @@ import { JsonLd } from "@/components/site/JsonLd";
 export const metadata = { alternates: { canonical: "/" } };
 
 export default async function HomePage() {
-  const [{ settings, offers, experiments }, { products }, faqs, reviews] = await Promise.all([
+  const [{ settings, offers, experiments }, { products }, rawFaqs, reviews] = await Promise.all([
     getStorefrontContext(),
     getCatalogue(),
     getFaqs(),
@@ -25,6 +25,7 @@ export default async function HomePage() {
   const c = settings.content;
   const unitOverride = experiments.overrides.unit_price_pence ?? null;
   const fromPrice = unitOverride ?? Math.min(...products.map((p) => p.price_pence), 2000);
+  const faqs = rawFaqs.map((f) => ({ ...f, answer: fillPrice(f.answer, fromPrice) }));
   const min = settings.pricing.min_group_size;
   const deliveryWindow = deliveryWindowText(settings.delivery);
   const examples = [min, 6, 8, 10].filter((n, i, a) => n >= min && a.indexOf(n) === i);

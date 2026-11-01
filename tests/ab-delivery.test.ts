@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { assignVariant, resolveExperiments } from "@/lib/ab";
 import { addWorkingDays, checkEventDate } from "@/lib/delivery";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
+import { fillPrice } from "@/lib/format";
 import type { Experiment } from "@/lib/types";
 
 const exp: Experiment = {
@@ -77,5 +78,29 @@ describe("delivery", () => {
     expect(checkEventDate(d, new Date(2026, 9, 9), "standard", now).status).toBe("tight");
     expect(checkEventDate(d, new Date(2026, 10, 1), "standard", now).status).toBe("comfortable");
     expect(checkEventDate(d, new Date(2026, 8, 1), "standard", now).status).toBe("past");
+  });
+});
+
+describe("price × size-flow tests run side by side", () => {
+  const exp = (key: string, variable: string, variants: [string, Record<string, unknown>][]) =>
+    ({ id: key, key, name: key, variable, status: "running", winner: null, started_at: null, ended_at: null, created_at: "",
+       variants: variants.map(([k, config]) => ({ key: k, name: k, weight: 1, config })) }) as never;
+  const running = [
+    exp("price-3way", "price", [["p1400", { unit_price_pence: 1400 }], ["p1700", { unit_price_pence: 1700 }], ["p2000", { unit_price_pence: 2000 }]]),
+    exp("size-flow", "size_flow", [["pay_first", { size_flow: "pay_first" }], ["share", { size_flow: "share" }], ["default_l", { size_flow: "default_l" }]]),
+  ];
+  it("every visitor gets one of each, and all 9 combinations occur", () => {
+    const combos = new Set<string>();
+    for (let i = 0; i < 2000; i++) {
+      const ctx = resolveExperiments(running, `v${i}`);
+      expect(ctx.overrides.unit_price_pence).toBeDefined();
+      expect(ctx.overrides.size_flow).toBeDefined();
+      combos.add(`${ctx.overrides.unit_price_pence}/${ctx.overrides.size_flow}`);
+    }
+    expect(combos.size).toBe(9);
+  });
+  it("fillPrice swaps the token for the visitor's price", () => {
+    expect(fillPrice("{price} a shirt", 1400)).toBe("£14 a shirt");
+    expect(fillPrice("{price} a shirt", 1750)).toBe("£17.50 a shirt");
   });
 });
