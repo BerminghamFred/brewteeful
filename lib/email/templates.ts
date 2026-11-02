@@ -7,6 +7,7 @@ import { addWorkingDays, estimateDelivery, formatDay } from "@/lib/delivery";
 import { gbp } from "@/lib/format";
 import type { SiteSettings } from "@/lib/settings";
 import type { Order, OrderItem } from "@/lib/types";
+import { SIZE_TBC } from "@/lib/sizes";
 
 const C = { pitch: "#0f3b2c", ink: "#0e0e10", paper: "#f6f5f1", mute: "#6f6b64", line: "#e8e6e0", flare: "#ff5a2c" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
@@ -30,6 +31,11 @@ function abs(url: string | null | undefined) {
 const firstName = (order: Order) => (order.customer_name ?? "").trim().split(/\s+/)[0] || "legend";
 const personLabel = (i: OrderItem) =>
   i.is_stag ? `★ The Stag${i.nickname ? ` (${i.nickname})` : ""}` : i.nickname || `Person ${i.position}`;
+/** Pay-now-sizes-later orders: items stay SIZE_TBC until the group fills them in. */
+const awaitingSizes = (order: Order, items: OrderItem[]) =>
+  Boolean(order.sizes_token && !order.sizes_completed_at && items.some((i) => i.size === SIZE_TBC));
+export const sizesUrl = (token: string) => `${BRAND.siteUrl}/sizes/${token}`;
+const sizeLabel = (i: OrderItem) => (i.size === SIZE_TBC ? "Size to follow" : `Size ${i.size}`);
 const range = (a: Date, b: Date) => (a.getTime() === b.getTime() ? formatDay(a) : `${formatDay(a)} – ${formatDay(b)}`);
 
 function addressLines(order: Order) {
@@ -78,7 +84,7 @@ function lineupRows(items: OrderItem[], products: Record<string, EmailProduct>) 
         <td width="76" style="padding:8px 0;">${thumb}</td>
         <td style="padding:8px 0;font:14px/1.45 ${FONT};color:${C.ink};">
           <strong>${esc(personLabel(i))}</strong><br>
-          <span style="color:${C.mute};">${esc(i.product_name)} · Size ${esc(i.size)}</span>
+          <span style="color:${C.mute};">${esc(i.product_name)} · ${esc(sizeLabel(i))}</span>
         </td>
       </tr>`;
     })
@@ -99,6 +105,8 @@ function totalsRows(order: Order) {
 const h1 = (t: string) => `<h1 style="margin:0;font:800 30px/1.1 ${FONT};letter-spacing:-0.8px;color:${C.ink};">${t}</h1>`;
 const p = (t: string) => `<p style="margin:12px 0 0;font:15px/1.6 ${FONT};color:${C.ink};">${t}</p>`;
 const h2 = (t: string) => `<p style="margin:0 0 8px;font:700 12px/1 ${FONT};letter-spacing:1.4px;text-transform:uppercase;color:${C.mute};">${t}</p>`;
+const button = (href: string, label: string) =>
+  `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0 6px;"><tr><td style="border-radius:999px;background:${C.ink};"><a href="${esc(href)}" style="display:inline-block;padding:14px 26px;font:700 15px/1 ${FONT};color:#ffffff;text-decoration:none;">${label}</a></td></tr></table>`;
 const section = (inner: string) => `<tr><td style="padding:0 32px;"><div style="border-top:1px solid ${C.line};padding:20px 0;">${inner}</div></td></tr>`;
 
 export function orderConfirmationEmail(args: {
@@ -112,14 +120,30 @@ export function orderConfirmationEmail(args: {
   const est = estimateDelivery(d, order.shipping_method === "express" ? "express" : "standard", new Date(order.paid_at ?? order.created_at));
   const stag = order.event_date ? new Date(`${order.event_date}T12:00`) : null;
   const addr = addressLines(order);
-  const subject = `Order #${order.order_number} confirmed — your stag shirts are going to print`;
+  const waiting = awaitingSizes(order, items);
+  const link = order.sizes_token ? sizesUrl(order.sizes_token) : "";
+  const missing = items.filter((i) => i.size === SIZE_TBC).length;
+  const subject = waiting
+    ? `Order #${order.order_number} confirmed — now add everyone's sizes`
+    : `Order #${order.order_number} confirmed — your stag shirts are going to print`;
 
   const body = `
     <tr><td style="padding:32px 32px 8px;">
-      ${h1("Shirts sorted. Legend.")}
-      ${p(`Cheers ${esc(firstName(order))} — order <strong>#${order.order_number}</strong> is confirmed and paid. Your set goes to print within one working day.`)}
+      ${h1(waiting ? "Paid. Now for the sizes." : "Shirts sorted. Legend.")}
+      ${
+        waiting
+          ? `${p(`Cheers ${esc(firstName(order))} — order <strong>#${order.order_number}</strong> is confirmed and paid. One last step: <strong>${missing} ${missing === 1 ? "size is" : "sizes are"} still needed.</strong>`)}
+             ${p(`Send this link to the group chat so everyone adds their own size. <strong>We start printing as soon as the last size is in</strong>, so the sooner they're filled in, the sooner your shirts arrive.`)}
+             ${button(link, "Add everyone's sizes →")}
+             <p style="margin:6px 0 0;font:13px/1.5 ${FONT};color:${C.mute};word-break:break-all;">${esc(link)}</p>`
+          : p(`Cheers ${esc(firstName(order))} — order <strong>#${order.order_number}</strong> is confirmed and paid. Your set goes to print within one working day.`)
+      }
       <div style="margin:18px 0 8px;padding:14px 16px;border-radius:14px;background:${C.paper};font:15px/1.5 ${FONT};color:${C.ink};">
-        <strong>Arriving ${esc(range(est.earliest, est.latest))}</strong>${stag ? `<br><span style="color:${C.mute};">Stag date: ${esc(formatDay(stag))}</span>` : ""}
+        <strong>${
+          waiting
+            ? `Arrives ${d.production_days_min + d.standard_days_min}–${d.production_days_max + d.standard_days_max} working days after the last size is in`
+            : `Arriving ${esc(range(est.earliest, est.latest))}`
+        }</strong>${waiting ? `<br><span style="color:${C.mute};">All sizes in today? Arriving ${esc(range(est.earliest, est.latest))}.</span>` : ""}${stag ? `<br><span style="color:${C.mute};">Stag date: ${esc(formatDay(stag))}</span>` : ""}
       </div>
     </td></tr>
     ${section(`${h2("The lineup")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${lineupRows(items, products)}</table>`)}
@@ -127,6 +151,7 @@ export function orderConfirmationEmail(args: {
     ${addr.length ? section(`${h2("Delivering to")}<p style="margin:0;font:14px/1.6 ${FONT};color:${C.ink};">${addr.map(esc).join("<br>")}</p>`) : ""}
     ${section(`${h2("What happens next")}
       <p style="margin:0;font:14px/1.7 ${FONT};color:${C.ink};">
+        ${waiting ? `<strong>0. Sizes</strong> — everyone adds theirs at the link above. Printing starts when the last one's in.<br>` : ""}
         <strong>1. Printing</strong> — ${d.production_days_min}–${d.production_days_max} working days.<br>
         <strong>2. Dispatch</strong> — one tracked parcel. We'll email your tracking link the moment it ships.<br>
         <strong>3. Arrives</strong> — ${esc(range(est.earliest, est.latest))}.
@@ -137,11 +162,20 @@ export function orderConfirmationEmail(args: {
   const text = [
     `Shirts sorted. Legend.`,
     ``,
-    `Cheers ${firstName(order)} — order #${order.order_number} is confirmed and paid. Your set goes to print within one working day.`,
-    `Arriving ${range(est.earliest, est.latest)}${stag ? ` (stag date: ${formatDay(stag)})` : ""}.`,
+    ...(waiting
+      ? [
+          `Cheers ${firstName(order)} — order #${order.order_number} is confirmed and paid. One last step: ${missing} ${missing === 1 ? "size is" : "sizes are"} still needed.`,
+          `Send this link to the group chat so everyone adds their own size. We start printing as soon as the last size is in, so the sooner they're filled in, the sooner your shirts arrive:`,
+          link,
+          `Arrives ${d.production_days_min + d.standard_days_min}–${d.production_days_max + d.standard_days_max} working days after the last size is in${stag ? ` (stag date: ${formatDay(stag)})` : ""}.`,
+        ]
+      : [
+          `Cheers ${firstName(order)} — order #${order.order_number} is confirmed and paid. Your set goes to print within one working day.`,
+          `Arriving ${range(est.earliest, est.latest)}${stag ? ` (stag date: ${formatDay(stag)})` : ""}.`,
+        ]),
     ``,
     `THE LINEUP`,
-    ...items.map((i) => `- ${personLabel(i)}: ${i.product_name}, size ${i.size}`),
+    ...items.map((i) => `- ${personLabel(i)}: ${i.product_name}, ${sizeLabel(i).toLowerCase()}`),
     ``,
     `${order.item_count} shirts: ${gbp(order.subtotal_pence)}`,
     ...(order.discount_pence ? [`Discount: -${gbp(order.discount_pence)}`] : []),
@@ -155,7 +189,8 @@ export function orderConfirmationEmail(args: {
     settings.contact.email ? `Questions? ${settings.contact.email}` : ``,
   ].join("\n");
 
-  return { subject, html: shell({ preheader: `Arriving ${range(est.earliest, est.latest)}. Here's your lineup.`, body, settings }), text };
+  const preheader = waiting ? "Send the sizes link to the group — printing starts when the last size is in." : `Arriving ${range(est.earliest, est.latest)}. Here's your lineup.`;
+  return { subject, html: shell({ preheader, body, settings }), text };
 }
 
 export function orderShippedEmail(args: {
@@ -224,6 +259,11 @@ export function newOrderAlertEmail(args: { order: Order; items: OrderItem[]; set
     <tr><td style="padding:32px 32px 8px;">
       ${h1(`New order #${order.order_number}`)}
       ${p(`<strong>${gbp(order.total_pence)}</strong> · ${order.item_count} shirts${order.discount_code ? ` · code ${esc(order.discount_code)}` : ""}`)}
+      ${
+        awaitingSizes(order, items)
+          ? `<p style="margin:12px 0 0;padding:10px 14px;border-radius:12px;background:#fff1ec;font:600 14px/1.5 ${FONT};color:${C.ink};">Pay now, sizes later — ${items.filter((i) => i.size === SIZE_TBC).length} sizes still to come. Don't print yet: you'll get another email when they're all in.</p>`
+          : ""
+      }
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:14px;">
         ${row("Customer", esc(order.customer_name ?? "—"))}
         ${row("Email", order.email ? `<a href="mailto:${esc(order.email)}" style="color:${C.pitch};">${esc(order.email)}</a>` : "—")}
@@ -236,7 +276,7 @@ export function newOrderAlertEmail(args: { order: Order; items: OrderItem[]; set
       </td></tr></table>
     </td></tr>
     ${section(`${h2("To print")}<p style="margin:0;font:14px/1.7 ${FONT};color:${C.ink};">${items
-      .map((i) => `<strong>${esc(i.product_name)}</strong> · ${esc(i.size)} <span style="color:${C.mute};">— ${esc(personLabel(i))}</span>`)
+      .map((i) => `<strong>${esc(i.product_name)}</strong> · ${esc(i.size === SIZE_TBC ? "size TBC" : i.size)} <span style="color:${C.mute};">— ${esc(personLabel(i))}</span>`)
       .join("<br>")}</p>`)}
     ${addr.length ? section(`${h2("Ship to")}<p style="margin:0;font:14px/1.6 ${FONT};color:${C.ink};">${addr.map(esc).join("<br>")}</p>`) : ""}
   `;
@@ -254,4 +294,57 @@ export function newOrderAlertEmail(args: { order: Order; items: OrderItem[]; set
   ].join("\n");
 
   return { subject, html: shell({ preheader: `${order.item_count} shirts · ${gbp(order.total_pence)}`, body, settings, internal: true }), text };
+}
+
+/** Customer: every size is in, the set is going to print. */
+export function sizesCompleteEmail(args: { order: Order; items: OrderItem[]; products: Record<string, EmailProduct>; settings: SiteSettings }) {
+  const { order, items, products, settings } = args;
+  const est = estimateDelivery(settings.delivery, order.shipping_method === "express" ? "express" : "standard", new Date());
+  const subject = `All sizes in — order #${order.order_number} is going to print`;
+  const body = `
+    <tr><td style="padding:32px 32px 8px;">
+      ${h1("All sizes in. Printing now.")}
+      ${p(`Nice one ${esc(firstName(order))} — everyone's size is in for order <strong>#${order.order_number}</strong>, so your set goes to print within one working day.`)}
+      <div style="margin:18px 0 8px;padding:14px 16px;border-radius:14px;background:${C.paper};font:15px/1.5 ${FONT};color:${C.ink};"><strong>Arriving ${esc(range(est.earliest, est.latest))}</strong></div>
+    </td></tr>
+    ${section(`${h2("The lineup")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${lineupRows(items, products)}</table>`)}
+  `;
+  const text = [
+    `All sizes in. Printing now.`,
+    ``,
+    `Everyone's size is in for order #${order.order_number}, so your set goes to print within one working day. Arriving ${range(est.earliest, est.latest)}.`,
+    ``,
+    ...items.map((i) => `- ${personLabel(i)}: ${i.product_name}, size ${i.size}`),
+  ].join("\n");
+  return { subject, html: shell({ preheader: `Arriving ${range(est.earliest, est.latest)}.`, body, settings }), text };
+}
+
+/** Owner: a pay-now-sizes-later order is complete and can be printed. */
+export function sizesCompleteAlertEmail(args: { order: Order; items: OrderItem[]; settings: SiteSettings }) {
+  const alert = newOrderAlertEmail(args);
+  return { ...alert, subject: `Sizes complete — order #${args.order.order_number} ready to print` };
+}
+
+/** "Email me this lineup" (A/B/C option 2). */
+export function savedLineupEmail(args: { link: string; groupSize: number | null; settings: SiteSettings }) {
+  const { link, groupSize, settings } = args;
+  const subject = "Your stag lineup — pick up where you left off";
+  const body = `
+    <tr><td style="padding:32px 32px 8px;">
+      ${h1("Your lineup, saved.")}
+      ${p(`Here's the ${groupSize ? `${groupSize}-person ` : ""}lineup you started. Open it any time to change designs, add sizes and check out.`)}
+      ${p(`Don't know everyone's size? Forward this link to the group chat — everyone can open it and pick theirs.`)}
+      ${button(link, "Open my lineup →")}
+      <p style="margin:6px 0 0;font:13px/1.5 ${FONT};color:${C.mute};word-break:break-all;">${esc(link)}</p>
+    </td></tr>
+  `;
+  const text = [
+    `Your lineup, saved.`,
+    ``,
+    `Here's the lineup you started. Open it any time to change designs, add sizes and check out:`,
+    link,
+    ``,
+    `Don't know everyone's size? Forward this link to the group chat — everyone can open it and pick theirs.`,
+  ].join("\n");
+  return { subject, html: shell({ preheader: "Open it any time to add sizes and check out.", body, settings }), text };
 }

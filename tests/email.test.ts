@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { newOrderAlertEmail, orderConfirmationEmail, orderShippedEmail } from "@/lib/email/templates";
+import { newOrderAlertEmail, orderConfirmationEmail, orderShippedEmail, savedLineupEmail, sizesCompleteEmail } from "@/lib/email/templates";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 import type { Order, OrderItem } from "@/lib/types";
 
@@ -43,5 +43,31 @@ describe("order emails", () => {
     expect(m.html).toContain("&lt;b&gt;Tom&lt;/b&gt;");
     expect(m.text).toContain("- Bierry Henry, L (★ The Stag)");
     expect(DEFAULT_SETTINGS.contact.order_alert_email).toBe("freddie@pubclubapp.co.uk");
+  });
+
+  it("pay-now-sizes-later confirmation leads with the sizes link and 'sooner sizes, sooner shirts'", () => {
+    const waitingOrder = { ...order, sizes_token: "tok_123456789012345678", sizes_completed_at: null } as Order;
+    const tbc = [{ ...items[0]!, size: "TBC" }, items[1]!] as OrderItem[];
+    const m = orderConfirmationEmail({ order: waitingOrder, items: tbc, products: {}, settings: DEFAULT_SETTINGS });
+    expect(m.subject).toContain("add everyone's sizes");
+    expect(m.html).toContain("/sizes/tok_123456789012345678");
+    expect(m.html).toContain("as soon as the last size is in");
+    expect(m.html).toContain("Size to follow");
+    expect(m.text).toContain("1 size is still needed");
+    const alert = newOrderAlertEmail({ order: waitingOrder, items: tbc, settings: DEFAULT_SETTINGS });
+    expect(alert.html).toContain("Don't print yet");
+  });
+
+  it("normal orders don't mention sizes later", () => {
+    const m = orderConfirmationEmail({ order: { ...order, sizes_token: null, sizes_completed_at: null } as Order, items, products: {}, settings: DEFAULT_SETTINGS });
+    expect(m.html).not.toContain("/sizes/");
+    expect(m.subject).toContain("going to print");
+  });
+
+  it("sizes-complete and saved-lineup emails", () => {
+    expect(sizesCompleteEmail({ order, items, products: {}, settings: DEFAULT_SETTINGS }).subject).toContain("All sizes in");
+    const saved = savedLineupEmail({ link: "https://x.test/build?n=3&p=a,b,c", groupSize: 3, settings: DEFAULT_SETTINGS });
+    expect(saved.html).toContain("https://x.test/build?n=3&amp;p=a,b,c");
+    expect(saved.html).toContain("3-person");
   });
 });

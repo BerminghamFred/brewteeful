@@ -69,6 +69,20 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
               {order.refunded_pence ? ` · Refunded ${gbp(order.refunded_pence)}` : ""}
             </p>
           </Card>
+          {order.sizes_token ? (
+            <Card title="Sizes (pay now, sizes later)">
+              {order.sizes_completed_at ? (
+                <p className="text-sm">All sizes in {new Date(order.sizes_completed_at).toLocaleString("en-GB")} — OK to print.</p>
+              ) : (
+                <p className="text-sm font-semibold text-flare">
+                  Waiting for {(items ?? []).filter((i) => i.size === "TBC").length} of {order.item_count} sizes — don&apos;t print yet.
+                </p>
+              )}
+              <p className="mt-2 break-all text-xs text-mute">
+                Group link: <a className="underline" href={`/sizes/${order.sizes_token}`} target="_blank" rel="noreferrer">/sizes/{order.sizes_token}</a>
+              </p>
+            </Card>
+          ) : null}
           <Card title="Customer & delivery">
             <p className="text-sm">
               <strong>{order.customer_name}</strong>

@@ -21,9 +21,14 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
     ? await db.from("order_items").select("*").in("order_id", ids).order("position").returns<OrderItem[]>()
     : { data: [] as OrderItem[] };
 
-  const sizes = [...new Set((items ?? []).map((i) => i.size))];
+  // Pay-now-sizes-later orders can't be printed until every size is in.
+  const waitingIds = new Set((orders ?? []).filter((o) => o.sizes_token && !o.sizes_completed_at).map((o) => o.id));
+  const waiting = (orders ?? []).filter((o) => waitingIds.has(o.id));
+  const printable = (orders ?? []).filter((o) => !waitingIds.has(o.id));
+  const printItems = (items ?? []).filter((i) => !waitingIds.has(i.order_id));
+  const sizes = [...new Set(printItems.map((i) => i.size))];
   const matrix = new Map<string, Map<string, number>>();
-  for (const i of items ?? []) {
+  for (const i of printItems) {
     const row = matrix.get(i.product_name) ?? new Map<string, number>();
     row.set(i.size, (row.get(i.size) ?? 0) + 1);
     matrix.set(i.product_name, row);
@@ -38,7 +43,7 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
         </div>
       </PageTitle>
       <Notice sp={sp} />
-      <Card title={`Totals — ${items?.length ?? 0} shirts across ${ids.length} orders`}>
+      <Card title={`Totals — ${printItems.length} shirts across ${printable.length} orders`}>
         {matrix.size ? (
           <table className="w-full text-sm">
             <thead className="text-left text-xs uppercase text-mute">
@@ -62,9 +67,25 @@ export default async function PickListPage({ searchParams }: { searchParams: Pro
           <p className="text-sm text-mute">Nothing waiting.</p>
         )}
       </Card>
-      {ids.length ? (
+      {waiting.length ? (
+        <Card title={`Waiting for sizes — ${waiting.length} paid ${waiting.length === 1 ? "order" : "orders"} (don't print yet)`}>
+          <ul className="space-y-1 text-sm">
+            {waiting.map((o) => {
+              const its = (items ?? []).filter((i) => i.order_id === o.id);
+              const missing = its.filter((i) => i.size === "TBC").length;
+              return (
+                <li key={o.id}>
+                  <Link href={`/admin/orders/${o.id}`} className="font-semibold underline">#{o.order_number}</Link> — {o.customer_name} · {missing} of {its.length} sizes still to come
+                  {o.event_date ? <span className="ml-2 rounded bg-sun px-1.5">Stag {o.event_date}</span> : null}
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ) : null}
+      {printable.length ? (
         <form action={bulkFulfilment}>
-          {(orders ?? []).map((o) => (
+          {printable.map((o) => (
             <Card key={o.id}>
               <label className="flex items-start gap-3">
                 <input type="checkbox" name="ids" value={o.id} defaultChecked className="mt-1" />

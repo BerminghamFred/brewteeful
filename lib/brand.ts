@@ -7,7 +7,7 @@ export const BRAND = {
   legalName: "BrewTeeFul",
   tagline: "Stag shirts that aren't shit.",
   description:
-    "Coordinated stag-do T-shirt sets. A different design for everyone in the group, one collection that looks great together. From £20 a shirt, UK delivery.",
+    "Coordinated stag-do T-shirt sets. A different design for everyone in the group, one collection that looks great together. Free tracked UK delivery.",
   siteUrl: normaliseOrigin(process.env.NEXT_PUBLIC_SITE_URL) ?? "http://localhost:3000",
   locale: "en_GB",
   currency: "GBP",

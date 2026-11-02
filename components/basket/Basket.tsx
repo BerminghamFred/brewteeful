@@ -26,7 +26,9 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
 
   useEffect(() => setMounted(true), []);
 
-  const ready = mounted && inBasket && isComplete(people);
+  const sizesLater = cfg.sizeFlow === "pay_first";
+  const missingSizes = people.filter((p) => !p.size).length;
+  const ready = mounted && inBasket && isComplete(people, sizesLater);
 
   // Server quote is authoritative (codes, experiment pricing); refresh when inputs change.
   useEffect(() => {
@@ -97,11 +99,21 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
                   </p>
                   <p className="truncate font-semibold">{d?.name}</p>
                 </div>
-                <span className="rounded-full bg-paper px-3 py-1 text-sm font-medium">{p.size}</span>
+                <span className={`rounded-full px-3 py-1 text-sm font-medium ${p.size ? "bg-paper" : "bg-[#fff1ec] text-ink/70"}`}>{p.size ?? "Size later"}</span>
               </li>
             );
           })}
         </ul>
+        {sizesLater && missingSizes ? (
+          <div className="mt-4 rounded-3xl bg-pitch p-5 text-chalk">
+            <p className="font-semibold">Pay now, add {missingSizes === people.length ? "sizes" : `the other ${missingSizes} ${missingSizes === 1 ? "size" : "sizes"}`} later</p>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-chalk/80">
+              After you pay, we&apos;ll email you a link to send to the group chat so everyone adds their own size.{" "}
+              <strong className="text-chalk">Printing starts as soon as the last size is in</strong>, so the sooner they&apos;re in, the sooner your
+              shirts arrive.
+            </p>
+          </div>
+        ) : null}
       </div>
 
       <aside className="min-w-0 space-y-4 md:sticky md:top-24 md:self-start">
@@ -122,8 +134,20 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
           ) : null}
 
           <p className="mt-4 rounded-2xl bg-paper p-4 text-sm">
-            <strong>Estimated arrival:</strong> {formatDay(est.earliest)}
-            {est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}
+            {sizesLater && missingSizes ? (
+              <>
+                <strong>Arrives {cfg.delivery.production_days_min + cfg.delivery.standard_days_min}–{cfg.delivery.production_days_max + cfg.delivery.standard_days_max} working days after the last size is in.</strong>{" "}
+                <span className="text-mute">
+                  All in today? {formatDay(est.earliest)}
+                  {est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}.
+                </span>
+              </>
+            ) : (
+              <>
+                <strong>Estimated arrival:</strong> {formatDay(est.earliest)}
+                {est.latest > est.earliest ? `–${formatDay(est.latest)}` : ""}
+              </>
+            )}
             {eventDate ? <span className="block text-xs text-mute">Stag date: {new Date(eventDate + "T12:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span> : null}
           </p>
 

@@ -20,3 +20,8 @@ export function deliveryWindowText(d: {
 }) {
   return `${d.production_days_min + d.standard_days_min}–${d.production_days_max + d.standard_days_max} working days`;
 }
+
+/** Content can say "{price}" instead of a fixed figure, so price tests stay consistent. */
+export function fillPrice(text: string, pence: number) {
+  return text.replaceAll("{price}", gbp(pence));
+}

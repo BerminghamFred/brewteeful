@@ -4,7 +4,8 @@ import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasServiceRole } from "@/lib/supabase/public";
-import { buildQuote, orderCostSnapshot, parseCheckoutInput } from "@/lib/checkout";
+import { randomBytes } from "node:crypto";
+import { SIZE_TBC, buildQuote, orderCostSnapshot, parseCheckoutInput } from "@/lib/checkout";
 import { getStorefrontContext } from "@/lib/store";
 import { COOKIES, parseConsent } from "@/lib/cookies";
 import { absoluteUrl } from "@/lib/brand";
@@ -80,6 +81,8 @@ export async function POST(req: Request) {
       attribution,
       experiments: ctx.experiments.assignments,
       consent: parseConsent(jar.get(COOKIES.consent)?.value),
+      // Pay now, sizes later: secret link the group uses to add their sizes after paying.
+      sizes_token: quote.lines.some((l) => l.size === SIZE_TBC) ? randomBytes(18).toString("base64url") : null,
     })
     .select("id, order_number")
     .single();
@@ -136,7 +139,9 @@ export async function POST(req: Request) {
       unit_amount: g.unit,
       product_data: {
         name: `${g.name} T-shirt`,
-        description: `Sizes: ${g.sizes.join(", ")}`,
+        description: g.sizes.every((s) => s === SIZE_TBC)
+          ? "Sizes to follow — you'll get a link to add them"
+          : `Sizes: ${g.sizes.map((s) => (s === SIZE_TBC ? "to follow" : s)).join(", ")}`,
         images: stripeImage(g.image),
       },
     },

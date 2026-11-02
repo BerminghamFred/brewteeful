@@ -5,13 +5,14 @@ import { Card, Field, Notice, PageTitle } from "@/components/admin/ui";
 import type { Experiment } from "@/lib/types";
 
 const EXAMPLE_VARIANTS: Record<string, string> = {
-  price: `[{"key":"control","name":"£20","weight":50,"config":{}},{"key":"p2199","name":"£21.99","weight":50,"config":{"unit_price_pence":2199}}]`,
+  price: `[{"key":"p1400","name":"£14","weight":34,"config":{"unit_price_pence":1400}},{"key":"p1700","name":"£17","weight":33,"config":{"unit_price_pence":1700}},{"key":"p2000","name":"£20","weight":33,"config":{"unit_price_pence":2000}}]`,
   headline: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Different design for everyone","weight":50,"config":{"headline":"A different shirt for everyone.","subheadline":"..."}}]`,
   cta: `[{"key":"control","name":"Build your stag set","weight":50,"config":{}},{"key":"b","name":"Sort the shirts","weight":50,"config":{"cta":"Sort the shirts"}}]`,
   hero_image: `[{"key":"control","name":"Current","weight":50,"config":{}},{"key":"b","name":"Group photo 2","weight":50,"config":{"hero_image_url":"https://..."}}]`,
   offer: `[{"key":"control","name":"No offer","weight":50,"config":{"offer_ids":[]}},{"key":"b","name":"8+ £10 off","weight":50,"config":{"offer_ids":["<offer id>"]}}]`,
   free_shipping: `[{"key":"control","name":"Free on all sets","weight":50,"config":{}},{"key":"b","name":"Free on 8+","weight":50,"config":{"free_shipping_min_items":8}}]`,
   homepage: `[{"key":"a","name":"Current homepage","weight":50,"config":{}},{"key":"b","name":"Ad-matched hero + big designs","weight":50,"config":{"home_layout":"b"}}]`,
+  size_flow: `[{"key":"pay_first","name":"1: Pay now, sizes later","weight":34,"config":{"size_flow":"pay_first"}},{"key":"share","name":"2: Share/save lineup","weight":33,"config":{"size_flow":"share"}},{"key":"default_l","name":"3: Everyone starts as L","weight":33,"config":{"size_flow":"default_l"}}]`,
   min_group_size: `[{"key":"control","name":"Min 3","weight":50,"config":{}},{"key":"b","name":"Min 4","weight":50,"config":{"min_group_size":4}}]`,
 };
 

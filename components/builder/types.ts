@@ -14,6 +14,13 @@ export type BuilderDesign = {
   sizes: string[];
 };
 
+/** Which size step this visitor sees (A/B/C test "size_flow"). */
+export type SizeFlow = "pay_first" | "share" | "default_l";
+
+export function parseSizeFlow(v: unknown): SizeFlow {
+  return v === "pay_first" || v === "default_l" ? v : "share";
+}
+
 export type BuilderConfig = {
   designs: BuilderDesign[];
   sizes: string[];
@@ -22,4 +29,5 @@ export type BuilderConfig = {
   offers: Offer[];
   unitPriceOverridePence: number | null;
   stagSlug: string | null;
+  sizeFlow: SizeFlow;
 };

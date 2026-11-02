@@ -178,7 +178,7 @@ export const FALLBACK_PRODUCTS: ProductWithRelations[] = DESIGNS.map((d, i) => {
 export const FALLBACK_FAQS: Faq[] = [
   ["How does the group set work?", "Tell us how many are going, give each person a design and a size, and pay once. Everyone can have a different design (that's the point) — or double up if two of you fight over the same one."],
   ["What's the minimum order?", "3 shirts. Most groups order 6–10. Over 30? Get in touch and we'll sort a bulk price."],
-  ["How much does it cost?", "£20 a shirt, with free tracked UK delivery on sets. You'll see the exact total before you pay — no surprises at checkout."],
+  ["How much does it cost?", "{price} a shirt, with free tracked UK delivery on sets. You'll see the exact total before you pay — no surprises at checkout."],
   ["How long does delivery take?", "Every set is printed to order: 2–3 working days to print, then 1–2 working days tracked delivery — 3–5 working days in total. Enter your stag date in the builder and we'll tell you straight away if we can make it."],
   ["I don't know everyone's size yet.", "Build the set anyway and hit 'Share lineup' — send the link to the group chat so everyone can check their design and size, then come back and pay. Most people take L if you're really stuck."],
   ["Can I put names on the shirts?", "Add a nickname to each person in the builder so we know who's who in the parcel. Printed names aren't available yet."],

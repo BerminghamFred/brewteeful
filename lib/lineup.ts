@@ -11,3 +11,8 @@ export function fillDesigns(people: Person[], designs: string[]): Person[] {
   let k = 0;
   return people.map((p) => (p.design || !queue.length ? p : { ...p, design: queue[k++ % queue.length]! }));
 }
+
+/** Gives everyone without a size `size` (A/B/C option "everyone starts as L"). */
+export function fillSizes(people: Person[], size: string): Person[] {
+  return people.map((p) => (p.size ? p : { ...p, size }));
+}

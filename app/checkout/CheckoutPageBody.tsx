@@ -11,7 +11,7 @@ import { track } from "@/lib/track";
 
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-export function CheckoutPageBody({ guarantee }: { guarantee: string }) {
+export function CheckoutPageBody({ guarantee, sizesLater = false }: { guarantee: string; sizesLater?: boolean }) {
   const router = useRouter();
   const { people, inBasket } = useSetStore();
   const [mounted, setMounted] = useState(false);
@@ -19,7 +19,7 @@ export function CheckoutPageBody({ guarantee }: { guarantee: string }) {
   const stripePromise = useMemo(() => (publishableKey ? loadStripe(publishableKey) : null), []);
 
   useEffect(() => setMounted(true), []);
-  const ready = inBasket && isComplete(people);
+  const ready = inBasket && isComplete(people, sizesLater);
   useEffect(() => {
     if (mounted && !ready) router.replace("/basket");
   }, [mounted, ready, router]);
@@ -52,6 +52,11 @@ export function CheckoutPageBody({ guarantee }: { guarantee: string }) {
       <p className="mb-4 text-sm text-mute">
         🔒 Secure payment by Stripe — Apple Pay, Google Pay and cards. {people.length} shirts, one parcel. {guarantee}
       </p>
+      {sizesLater && people.some((p) => !p.size) ? (
+        <p className="mb-4 rounded-2xl bg-paper p-3 text-sm">
+          <strong>Sizes later:</strong> straight after paying you&apos;ll get a link for the group to add their sizes. Printing starts when the last one&apos;s in.
+        </p>
+      ) : null}
       {error ? (
         <div className="card bg-sun p-4 text-sm font-bold">
           {error}{" "}

@@ -9,6 +9,9 @@ import { getCatalogue, getSettingsWithEconomics, type StorefrontContext } from "
 import { priceSet, type PricingResult, type ShippingMethod } from "@/lib/pricing";
 import { estimateFulfilmentCost } from "@/lib/economics";
 import type { DiscountCode, ProductWithRelations } from "@/lib/types";
+import { SIZE_TBC } from "@/lib/sizes";
+
+export { SIZE_TBC };
 
 export type CheckoutInput = {
   people: { design: string; size: string; nickname?: string }[];
@@ -81,10 +84,28 @@ export async function buildQuote(input: CheckoutInput, ctx: StorefrontContext): 
   const errors: string[] = [];
   const lines: DraftLine[] = [];
 
+  // Pay now, sizes later (size_flow A/B/C option 1): only for visitors in that variant,
+  // decided server-side. Sizes are collected after payment at /sizes/<token>.
+  const sizesLater = ctx.experiments.overrides.size_flow === "pay_first";
+
   input.people.forEach((person, i) => {
     const product = bySlug.get(person.design);
     if (!product) {
       errors.push(`Person ${i + 1}: that design is no longer available.`);
+      return;
+    }
+    if (!person.size && sizesLater) {
+      lines.push({
+        position: i + 1,
+        is_stag: i === 0,
+        nickname: person.nickname || null,
+        product,
+        variantId: null,
+        sku: null,
+        size: SIZE_TBC,
+        unitPricePence: product.price_pence,
+        unitCostPence: product.cost_pence ?? 0,
+      });
       return;
     }
     const variant = product.variants.find((v) => v.size === person.size && v.active);
