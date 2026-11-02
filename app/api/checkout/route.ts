@@ -1,3 +1,4 @@
+import { shirts } from "@/lib/format";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type Stripe from "stripe";
@@ -183,7 +184,7 @@ export async function POST(req: Request) {
       metadata: { order_id: order.id, order_number: String(order.order_number) },
       payment_intent_data: {
         metadata: { order_id: order.id, order_number: String(order.order_number) },
-        description: `Stag set #${order.order_number} (${p.itemCount} shirts)`,
+        description: `Stag set #${order.order_number} (${shirts(p.itemCount)})`,
       },
       return_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     });

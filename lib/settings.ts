@@ -111,7 +111,7 @@ export const SETTINGS_KEYS: SettingsKey[] = [
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   pricing: {
-    min_group_size: 3,
+    min_group_size: 1,
     max_group_size: 30,
     standard_shipping_pence: 499,
     free_shipping_min_items: 3,
@@ -189,7 +189,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
-      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. Minimum 3 shirts, free tracked UK delivery.",
+      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. Order one or the whole group, with free tracked UK delivery on 3 or more.",
     og_image_url: "",
   },
   sizing: {

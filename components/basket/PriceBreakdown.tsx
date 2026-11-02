@@ -1,4 +1,4 @@
-import { gbp } from "@/lib/format";
+import { gbp, shirts } from "@/lib/format";
 import type { PricingResult } from "@/lib/pricing";
 
 export function PriceBreakdown({ pricing }: { pricing: PricingResult }) {
@@ -8,7 +8,7 @@ export function PriceBreakdown({ pricing }: { pricing: PricingResult }) {
     <dl className="space-y-1.5 text-sm">
       <div className="flex justify-between">
         <dt>
-          {pricing.itemCount} shirts{allSame ? ` × ${gbp(unit)}` : ""}
+          {shirts(pricing.itemCount)}{allSame ? ` × ${gbp(unit)}` : ""}
         </dt>
         <dd>{gbp(pricing.subtotalPence)}</dd>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { shirts } from "@/lib/format";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,7 +51,7 @@ export function CheckoutPageBody({ guarantee, sizesLater = false }: { guarantee:
         <Link href="/basket" className="text-sm font-bold underline">← Back to set</Link>
       </div>
       <p className="mb-4 text-sm text-mute">
-        🔒 Secure payment by Stripe — Apple Pay, Google Pay and cards. {people.length} shirts, one parcel. {guarantee}
+        🔒 Secure payment by Stripe — Apple Pay, Google Pay and cards. {shirts(people.length)}, one parcel. {guarantee}
       </p>
       {sizesLater && people.some((p) => !p.size) ? (
         <p className="mb-4 rounded-2xl bg-paper p-3 text-sm">

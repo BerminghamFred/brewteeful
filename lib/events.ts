@@ -21,6 +21,7 @@ export const EVENT_NAMES = [
   "open_faq",
   "page_engagement",
   "save_lineup",
+  "view_image",
 ] as const;
 
 /** `purchase` and `session_start` are server-generated only. */

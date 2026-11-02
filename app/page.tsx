@@ -29,7 +29,7 @@ export default async function HomePage() {
   const faqs = rawFaqs.map((f) => ({ ...f, answer: fillPrice(f.answer, fromPrice) }));
   const min = settings.pricing.min_group_size;
   const deliveryWindow = deliveryWindowText(settings.delivery);
-  const examples = [min, 6, 8, 10].filter((n, i, a) => n >= min && a.indexOf(n) === i);
+  const examples = [min, 3, 6, 10].filter((n, i, a) => n >= min && a.indexOf(n) === i);
   const priceRows = examples.map((n) => ({
     n,
     r: priceSet({
@@ -73,7 +73,7 @@ export default async function HomePage() {
           price={gbp(fromPrice)}
           min={min}
           deliveryWindow={deliveryWindow}
-          freeDelivery={freeFrom <= min}
+          freeFrom={freeFrom}
           cta={c.hero_cta}
           headline={c.hero_headline}
         />
@@ -101,8 +101,8 @@ export default async function HomePage() {
                 <dd className="mt-0.5 font-semibold">{gbp(fromPrice)} a shirt</dd>
               </div>
               <div className="px-3">
-                <dt className="text-mute">Minimum</dt>
-                <dd className="mt-0.5 font-semibold">{min} shirts</dd>
+                <dt className="text-mute">{min > 1 ? "Minimum" : "Order"}</dt>
+                <dd className="mt-0.5 font-semibold">{min > 1 ? `${min} shirts` : "From 1 shirt"}</dd>
               </div>
               <div className="pl-3">
                 <dt className="text-mute">{freeFrom <= min ? "Free delivery" : `Free ${freeFrom}+`}</dt>
@@ -124,7 +124,7 @@ export default async function HomePage() {
         <h2 className="h-display mt-3 max-w-xl text-4xl md:text-5xl">Sorted in five minutes.</h2>
         <ol className="mt-10 grid gap-4 md:grid-cols-3">
           {[
-            ["How many of you?", `Pick your group size — ${min} or more. Add the stag date and we'll check delivery.`],
+            ["How many of you?", min > 1 ? `Pick your group size — ${min} or more. Add the stag date and we'll check delivery.` : "One shirt or the whole group. Add the stag date and we'll check delivery."],
             ["Everyone gets a design", "Give everyone their own design and size. Different shirts, one collection."],
             ["Pay once, one parcel", `Apple Pay, Google Pay or card. Printed to order and delivered in ${deliveryWindow}.`],
           ].map(([t, d], i) => (
@@ -194,7 +194,7 @@ export default async function HomePage() {
               <tbody>
                 {priceRows.map(({ n, r }) => (
                   <tr key={n} className="border-t border-chalk/10">
-                    <td className="py-4 font-medium">{n} shirts</td>
+                    <td className="py-4 font-medium">{n} {n === 1 ? "shirt" : "shirts"}</td>
                     <td className="py-4 text-chalk/60">{r.shippingPence ? gbp(r.shippingPence) : "Free"}</td>
                     <td className="py-4 text-right text-lg font-semibold tabular-nums">
                       {gbp(r.totalPence)}
@@ -281,7 +281,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <StickyCta label="Build set" summary={`${gbp(fromPrice)} a shirt · min ${min} · ${freeFrom <= min ? "free delivery" : "UK delivery"}`} />
+      <StickyCta label="Build set" summary={`${gbp(fromPrice)} a shirt · ${min > 1 ? `min ${min} · ` : ""}${freeFrom <= min ? "free delivery" : `free delivery ${freeFrom}+`}`} />
     </>
   );
 }
