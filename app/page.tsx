@@ -5,6 +5,7 @@ import { gbp, deliveryWindowText, fillPrice } from "@/lib/format";
 import { BRAND, absoluteUrl } from "@/lib/brand";
 import { Lineup } from "@/components/site/Lineup";
 import { HeroB } from "@/components/site/HeroB";
+import { OnModel } from "@/components/site/OnModel";
 import { KeepTogether } from "@/components/site/KeepTogether";
 import { TeeArt } from "@/components/site/TeeArt";
 import { CtaLink } from "@/components/site/CtaLink";
@@ -113,6 +114,9 @@ export default async function HomePage() {
         </div>
       </section>
       )}
+
+      {/* 1b. On-model photos */}
+      <OnModel products={products} />
 
       {/* 2. How it works */}
       <section id="how-it-works" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 md:px-6 md:py-24">
