@@ -25,3 +25,8 @@ export function deliveryWindowText(d: {
 export function fillPrice(text: string, pence: number) {
   return text.replaceAll("{price}", gbp(pence));
 }
+
+/** "1 shirt", "3 shirts". */
+export function shirts(n: number) {
+  return `${n} ${n === 1 ? "shirt" : "shirts"}`;
+}

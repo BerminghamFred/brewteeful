@@ -8,7 +8,7 @@ import { decodeLineup, encodeLineup, useSetStore, type Person } from "@/stores/s
 import { fillDesigns, fillSizes } from "@/lib/lineup";
 import { SaveLineup } from "@/components/builder/SaveLineup";
 import { TeeArt } from "@/components/site/TeeArt";
-import { gbp } from "@/lib/format";
+import { gbp, shirts } from "@/lib/format";
 import { checkEventDate, formatDay } from "@/lib/delivery";
 import { track, type GaItem } from "@/lib/track";
 import type { BuilderConfig, BuilderDesign } from "@/components/builder/types";
@@ -57,7 +57,8 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
       s.setInBasket(false);
       source = "shared_link";
     } else if (!s.people.length) {
-      s.setGroupSize(min);
+      // A fresh set starts at 3 (a typical group) even when fewer is allowed.
+      s.setGroupSize(Math.min(max, Math.max(min, 3)));
     }
     if (prefill && bySlug.has(prefill)) {
       const people = useSetStore.getState().people;
@@ -220,7 +221,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
       <p className="eyebrow">Group builder</p>
       <h1 className="h-display mt-3 text-[2.75rem] md:text-6xl">Build your stag set.</h1>
       <p className="mt-3 text-[16px] text-ink/65">
-        {gbp(pricing.unitPrices[0] ?? cfg.designs[0]?.pricePence ?? 2000)} a shirt · minimum {min} · everyone can pick a different design.
+        {gbp(pricing.unitPrices[0] ?? cfg.designs[0]?.pricePence ?? 2000)} a shirt · {min > 1 ? `minimum ${min} · ` : ""}{cfg.pricing.free_shipping_min_items > min ? `free delivery on ${cfg.pricing.free_shipping_min_items}+ · ` : ""}everyone can pick a different design.
       </p>
 
       {/* Step 1: group size + date */}
@@ -466,7 +467,7 @@ export function Builder({ cfg }: { cfg: BuilderConfig }) {
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold tabular-nums">
               {gbp(pricing.totalPence)}
-              <span className="ml-1.5 font-normal text-chalk/60">· {people.length} shirts</span>
+              <span className="ml-1.5 font-normal text-chalk/60">· {shirts(people.length)}</span>
               {pricing.discountPence ? <span className="ml-1.5 text-[13px] font-medium text-[#8fe3b8]">−{gbp(pricing.discountPence)}</span> : null}
             </p>
             <p className="truncate text-[12px] text-chalk/55">

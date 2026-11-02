@@ -16,7 +16,7 @@ export function HeroB({
   price,
   min,
   deliveryWindow,
-  freeDelivery,
+  freeFrom,
   cta,
   headline,
 }: {
@@ -24,7 +24,8 @@ export function HeroB({
   price: string;
   min: number;
   deliveryWindow: string;
-  freeDelivery: boolean;
+  /** Free delivery from this many shirts. */
+  freeFrom: number;
   cta: string;
   /** Same headline as A (content.hero_headline), so the test only compares layout. */
   headline: string;
@@ -38,7 +39,7 @@ export function HeroB({
           <KeepTogether text={headline} />
         </h1>
         <p className="mt-3 text-[16px] text-chalk/80 md:text-lg">
-          <strong className="text-chalk">{price} a shirt</strong> · min {min} · {freeDelivery ? "free UK delivery" : "UK delivery"} in {deliveryWindow}
+          <strong className="text-chalk">{price} a shirt</strong>{min > 1 ? ` · min ${min}` : ""} · {freeFrom <= min ? "free UK delivery" : `free UK delivery on ${freeFrom}+`} · arrives in {deliveryWindow}
         </p>
       </div>
 
@@ -84,7 +85,7 @@ export function HeroB({
         </div>
         <ul className="mt-6 grid gap-2 text-sm text-chalk/85 sm:grid-cols-3">
           {[
-            freeDelivery ? "Free tracked UK delivery" : "Tracked UK delivery",
+            freeFrom <= min ? "Free tracked UK delivery" : `Free tracked UK delivery on ${freeFrom}+`,
             `Arrives in ${deliveryWindow}`,
             "Wrong or misprinted? Free reprint",
           ].map((t) => (

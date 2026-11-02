@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCatalogue, getProductBySlug, getStorefrontContext } from "@/lib/store";
 import { isModelShot } from "@/components/site/OnModel";
+import { DesignGallery } from "@/components/site/DesignGallery";
 import { TeeArt } from "@/components/site/TeeArt";
 import { TrackOnView } from "@/components/site/TrackOnView";
 import { CtaLink } from "@/components/site/CtaLink";
@@ -84,16 +85,7 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
       <div className="mt-4 grid gap-8 md:grid-cols-2">
         <div>
           {images.length ? (
-            <>
-              <TeeArt name={images[0]!.alt ?? p.name} color={p.accent_color} imageUrl={images[0]!.url} priority sizes="(max-width: 768px) 100vw, 50vw" className={`${leadIsModel ? "aspect-[4/5]" : "aspect-square"} rounded-[28px] border border-ink/[0.06]`} />
-              {images.length > 1 ? (
-                <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
-                  {images.slice(1).map((img) => (
-                    <TeeArt key={img.id} name={img.alt ?? p.name} color={p.accent_color} imageUrl={img.url} sizes="(max-width: 768px) 40vw, 12vw" className="aspect-square w-[40%] shrink-0 snap-start rounded-2xl border border-ink/[0.06] md:w-auto" />
-                  ))}
-                </div>
-              ) : null}
-            </>
+            <DesignGallery name={p.name} color={p.accent_color} images={images} portrait={leadIsModel} />
           ) : (
             <TeeArt name={p.name} color={p.accent_color} priority sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px]" />
           )}
@@ -106,7 +98,7 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
             {p.compare_at_price_pence && p.compare_at_price_pence > price ? (
               <s className="ml-2 text-base font-bold text-mute">{gbp(p.compare_at_price_pence)}</s>
             ) : null}
-            <span className="ml-2 text-sm font-normal text-mute">per shirt · min {settings.pricing.min_group_size} in a set</span>
+            <span className="ml-2 text-sm font-normal text-mute">per shirt{settings.pricing.min_group_size > 1 ? ` · min ${settings.pricing.min_group_size} in a set` : settings.pricing.free_shipping_min_items > 1 ? ` · free delivery on ${settings.pricing.free_shipping_min_items}+` : ""}</span>
           </p>
           <p className="mt-4 leading-relaxed text-ink/85">{p.description}</p>
           <CtaLink href={`/build?design=${p.slug}`} location="design_page" className="btn-primary mt-6 w-full text-lg md:w-auto">

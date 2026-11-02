@@ -1,5 +1,6 @@
 "use client";
 
+import { shirts } from "@/lib/format";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSetStore } from "@/stores/set-store";
@@ -13,7 +14,7 @@ export function BasketButton() {
   return (
     <Link
       href="/basket"
-      aria-label={count ? `Basket, ${count} shirts` : "Basket"}
+      aria-label={count ? `Basket, ${shirts(count)}` : "Basket"}
       className="relative flex h-10 w-10 items-center justify-center rounded-full text-ink transition hover:bg-ink/5"
     >
       <svg viewBox="0 0 24 24" className="h-[22px] w-[22px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
