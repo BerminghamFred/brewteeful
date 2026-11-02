@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCatalogue, getProductBySlug, getStorefrontContext } from "@/lib/store";
+import { isModelShot } from "@/components/site/OnModel";
 import { TeeArt } from "@/components/site/TeeArt";
 import { TrackOnView } from "@/components/site/TrackOnView";
 import { CtaLink } from "@/components/site/CtaLink";
@@ -31,7 +32,10 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
   const [p, { products }, { settings, experiments }] = await Promise.all([getProductBySlug(slug), getCatalogue(), getStorefrontContext()]);
   if (!p) notFound();
   const price = experiments.overrides.unit_price_pence ?? p.price_pence;
-  const images = p.images.length ? p.images : p.hero_image_url ? [{ id: "hero", url: p.hero_image_url, alt: p.name }] : [];
+  // An on-model shot, when there is one, leads the gallery (shown portrait).
+  const ordered = [...p.images].sort((a, b) => Number(isModelShot(b.url)) - Number(isModelShot(a.url)));
+  const images = ordered.length ? ordered : p.hero_image_url ? [{ id: "hero", url: p.hero_image_url, alt: p.name }] : [];
+  const leadIsModel = images[0] ? isModelShot(images[0].url) : false;
   const others = products.filter((x) => x.slug !== p.slug).slice(0, 4);
   const url = absoluteUrl(`/designs/${p.slug}`);
 
@@ -81,7 +85,7 @@ export default async function DesignPage({ params }: { params: Promise<{ slug: s
         <div>
           {images.length ? (
             <>
-              <TeeArt name={images[0]!.alt ?? p.name} color={p.accent_color} imageUrl={images[0]!.url} priority sizes="(max-width: 768px) 100vw, 50vw" className="aspect-square rounded-[28px] border border-ink/[0.06]" />
+              <TeeArt name={images[0]!.alt ?? p.name} color={p.accent_color} imageUrl={images[0]!.url} priority sizes="(max-width: 768px) 100vw, 50vw" className={`${leadIsModel ? "aspect-[4/5]" : "aspect-square"} rounded-[28px] border border-ink/[0.06]`} />
               {images.length > 1 ? (
                 <div className="no-scrollbar -mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
                   {images.slice(1).map((img) => (

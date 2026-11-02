@@ -43,6 +43,7 @@ const DESIGNS: DesignSeed[] = [
       { url: `${BIERRY}/colour/folded.jpg`, alt: "Bierry Henry T-shirt — folded" },
       { url: `${BIERRY}/colour/side-left.jpg`, alt: "Bierry Henry T-shirt — left side" },
       { url: `${BIERRY}/colour/side-right.jpg`, alt: "Bierry Henry T-shirt — right side" },
+      { url: `${BIERRY}/model/back.jpg`, alt: "Bierry Henry T-shirt shown on model (back)" },
     ],
   },
   {
@@ -91,6 +92,7 @@ const DESIGNS: DesignSeed[] = [
       { url: "/designs/pamela-canderson/colour/folded.jpg", alt: "Pamela Canderson T-shirt — folded" },
       { url: "/designs/pamela-canderson/colour/side-left.jpg", alt: "Pamela Canderson T-shirt — left side" },
       { url: "/designs/pamela-canderson/colour/side-right.jpg", alt: "Pamela Canderson T-shirt — right side" },
+      { url: "/designs/pamela-canderson/model/back.jpg", alt: "Pamela Canderson T-shirt shown on model (back)" },
     ],
   },
   {
@@ -107,6 +109,7 @@ const DESIGNS: DesignSeed[] = [
       { url: "/designs/marilyn-monrose/colour/folded.jpg", alt: "Marilyn Monrosé T-shirt — folded" },
       { url: "/designs/marilyn-monrose/colour/side-left.jpg", alt: "Marilyn Monrosé T-shirt — left side" },
       { url: "/designs/marilyn-monrose/colour/side-right.jpg", alt: "Marilyn Monrosé T-shirt — right side" },
+      { url: "/designs/marilyn-monrose/model/back.jpg", alt: "Marilyn Monrosé T-shirt shown on model (back)" },
     ],
   },
   {
@@ -120,6 +123,7 @@ const DESIGNS: DesignSeed[] = [
     images: [
       { url: "/designs/nelson-manstella/colour/back.jpg", alt: "Nelson Manstella T-shirt — back print" },
       { url: "/designs/nelson-manstella/colour/front.jpg", alt: "Nelson Manstella T-shirt — front chest print" },
+      { url: "/designs/nelson-manstella/model/back.jpg", alt: "Nelson Manstella T-shirt shown on model (back)" },
     ],
   },
   {
@@ -133,6 +137,7 @@ const DESIGNS: DesignSeed[] = [
     images: [
       { url: "/designs/mother-beeresa/colour/back.jpg", alt: "Mother Beeresa T-shirt — back print" },
       { url: "/designs/mother-beeresa/colour/front.jpg", alt: "Mother Beeresa T-shirt — front chest print" },
+      { url: "/designs/mother-beeresa/model/back.jpg", alt: "Mother Beeresa T-shirt shown on model (back)" },
     ],
   },
 ];
