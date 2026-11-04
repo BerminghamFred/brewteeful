@@ -12,6 +12,10 @@ export type BuilderDesign = {
   artworkUrl: string | null;
   pricePence: number;
   sizes: string[];
+  /** Longer copy for the expanded basket view. */
+  description: string | null;
+  /** Gallery photos, on-model shot first when there is one. */
+  images: { id: string; url: string; alt: string | null }[];
 };
 
 /** Which size step this visitor sees (A/B/C test "size_flow"). */

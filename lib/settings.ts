@@ -114,7 +114,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     min_group_size: 1,
     max_group_size: 30,
     standard_shipping_pence: 499,
-    free_shipping_min_items: 3,
+    free_shipping_min_items: 1,
     express_enabled: false,
     express_shipping_pence: 995,
   },
@@ -189,7 +189,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     default_title: "Stag Do T-Shirts — A Different Design For Everyone",
     default_description:
-      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. Order one or the whole group, with free tracked UK delivery on 3 or more.",
+      "Stag do T-shirts starring hand-illustrated icons, each with a drink in hand. A different design for everyone in the group. Order one or the whole group, with free tracked UK delivery.",
     og_image_url: "",
   },
   sizing: {
