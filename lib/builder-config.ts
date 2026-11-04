@@ -1,5 +1,6 @@
 import "server-only";
 import { getCatalogue, getStorefrontContext } from "@/lib/store";
+import { isModelShot } from "@/components/site/OnModel";
 import { parseSizeFlow, type BuilderConfig } from "@/components/builder/types";
 
 export async function getBuilderConfig(): Promise<BuilderConfig> {
@@ -17,6 +18,10 @@ export async function getBuilderConfig(): Promise<BuilderConfig> {
     artworkUrl: p.artwork_url,
     pricePence: p.price_pence,
     sizes: settings.sizing.sizes.filter((s) => p.variants.some((v) => v.size === s)),
+    description: p.description,
+    images: [...p.images]
+      .sort((a, b) => Number(isModelShot(b.url)) - Number(isModelShot(a.url)))
+      .map((i) => ({ id: i.id, url: i.url, alt: i.alt })),
   }));
   return {
     designs,

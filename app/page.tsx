@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { landingRedirect } from "@/lib/landing";
 import { getApprovedReviews, getCatalogue, getFaqs, getStorefrontContext } from "@/lib/store";
 import { priceSet } from "@/lib/pricing";
 import { gbp, deliveryWindowText, fillPrice } from "@/lib/format";
@@ -16,13 +18,19 @@ import { JsonLd } from "@/components/site/JsonLd";
 
 export const metadata = { alternates: { canonical: "/" } };
 
-export default async function HomePage() {
-  const [{ settings, offers, experiments }, { products }, rawFaqs, reviews] = await Promise.all([
+export default async function HomePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const [{ settings, offers, experiments }, { products }, rawFaqs, reviews, sp] = await Promise.all([
     getStorefrontContext(),
     getCatalogue(),
     getFaqs(),
     getApprovedReviews(),
+    searchParams,
   ]);
+  // Landing test: some ad clicks go straight to the basket with a design already in it.
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(sp)) if (typeof v === "string") params.set(k, v);
+  const to = landingRedirect(params, experiments.overrides.landing, new Set(products.map((p) => p.slug)));
+  if (to) redirect(to);
   const c = settings.content;
   const unitOverride = experiments.overrides.unit_price_pence ?? null;
   const fromPrice = unitOverride ?? Math.min(...products.map((p) => p.price_pence), 2000);
