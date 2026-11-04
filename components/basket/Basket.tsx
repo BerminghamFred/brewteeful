@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSetStore } from "@/stores/set-store";
 import { TeeArt } from "@/components/site/TeeArt";
 import { DesignGallery } from "@/components/site/DesignGallery";
-import { gbp, shirts } from "@/lib/format";
+import { deliveryWindowText, gbp, shirts } from "@/lib/format";
 import { estimateDelivery, formatDay } from "@/lib/delivery";
 import { track } from "@/lib/track";
 import type { PricingResult } from "@/lib/pricing";
@@ -22,6 +22,8 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
   const { people, inBasket, eventDate, discountCode, shippingMethod, setDiscountCode, setShippingMethod, updatePerson, replaceAll } = useSetStore();
   const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState(0);
+  // Arrived from an ad straight into the basket (?start=<design>): greet, don't say "Your set".
+  const [landed, setLanded] = useState(false);
   const detailRef = useRef<HTMLDivElement | null>(null);
   const [codeInput, setCodeInput] = useState("");
   const [quote, setQuote] = useState<ServerQuote | null>(null);
@@ -36,6 +38,7 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
     const start = new URLSearchParams(window.location.search).get("start");
     const d = start ? bySlug.get(start) : undefined;
     if (d) {
+      setLanded(true);
       const s = useSetStore.getState();
       if (!s.inBasket || !s.people.length) {
         s.replaceAll([{ design: d.slug, size: defaultSize(d), nickname: "" }]);
@@ -133,10 +136,23 @@ export function Basket({ cfg, guarantee }: { cfg: BuilderConfig; guarantee: stri
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 pb-32 pt-6 md:grid-cols-[minmax(0,1fr)_340px] md:pb-16 md:pt-10">
       <div className="min-w-0">
-        <div className="flex items-end justify-between">
-          <h1 className="h-display text-5xl">Your set</h1>
-          <Link href="/build" className="text-sm font-medium text-ink/60 hover:text-ink">Open the group builder</Link>
-        </div>
+        {landed && people.length === 1 && current ? (
+          <div>
+            <h1 className="h-display text-4xl md:text-5xl">Start with {current.name}.</h1>
+            <p className="mt-2 text-[16px] text-ink/70">
+              <strong className="text-ink">
+                {gbp(pricing.unitPrices[0] ?? current.pricePence)}
+                {pricing.shippingPence ? "" : ", free UK delivery"}
+              </strong>
+              , arrives in {deliveryWindowText(cfg.delivery)}. Pick your size and check out, or swap it and add your mates&apos; below.
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-end justify-between">
+            <h1 className="h-display text-5xl">Your set</h1>
+            <Link href="/build" className="text-sm font-medium text-ink/60 hover:text-ink">Open the group builder</Link>
+          </div>
+        )}
 
         {people.length > 1 ? (
           <ul className="mt-4 divide-y divide-ink/[0.06] card overflow-hidden">
