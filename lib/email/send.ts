@@ -10,6 +10,8 @@ export type OutgoingEmail = {
   replyTo?: string | null;
   /** Resend de-duplicates retries carrying the same key for 24h. */
   idempotencyKey?: string;
+  /** Extra headers, e.g. List-Unsubscribe. */
+  headers?: Record<string, string>;
 };
 
 export function emailConfigured() {
@@ -35,6 +37,7 @@ export async function sendEmail(email: OutgoingEmail): Promise<boolean> {
       html: email.html,
       text: email.text,
       ...(email.replyTo ? { reply_to: email.replyTo } : {}),
+      ...(email.headers ? { headers: email.headers } : {}),
     }),
   });
   if (!res.ok) {

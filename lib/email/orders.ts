@@ -21,7 +21,7 @@ const COLUMN: Record<Kind, "confirmation_email_sent_at" | "shipped_email_sent_at
   shipped: "shipped_email_sent_at",
 };
 
-async function load(orderId: string) {
+export async function loadOrderForEmail(orderId: string) {
   const db = createAdminClient();
   const [{ data: order }, { data: items }] = await Promise.all([
     db.from("orders").select("*").eq("id", orderId).maybeSingle<Order>(),
@@ -56,7 +56,7 @@ export async function sendOrderEmail(orderId: string, kind: Kind, opts: { force?
   }
 
   try {
-    const data = await load(orderId);
+    const data = await loadOrderForEmail(orderId);
     if (!data?.order.email) throw new Error("order or email missing");
     const settings = await getSettings();
     const msg = kind === "confirmation" ? orderConfirmationEmail({ ...data, settings }) : orderShippedEmail({ ...data, settings });
@@ -87,7 +87,7 @@ export async function sendNewOrderAlert(orderId: string): Promise<boolean> {
       .map((s) => s.trim())
       .filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
     if (!to.length) return false;
-    const data = await load(orderId);
+    const data = await loadOrderForEmail(orderId);
     if (!data) return false;
     const msg = newOrderAlertEmail({ order: data.order, items: data.items, settings });
     return await sendEmail({ to, ...msg, replyTo: data.order.email, idempotencyKey: `alert-${orderId}` });
@@ -97,7 +97,7 @@ export async function sendNewOrderAlert(orderId: string): Promise<boolean> {
   }
 }
 
-function alertRecipients(raw: string) {
+export function alertRecipients(raw: string) {
   return raw
     .split(/[,;\s]+/)
     .map((s) => s.trim())
@@ -108,7 +108,7 @@ function alertRecipients(raw: string) {
 export async function sendSizesComplete(orderId: string): Promise<void> {
   if (!emailConfigured()) return;
   try {
-    const data = await load(orderId);
+    const data = await loadOrderForEmail(orderId);
     if (!data) return;
     const settings = await getSettings();
     if (data.order.email) {

@@ -17,6 +17,7 @@ export default async function PrivacyPage() {
       <h2>What we collect and why</h2>
       <ul>
         <li><strong>Orders:</strong> name, email, phone, delivery address and what you ordered — to make and deliver your order (contract) and keep accounting records (legal obligation).</li>
+        <li><strong>Unfinished checkouts:</strong> the email you give before paying — if you start checkout but don&apos;t pay and you left the box ticked, we send you one reminder with a link back to your order (legitimate interests / your choice). Every reminder has an unsubscribe link, and we never send more than one.</li>
         <li><strong>Payments:</strong> handled by Stripe. We never see or store your card details.</li>
         <li><strong>Site usage:</strong> we record which pages you view and steps you take in the set builder, using a first-party cookie, to understand where our site works and doesn&apos;t (legitimate interests). This data stays with us.</li>
         <li><strong>Advertising &amp; analytics cookies (only if you accept):</strong> Google Analytics, Google Ads and Meta Pixel, used to measure which ads lead to orders and to show our ads to people who&apos;ve visited. If you accept marketing cookies, we also send Meta a scrambled (hashed) copy of your order contact details to match the sale to an ad.</li>

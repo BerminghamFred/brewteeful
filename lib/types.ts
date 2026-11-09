@@ -128,6 +128,10 @@ export type Order = {
   /** Pay-now-sizes-later: secret for /sizes/<token>; null for normal orders. */
   sizes_token: string | null;
   sizes_completed_at: string | null;
+  /** Agreed (at checkout) to one reminder if they don't finish paying. */
+  reminder_opt_in: boolean;
+  reminder_sent_at: string | null;
+  abandon_alert_sent_at: string | null;
 };
 
 export type OrderItem = {

@@ -348,3 +348,97 @@ export function savedLineupEmail(args: { link: string; groupSize: number | null;
   ].join("\n");
   return { subject, html: shell({ preheader: "Open it any time to add sizes and check out.", body, settings }), text };
 }
+
+export const resumeUrl = (orderId: string) => `${BRAND.siteUrl}/resume/${orderId}`;
+export const unsubscribeUrl = (orderId: string) => `${BRAND.siteUrl}/api/unsubscribe?o=${orderId}`;
+
+/** Customer: they reached payment but didn't finish. Sent once, only if they agreed at checkout. */
+export function abandonedReminderEmail(args: { order: Order; items: OrderItem[]; products: Record<string, EmailProduct>; settings: SiteSettings }) {
+  const { order, items, products, settings } = args;
+  const est = estimateDelivery(settings.delivery, order.shipping_method === "express" ? "express" : "standard");
+  const designs = [...new Set(items.map((i) => i.product_name))];
+  const subject = designs.length === 1 && items.length === 1 ? `Your ${designs[0]} shirt is still waiting` : "Your stag set is still waiting";
+  const link = resumeUrl(order.id);
+  const unsub = unsubscribeUrl(order.id);
+  const shirtsText = `${order.item_count} ${order.item_count === 1 ? "shirt" : "shirts"}`;
+  const delivery = order.shipping_pence ? `${gbp(order.shipping_pence)} delivery` : "free UK delivery";
+  const body = `
+    <tr><td style="padding:32px 32px 8px;">
+      ${h1("Your order's still here.")}
+      ${p(`You got as far as payment but didn't finish — no problem, we've kept it for you.`)}
+      ${button(link, "Finish my order →")}
+    </td></tr>
+    ${section(`${h2("What you picked")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${lineupRows(items, products)}</table>
+      <p style="margin:10px 0 0;font:700 16px/1.5 ${FONT};color:${C.ink};">${gbp(order.total_pence)} <span style="font-weight:400;color:${C.mute};">· ${shirtsText} · ${delivery}</span></p>`)}
+    ${section(`<p style="margin:0;font:14px/1.7 ${FONT};color:${C.ink};">
+      ✓ Order today and it should arrive <strong>${esc(range(est.earliest, est.latest))}</strong><br>
+      ✓ ${esc(settings.content.guarantee)}<br>
+      ✓ Questions about sizing or delivery? Just reply to this email.
+    </p>`)}
+    <tr><td style="padding:0 32px 8px;font:12px/1.6 ${FONT};color:#9a958c;">
+      This is a one-off reminder because you started an order at ${esc(BRAND.siteUrl.replace(/^https?:\/\//, ""))}. We won't send another.
+      <a href="${esc(unsub)}" style="color:#9a958c;">Unsubscribe</a>.
+    </td></tr>
+  `;
+  const text = [
+    `Your order's still here.`,
+    ``,
+    `You got as far as payment but didn't finish — no problem, we've kept it for you.`,
+    ``,
+    ...items.map((i) => `- ${i.product_name}, ${sizeLabel(i)}`),
+    `${gbp(order.total_pence)} · ${shirtsText} · ${delivery}`,
+    ``,
+    `Finish your order: ${link}`,
+    ``,
+    `Order today and it should arrive ${range(est.earliest, est.latest)}.`,
+    settings.content.guarantee,
+    `Questions? Just reply to this email.`,
+    ``,
+    `One-off reminder because you started an order with us. Unsubscribe: ${unsub}`,
+  ].join("\n");
+  return {
+    subject,
+    html: shell({ preheader: `${shirtsText}, ${delivery}. Finish in under a minute.`, body, settings }),
+    text,
+    headers: { "List-Unsubscribe": `<${unsub}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+  };
+}
+
+/** Owner: someone reached payment an hour ago and didn't pay. */
+export function abandonedAlertEmail(args: { order: Order; items: OrderItem[]; settings: SiteSettings; reminder: "sent" | "opted_out" | "suppressed" | "skipped" }) {
+  const { order, items, settings, reminder } = args;
+  const adminUrl = `${BRAND.siteUrl}/admin/orders/${order.id}`;
+  const landing = (order.experiments as Record<string, string> | null)?.["ad-landing"];
+  const reminderText = {
+    sent: "Reminder email sent to them.",
+    opted_out: "They unticked the reminder, so we haven't emailed them.",
+    suppressed: "They've unsubscribed before, so we haven't emailed them.",
+    skipped: "No reminder sent (they were reminded recently or have since ordered).",
+  }[reminder];
+  const subject = `Abandoned checkout #${order.order_number} — ${gbp(order.total_pence)}, ${order.item_count} ${order.item_count === 1 ? "shirt" : "shirts"}`;
+  const row = (k: string, v: string) =>
+    `<tr><td style="padding:3px 12px 3px 0;font:14px/1.5 ${FONT};color:${C.mute};white-space:nowrap;vertical-align:top;">${k}</td><td style="padding:3px 0;font:14px/1.5 ${FONT};color:${C.ink};">${v}</td></tr>`;
+  const started = new Date(order.created_at).toLocaleString("en-GB", { timeZone: "Europe/London", weekday: "short", hour: "2-digit", minute: "2-digit" });
+  const body = `
+    <tr><td style="padding:32px 32px 8px;">
+      ${h1(`Abandoned checkout #${order.order_number}`)}
+      ${p(`Reached payment at <strong>${esc(started)}</strong> and hasn't paid. ${esc(reminderText)}`)}
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:14px;">
+        ${row("Email", order.email ? `<a href="mailto:${esc(order.email)}" style="color:${C.pitch};">${esc(order.email)}</a>` : "—")}
+        ${row("Basket", esc(`${gbp(order.total_pence)} · ${items.map((i) => `${i.product_name} ${i.size}`).join(", ")}`))}
+        ${landing ? row("Ad landing", esc(landing)) : ""}
+      </table>
+      ${p(`Want to follow up personally? Reply to this email — it goes to them.`)}
+      ${button(adminUrl, "Open in admin →")}
+    </td></tr>`;
+  const text = [
+    subject,
+    `Reached payment at ${started} and hasn't paid. ${reminderText}`,
+    `Email: ${order.email ?? "—"}`,
+    `Basket: ${gbp(order.total_pence)} · ${items.map((i) => `${i.product_name} ${i.size}`).join(", ")}`,
+    landing ? `Ad landing: ${landing}` : "",
+    ``,
+    adminUrl,
+  ].join("\n");
+  return { subject, html: shell({ preheader: `${order.email ?? ""} · ${gbp(order.total_pence)}`, body, settings, internal: true }), text };
+}
