@@ -3,6 +3,7 @@
  * Everything the customer pays is decided here from DB prices, never from the client.
  */
 import "server-only";
+import { normaliseEmail } from "@/lib/recovery-rules";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasServiceRole } from "@/lib/supabase/public";
 import { getCatalogue, getSettingsWithEconomics, type StorefrontContext } from "@/lib/store";
@@ -18,6 +19,10 @@ export type CheckoutInput = {
   eventDate?: string | null;
   discountCode?: string | null;
   shippingMethod?: ShippingMethod;
+  /** Collected before payment (checkout only; quotes don't need it). */
+  email?: string | null;
+  /** Agreed to one reminder email if they don't finish paying. */
+  reminderOptIn?: boolean;
 };
 
 export type DraftLine = {
@@ -57,7 +62,7 @@ export function parseCheckoutInput(raw: unknown): CheckoutInput | null {
   const discountCode =
     typeof r.discountCode === "string" && r.discountCode.trim() ? r.discountCode.trim().toUpperCase().slice(0, 40) : null;
   const shippingMethod: ShippingMethod = r.shippingMethod === "express" ? "express" : "standard";
-  return { people, eventDate, discountCode, shippingMethod };
+  return { people, eventDate, discountCode, shippingMethod, email: normaliseEmail(r.email), reminderOptIn: r.reminderOptIn === true };
 }
 
 /** Products with real costs (service role) or the public catalogue as a fallback. */

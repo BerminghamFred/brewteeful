@@ -15,6 +15,9 @@ export type SetState = {
   inBasket: boolean;
   discountCode: string | null;
   shippingMethod: "standard" | "express";
+  /** Asked for before payment, so we can send updates (and one reminder if they agreed). */
+  email: string | null;
+  setEmail: (e: string | null) => void;
   setGroupSize: (n: number) => void;
   updatePerson: (i: number, patch: Partial<Person>) => void;
   replaceAll: (people: Person[], eventDate?: string | null) => void;
@@ -35,6 +38,8 @@ export const useSetStore = create<SetState>()(
       inBasket: false,
       discountCode: null,
       shippingMethod: "standard",
+      email: null,
+      setEmail: (email) => set({ email }),
       setGroupSize: (n) =>
         set((s) => ({
           people: Array.from({ length: n }, (_, i) => s.people[i] ?? blank()),
@@ -61,6 +66,7 @@ export const useSetStore = create<SetState>()(
         inBasket: s.inBasket,
         discountCode: s.discountCode,
         shippingMethod: s.shippingMethod,
+        email: s.email,
       }),
     }
   )

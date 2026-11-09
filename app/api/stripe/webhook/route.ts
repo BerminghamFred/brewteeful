@@ -94,7 +94,8 @@ async function markPaid(session: Stripe.Checkout.Session) {
     .update({
       status: "paid",
       paid_at: new Date().toISOString(),
-      email: details?.email ?? null,
+      // Keep the email they gave before payment if Stripe somehow has none.
+      ...(details?.email ? { email: details.email } : {}),
       customer_name: ship?.name ?? details?.name ?? null,
       phone: details?.phone ?? null,
       shipping_address: address ? { name: ship?.name ?? details?.name ?? null, ...address } : null,

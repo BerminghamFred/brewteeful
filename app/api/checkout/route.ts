@@ -30,6 +30,7 @@ export async function POST(req: Request) {
 
   const input = parseCheckoutInput(await req.json().catch(() => null));
   if (!input) return NextResponse.json({ error: "Invalid set" }, { status: 400 });
+  if (!input.email) return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
 
   const ctx = await getStorefrontContext();
   const quote = await buildQuote(input, ctx);
@@ -65,6 +66,8 @@ export async function POST(req: Request) {
     .from("orders")
     .insert({
       status: "pending",
+      email: input.email,
+      reminder_opt_in: input.reminderOptIn === true,
       event_date: quote.eventDate,
       shipping_method: p.shippingMethod,
       item_count: p.itemCount,
@@ -167,6 +170,7 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       mode: "payment",
+      customer_email: input.email,
       line_items,
       discounts,
       shipping_address_collection: { allowed_countries: ["GB"] },
